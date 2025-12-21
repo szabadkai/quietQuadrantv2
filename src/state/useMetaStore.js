@@ -51,8 +51,10 @@ export const useMetaStore = create(
       unlockedCosmetics: ["default"],
       pendingCardReward: {
         active: false,
-        options: []
+        options: [],
+        runId: null
       },
+      lastRewardRunId: null,
       lastRun: null,
 
       actions: {
@@ -129,6 +131,59 @@ export const useMetaStore = create(
             }
           });
           return { streakIncreased: diffDays === 1, newStreak };
+        },
+        setCardReward: (options, runId) => {
+          set({
+            pendingCardReward: {
+              active: true,
+              options: [...options],
+              runId: runId ?? null
+            }
+          });
+        },
+
+        claimCardReward: (upgradeId) => {
+          set((state) => {
+            const unlocked = new Set(state.cardCollection.unlockedUpgrades);
+            const boosts = { ...(state.cardCollection.upgradeBoosts || {}) };
+            let unlockedUpgrades = state.cardCollection.unlockedUpgrades;
+
+            if (unlocked.has(upgradeId)) {
+              const current = boosts[upgradeId] ?? 0;
+              boosts[upgradeId] = Math.min(5, current + 1);
+            } else {
+              unlockedUpgrades = [...unlockedUpgrades, upgradeId];
+            }
+
+            const upgradePickCounts = {
+              ...(state.stats.upgradePickCounts || {})
+            };
+            upgradePickCounts[upgradeId] =
+              (upgradePickCounts[upgradeId] ?? 0) + 1;
+
+            const rewardRunId =
+              state.pendingCardReward.runId ?? state.lastRewardRunId;
+
+            return {
+              cardCollection: {
+                ...state.cardCollection,
+                unlockedUpgrades,
+                upgradeBoosts: boosts,
+                totalCardsCollected:
+                  (state.cardCollection.totalCardsCollected ?? 0) + 1
+              },
+              stats: {
+                ...state.stats,
+                upgradePickCounts
+              },
+              pendingCardReward: {
+                active: false,
+                options: [],
+                runId: null
+              },
+              lastRewardRunId: rewardRunId
+            };
+          });
         }
       }
     }),

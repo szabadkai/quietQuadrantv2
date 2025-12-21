@@ -7,24 +7,42 @@ import { soundManager } from "../../audio/SoundManager.js";
 import { musicManager } from "../../audio/MusicManager.js";
 
 const SETTINGS_KEY = "quiet-quadrant-settings";
+const DEFAULT_SETTINGS = {
+  masterVolume: 0.7,
+  musicVolume: 0.5,
+  sfxVolume: 1.0,
+  screenShake: true,
+  screenFlash: true,
+  damageNumbers: false,
+  highContrast: false,
+  reducedMotion: false
+};
 
 function loadSettings() {
   try {
     const stored = localStorage.getItem(SETTINGS_KEY);
-    if (stored) return JSON.parse(stored);
+    if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
   } catch (e) {}
-  return {
-    masterVolume: 0.7,
-    musicVolume: 0.5,
-    sfxVolume: 1.0,
-    screenShake: true
-  };
+  return { ...DEFAULT_SETTINGS };
 }
 
 function saveSettings(settings) {
   try {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   } catch (e) {}
+}
+
+function applyVisualSettings(settings) {
+  if (typeof document === "undefined") return;
+  document.body.classList.toggle("qq-high-contrast", settings.highContrast);
+  document.body.classList.toggle("qq-reduced-motion", settings.reducedMotion);
+}
+
+function notifySettingsChanged(settings) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent("qq-settings-changed", { detail: settings })
+  );
 }
 
 export function PauseModal({ onResume }) {
@@ -38,6 +56,8 @@ export function PauseModal({ onResume }) {
     musicManager.setMasterVolume(settings.masterVolume);
     musicManager.setMusicVolume(settings.musicVolume);
     saveSettings(settings);
+    applyVisualSettings(settings);
+    notifySettingsChanged(settings);
   }, [settings]);
 
   useEffect(() => {
@@ -92,6 +112,54 @@ export function PauseModal({ onResume }) {
               onClick={() => updateSetting("screenShake", !settings.screenShake)}
             >
               {settings.screenShake ? "ON" : "OFF"}
+            </button>
+          </div>
+
+          <div className="qq-toggle-row">
+            <span>Screen Flash</span>
+            <button
+              type="button"
+              className={`qq-toggle ${settings.screenFlash ? "active" : ""}`}
+              onClick={() => updateSetting("screenFlash", !settings.screenFlash)}
+            >
+              {settings.screenFlash ? "ON" : "OFF"}
+            </button>
+          </div>
+
+          <div className="qq-toggle-row">
+            <span>Damage Numbers</span>
+            <button
+              type="button"
+              className={`qq-toggle ${settings.damageNumbers ? "active" : ""}`}
+              onClick={() =>
+                updateSetting("damageNumbers", !settings.damageNumbers)
+              }
+            >
+              {settings.damageNumbers ? "ON" : "OFF"}
+            </button>
+          </div>
+
+          <div className="qq-toggle-row">
+            <span>High Contrast</span>
+            <button
+              type="button"
+              className={`qq-toggle ${settings.highContrast ? "active" : ""}`}
+              onClick={() => updateSetting("highContrast", !settings.highContrast)}
+            >
+              {settings.highContrast ? "ON" : "OFF"}
+            </button>
+          </div>
+
+          <div className="qq-toggle-row">
+            <span>Reduced Motion</span>
+            <button
+              type="button"
+              className={`qq-toggle ${settings.reducedMotion ? "active" : ""}`}
+              onClick={() =>
+                updateSetting("reducedMotion", !settings.reducedMotion)
+              }
+            >
+              {settings.reducedMotion ? "ON" : "OFF"}
             </button>
           </div>
         </div>

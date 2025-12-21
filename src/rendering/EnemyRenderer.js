@@ -60,10 +60,6 @@ export class EnemyRenderer {
 }
 
 function getEnemySize(enemy) {
-  const multipliers = {
-    splitter: 2.2,
-    orbiter: 2.1
-  };
-  const scale = multipliers[enemy.type] ?? 2;
+  const scale = 2;
   return enemy.radius * scale * 2.4;
 }

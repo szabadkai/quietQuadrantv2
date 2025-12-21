@@ -16,14 +16,33 @@
   --qq-rare: #ffd700;
   --qq-legendary: #aa00ff;
   --qq-synergy: #00ffaa;
+  --qq-hud-font: "Courier New", monospace;
+  --qq-hud-number-font: "Courier New", monospace;
 }
 
 body {
   margin: 0;
   background: var(--qq-bg);
   color: var(--qq-text);
-  font-family: "Space Mono", "IBM Plex Mono", "Menlo", monospace;
+  font-family: "Courier New", monospace;
   letter-spacing: 0.02em;
+}
+
+body.qq-high-contrast {
+  --qq-bg: #000000;
+  --qq-panel: #040608;
+  --qq-panel-border: #7fdcff;
+  --qq-text: #f5fbff;
+  --qq-muted: #c5d4dc;
+  --qq-accent: #9ff0ff;
+  --qq-accent-soft: #c9f3ff;
+  --qq-danger: #ffb000;
+  --qq-xp: #00ff6a;
+}
+
+body.qq-reduced-motion * {
+  animation: none !important;
+  transition: none !important;
 }
 
 @keyframes qq-health-pulse {
@@ -69,64 +88,131 @@ body {
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.45);
 }
 
+.qq-screen .qq-panel {
+  border-width: 2px;
+  box-shadow:
+    0 0 0 1px rgba(159, 240, 255, 0.08),
+    0 0 18px rgba(159, 240, 255, 0.14),
+    0 0 32px rgba(0, 0, 0, 0.55);
+}
+
 .qq-panel.glow {
   animation: qq-panel-glow 3s ease-in-out infinite;
 }
 
 .qq-hud-bar {
   display: grid;
-  grid-template-columns: minmax(180px, 1.1fr) minmax(200px, 1.2fr) minmax(120px, 0.6fr)
-    minmax(120px, 0.6fr) minmax(200px, 1.2fr);
-  gap: 8px;
-}
-
-.qq-hud-label {
-  font-size: 10px;
-  color: var(--qq-muted);
-  letter-spacing: 0.28em;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  font-family: var(--qq-hud-font);
   text-transform: uppercase;
 }
 
+.qq-hud-wrap {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(980px, calc(100% - 16px));
+}
+
+.qq-hud-panel {
+  border: 1px solid rgba(159, 240, 255, 0.32);
+  background: linear-gradient(180deg, rgba(10, 18, 25, 0.98), rgba(6, 10, 14, 0.96));
+  box-shadow:
+    0 0 0 1px rgba(0, 255, 255, 0.08),
+    0 0 18px rgba(0, 255, 255, 0.12),
+    inset 0 0 18px rgba(0, 255, 255, 0.08);
+  min-height: clamp(32px, 5vw, 45px);
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  justify-content: center;
+}
+
+.qq-hud-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.qq-hud-label {
+  font-size: clamp(7px, 1.6vw, 9px);
+  color: var(--qq-accent-soft);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(109, 214, 255, 0.4);
+}
+
 .qq-hud-value {
-  font-size: 16px;
+  font-family: var(--qq-hud-number-font);
+  font-size: clamp(9px, 2.2vw, 12px);
   color: var(--qq-text);
+  text-shadow: 0 0 12px rgba(159, 240, 255, 0.45);
+  font-variant-numeric: tabular-nums;
+}
+
+.qq-hud-value-large {
+  font-size: clamp(11px, 3vw, 15px);
+  letter-spacing: 0.08em;
+}
+
+.qq-hud-wave {
+  font: inherit;
 }
 
 .qq-hud-sub {
-  font-size: 11px;
+  font-family: var(--qq-hud-number-font);
+  font-size: clamp(7px, 1.4vw, 8px);
   color: var(--qq-accent-soft);
+  text-shadow: 0 0 8px rgba(109, 214, 255, 0.28);
+}
+
+.qq-hud-meta {
+  font-family: var(--qq-hud-number-font);
+  font-size: clamp(7px, 1.4vw, 8px);
+  color: var(--qq-accent-soft);
+  text-shadow: 0 0 10px rgba(109, 214, 255, 0.32);
+  font-variant-numeric: tabular-nums;
 }
 
 .qq-hud-barline {
-  margin-top: 8px;
-  height: 6px;
+  margin-top: 2px;
+  height: clamp(3px, 0.8vw, 5px);
   border-radius: 4px;
-  background: #0c141b;
-  border: 1px solid #14222b;
+  background: #0b141c;
+  border: 1px solid rgba(109, 214, 255, 0.2);
   overflow: hidden;
 }
 
 .qq-hud-barfill {
   height: 100%;
-  background: var(--qq-accent);
-  box-shadow: 0 0 10px rgba(159, 240, 255, 0.35);
+  background: #b6f2ff;
+  box-shadow: 0 0 12px rgba(159, 240, 255, 0.55);
 }
 
 .qq-button {
   background: transparent;
   color: var(--qq-accent);
-  border: 1px solid var(--qq-panel-border);
+  border: 2px solid rgba(159, 240, 255, 0.35);
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 12px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
+  box-shadow:
+    0 0 10px rgba(159, 240, 255, 0.16),
+    inset 0 0 10px rgba(159, 240, 255, 0.1);
 }
 
 .qq-button.primary {
   border-color: var(--qq-accent);
-  box-shadow: 0 0 10px rgba(159, 240, 255, 0.2);
+  box-shadow:
+    0 0 14px rgba(159, 240, 255, 0.3),
+    inset 0 0 12px rgba(159, 240, 255, 0.16);
 }
 
 .qq-upgrade-card {
@@ -259,17 +345,6 @@ body {
   height: 100%;
 }
 
-@media (max-width: 900px) {
-  .qq-hud-bar {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 600px) {
-  .qq-hud-bar {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
 
 
 /* Disconnect Overlay */
@@ -500,7 +575,7 @@ body {
 .qq-btn {
   background: transparent;
   color: var(--qq-accent);
-  border: 1px solid var(--qq-panel-border);
+  border: 2px solid rgba(159, 240, 255, 0.32);
   padding: 12px 24px;
   border-radius: 6px;
   font-size: 13px;
@@ -510,11 +585,17 @@ body {
   cursor: pointer;
   transition: all 0.15s ease-out;
   width: 100%;
+  box-shadow:
+    0 0 12px rgba(159, 240, 255, 0.18),
+    inset 0 0 10px rgba(159, 240, 255, 0.1);
 }
 
 .qq-btn:hover {
   border-color: var(--qq-accent);
   transform: scale(1.02);
+  box-shadow:
+    0 0 16px rgba(159, 240, 255, 0.28),
+    inset 0 0 12px rgba(159, 240, 255, 0.18);
 }
 
 .qq-btn:active {
@@ -523,7 +604,9 @@ body {
 
 .qq-btn-primary {
   border-color: var(--qq-accent);
-  box-shadow: 0 0 12px rgba(159, 240, 255, 0.2);
+  box-shadow:
+    0 0 18px rgba(159, 240, 255, 0.32),
+    inset 0 0 12px rgba(159, 240, 255, 0.2);
 }
 
 .qq-btn-focused {
@@ -913,7 +996,7 @@ body {
 
 .qq-filter-btn {
   background: transparent;
-  border: 1px solid var(--qq-panel-border);
+  border: 2px solid rgba(159, 240, 255, 0.25);
   color: var(--qq-muted);
   padding: 6px 14px;
   border-radius: 4px;
@@ -923,12 +1006,18 @@ body {
   letter-spacing: 0.1em;
   cursor: pointer;
   transition: all 0.15s;
+  box-shadow:
+    0 0 10px rgba(159, 240, 255, 0.12),
+    inset 0 0 8px rgba(159, 240, 255, 0.08);
 }
 
 .qq-filter-btn:hover,
 .qq-filter-btn.active {
   border-color: var(--qq-accent);
   color: var(--qq-accent);
+  box-shadow:
+    0 0 14px rgba(159, 240, 255, 0.26),
+    inset 0 0 10px rgba(159, 240, 255, 0.14);
 }
 
 .qq-collection-grid {
@@ -1013,18 +1102,19 @@ body {
 .qq-stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
 }
 
 .qq-stats-section {
-  padding: 16px;
+  padding: 14px;
   background: rgba(6, 10, 14, 0.6);
+  border: 1px solid rgba(159, 240, 255, 0.2);
   border-radius: 6px;
 }
 
 .qq-stats-section h3 {
   font-size: 12px;
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   color: var(--qq-accent);
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -1033,22 +1123,111 @@ body {
 .qq-stat-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .qq-stat {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(159, 240, 255, 0.12);
+}
+
+.qq-stat:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .qq-stat-label {
-  color: var(--qq-muted);
+  font-size: 11px;
+  color: rgba(159, 240, 255, 0.65);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 .qq-stat-value {
+  font-size: 15px;
   color: var(--qq-text);
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-align: right;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(6, 10, 14, 0.85);
+  border: 1px solid rgba(159, 240, 255, 0.2);
+  box-shadow:
+    0 0 12px rgba(159, 240, 255, 0.12),
+    inset 0 0 8px rgba(159, 240, 255, 0.06);
+}
+
+.qq-achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.qq-achievement-card {
+  background: rgba(6, 10, 14, 0.9);
+  border: 2px solid rgba(159, 240, 255, 0.2);
+  border-radius: 6px;
+  padding: 8px;
+  min-height: 72px;
+  box-shadow:
+    0 0 14px rgba(159, 240, 255, 0.12),
+    inset 0 0 10px rgba(159, 240, 255, 0.08);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.qq-achievement-card.locked {
+  opacity: 0.55;
+  border-color: rgba(159, 240, 255, 0.12);
+  box-shadow:
+    0 0 10px rgba(159, 240, 255, 0.08),
+    inset 0 0 8px rgba(159, 240, 255, 0.06);
+}
+
+.qq-achievement-icon {
+  font-size: 12px;
+  margin-bottom: 2px;
+  color: var(--qq-accent);
+}
+
+.qq-achievement-name {
+  font-size: 9px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  color: var(--qq-text);
+}
+
+.qq-achievement-desc {
+  font-size: 7px;
+  color: rgba(159, 240, 255, 0.65);
+  line-height: 1.3;
+  margin-bottom: 3px;
+  text-transform: none;
+  letter-spacing: 0.03em;
+}
+
+.qq-achievement-meta {
+  font-size: 6px;
+  color: rgba(159, 240, 255, 0.6);
+  letter-spacing: 0.18em;
+}
+
+@media (max-width: 900px) {
+  .qq-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .qq-stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Summary */

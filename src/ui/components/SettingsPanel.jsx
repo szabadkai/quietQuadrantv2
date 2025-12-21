@@ -3,26 +3,42 @@ import { soundManager } from "../../audio/SoundManager.js";
 import { musicManager } from "../../audio/MusicManager.js";
 
 const STORAGE_KEY = "quiet-quadrant-settings";
+const DEFAULT_SETTINGS = {
+  masterVolume: 0.7,
+  musicVolume: 0.5,
+  sfxVolume: 1.0,
+  screenShake: true,
+  screenFlash: true,
+  damageNumbers: false,
+  highContrast: false,
+  reducedMotion: false
+};
 
 function loadSettings() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
+    if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
   } catch (e) {}
-  return {
-    masterVolume: 0.7,
-    musicVolume: 0.5,
-    sfxVolume: 1.0,
-    screenShake: true,
-    screenFlash: true,
-    highContrast: false
-  };
+  return { ...DEFAULT_SETTINGS };
 }
 
 function saveSettings(settings) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
   } catch (e) {}
+}
+
+function applyVisualSettings(settings) {
+  if (typeof document === "undefined") return;
+  document.body.classList.toggle("qq-high-contrast", settings.highContrast);
+  document.body.classList.toggle("qq-reduced-motion", settings.reducedMotion);
+}
+
+function notifySettingsChanged(settings) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent("qq-settings-changed", { detail: settings })
+  );
 }
 
 export function SettingsPanel({ onClose }) {
@@ -34,6 +50,8 @@ export function SettingsPanel({ onClose }) {
     musicManager.setMasterVolume(settings.masterVolume);
     musicManager.setMusicVolume(settings.musicVolume);
     saveSettings(settings);
+    applyVisualSettings(settings);
+    notifySettingsChanged(settings);
   }, [settings]);
 
   const updateSetting = (key, value) => {
@@ -114,6 +132,20 @@ export function SettingsPanel({ onClose }) {
       <div className="qq-settings-group">
         <div className="qq-settings-toggle">
           <span className="qq-settings-label" style={{ marginBottom: 0 }}>
+            Damage Numbers
+          </span>
+          <button
+            type="button"
+            className={`qq-toggle-switch ${settings.damageNumbers ? "active" : ""}`}
+            onClick={() => updateSetting("damageNumbers", !settings.damageNumbers)}
+            aria-pressed={settings.damageNumbers}
+          />
+        </div>
+      </div>
+
+      <div className="qq-settings-group">
+        <div className="qq-settings-toggle">
+          <span className="qq-settings-label" style={{ marginBottom: 0 }}>
             High Contrast
           </span>
           <button
@@ -121,6 +153,20 @@ export function SettingsPanel({ onClose }) {
             className={`qq-toggle-switch ${settings.highContrast ? "active" : ""}`}
             onClick={() => updateSetting("highContrast", !settings.highContrast)}
             aria-pressed={settings.highContrast}
+          />
+        </div>
+      </div>
+
+      <div className="qq-settings-group">
+        <div className="qq-settings-toggle">
+          <span className="qq-settings-label" style={{ marginBottom: 0 }}>
+            Reduced Motion
+          </span>
+          <button
+            type="button"
+            className={`qq-toggle-switch ${settings.reducedMotion ? "active" : ""}`}
+            onClick={() => updateSetting("reducedMotion", !settings.reducedMotion)}
+            aria-pressed={settings.reducedMotion}
           />
         </div>
       </div>

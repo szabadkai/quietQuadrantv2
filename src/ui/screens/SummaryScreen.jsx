@@ -1,14 +1,68 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useUIStore } from "../../state/useUIStore.js";
 import { useGameStore } from "../../state/useGameStore.js";
 import { useMetaStore } from "../../state/useMetaStore.js";
+import { musicManager } from "../../audio/MusicManager.js";
 import { Button } from "../components/Button.jsx";
+import { CardRewardModal } from "../components/CardRewardModal.jsx";
+import { UPGRADES } from "../../config/upgrades.js";
+
+const MAX_CARD_BOOST = 5;
+
+function rollCardRewardOptions(cardCollection, count = 3) {
+  const unlocked = new Set(cardCollection.unlockedUpgrades ?? []);
+  const boosts = cardCollection.upgradeBoosts ?? {};
+  let pool = Object.values(UPGRADES).filter((upgrade) => {
+    const boostLevel = boosts[upgrade.id] ?? 0;
+    return !unlocked.has(upgrade.id) || boostLevel < MAX_CARD_BOOST;
+  });
+
+  if (pool.length < count) {
+    pool = Object.values(UPGRADES);
+  }
+
+  const options = [];
+  const pickCount = Math.min(count, pool.length);
+  const available = [...pool];
+  for (let i = 0; i < pickCount; i += 1) {
+    const index = Math.floor(Math.random() * available.length);
+    const [picked] = available.splice(index, 1);
+    if (picked) options.push(picked.id);
+  }
+  return options;
+}
 
 export function SummaryScreen() {
   const setScreen = useUIStore((s) => s.actions.setScreen);
   const startGame = useGameStore((s) => s.actions.startGame);
   const lastRun = useMetaStore((s) => s.lastRun);
   const stats = useMetaStore((s) => s.stats);
+  const cardCollection = useMetaStore((s) => s.cardCollection);
+  const pendingCardReward = useMetaStore((s) => s.pendingCardReward);
+  const lastRewardRunId = useMetaStore((s) => s.lastRewardRunId);
+  const metaActions = useMetaStore((s) => s.actions);
+
+  useEffect(() => {
+    musicManager.init();
+    musicManager.play("ending");
+  }, []);
+
+  useEffect(() => {
+    if (!lastRun?.victory) return;
+    const runId = lastRun.completedAt;
+    if (!runId) return;
+    if (pendingCardReward.active && pendingCardReward.runId === runId) return;
+    if (lastRewardRunId === runId) return;
+    const options = rollCardRewardOptions(cardCollection, 3);
+    metaActions.setCardReward(options, runId);
+  }, [
+    lastRun,
+    pendingCardReward.active,
+    pendingCardReward.runId,
+    lastRewardRunId,
+    cardCollection,
+    metaActions,
+  ]);
 
   const handlePlayAgain = () => {
     startGame({ seed: Date.now() });
@@ -98,6 +152,13 @@ export function SummaryScreen() {
           </Button>
         </div>
       </div>
+
+      {lastRun.victory && pendingCardReward.active && (
+        <CardRewardModal
+          options={pendingCardReward.options}
+          onSelect={metaActions.claimCardReward}
+        />
+      )}
     </div>
   );
 }

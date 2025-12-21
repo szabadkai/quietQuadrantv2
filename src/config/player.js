@@ -9,7 +9,7 @@ export const PLAYER_BASE = {
   magnetRadius: 80,
   accuracyPct: 1,
   critChance: 0.05,
-  critDamage: 1.5,
+  critDamage: 2.0,
   dashCooldownMs: 1600,
   dashDurationMs: 220,
   invulnAfterHitMs: 500,

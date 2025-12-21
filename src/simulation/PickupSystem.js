@@ -19,8 +19,8 @@ export const PickupSystem = {
 
       const target = resolvePickupTarget(pickup, players);
       if (!target) {
-        pickup.vx = 0;
-        pickup.vy = 0;
+        pickup.x += (pickup.vx ?? 0) / TICK_RATE;
+        pickup.y += (pickup.vy ?? 0) / TICK_RATE;
         continue;
       }
 
@@ -48,7 +48,7 @@ function resolvePickupTarget(pickup, players) {
   let bestDist = Infinity;
   for (const player of players) {
     const baseRadius = player.magnetRadius ?? DEFAULT_MAGNET_RADIUS;
-    const radius = baseRadius * (1 + (player.xpPickupRadiusPct ?? 0));
+    const radius = baseRadius * (2 + (player.xpPickupRadiusPct ?? 0));
     const dx = player.x - pickup.x;
     const dy = player.y - pickup.y;
     const distSq = dx * dx + dy * dy;

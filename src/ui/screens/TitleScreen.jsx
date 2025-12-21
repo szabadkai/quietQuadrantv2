@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useUIStore } from "../../state/useUIStore.js";
 import { useGameStore } from "../../state/useGameStore.js";
 import { useMetaStore } from "../../state/useMetaStore.js";
 import { getWeeklyAffix, getWeeklySeed } from "../../config/affixes.js";
 import { BOSSES } from "../../config/bosses.js";
+import { musicManager } from "../../audio/MusicManager.js";
 import { Button } from "../components/Button.jsx";
 import { SettingsModal } from "../modals/SettingsModal.jsx";
 
@@ -16,19 +17,17 @@ export function TitleScreen() {
   const weeklyAffix = getWeeklyAffix();
   const weeklySeed = getWeeklySeed();
   const weeklyBoss = BOSSES[weeklySeed % BOSSES.length];
+  const versionLabel = import.meta.env?.DEV
+    ? "vDev"
+    : `v${import.meta.env?.VITE_APP_VERSION ?? "Dev"}`;
+
+  useEffect(() => {
+    musicManager.init();
+    musicManager.play("title");
+  }, []);
 
   const handleWeekly = () => {
     startGame({ seed: weeklySeed, affix: weeklyAffix });
-    setScreen("game");
-  };
-
-  const handleRandom = () => {
-    startGame({ seed: Date.now() });
-    setScreen("game");
-  };
-
-  const handleInfinite = () => {
-    startGame({ seed: Date.now(), mode: "infinite" });
     setScreen("game");
   };
 
@@ -44,14 +43,8 @@ export function TitleScreen() {
           <Button primary onClick={handleWeekly}>
             Weekly Run
           </Button>
-          <Button onClick={handleRandom}>
-            Random Run
-          </Button>
           <Button onClick={() => setScreen("multiplayer")}>
             Multiplayer
-          </Button>
-          <Button onClick={handleInfinite}>
-            Infinite Mode
           </Button>
           <Button onClick={() => setScreen("collection")}>
             Collection
@@ -90,7 +83,7 @@ export function TitleScreen() {
           <div className="qq-affix-desc">{weeklyAffix.description}</div>
         </div>
 
-        <div className="qq-version">v2.0</div>
+        <div className="qq-version">{versionLabel}</div>
       </div>
 
       {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}

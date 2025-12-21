@@ -15,6 +15,7 @@ export class ScreenEffects {
         this.slowMoActive = false;
         this.slowMoTimer = 0;
         this.slowMoScale = 1;
+        this.flashQueue = [];
     }
 
     shake(intensity = 0.005, duration = 100) {
@@ -35,6 +36,16 @@ export class ScreenEffects {
     }
 
     update(delta) {
+        if (this.flashQueue.length) {
+            for (let i = this.flashQueue.length - 1; i >= 0; i--) {
+                const f = this.flashQueue[i];
+                f.delay -= delta;
+                if (f.delay <= 0) {
+                    this.flash(f.color, f.duration, f.alpha);
+                    this.flashQueue.splice(i, 1);
+                }
+            }
+        }
         if (this.slowMoActive) {
             this.slowMoTimer -= delta;
             if (this.slowMoTimer <= 0) {
@@ -54,9 +65,8 @@ export class ScreenEffects {
     }
 
     onPlayerDeath() {
-        this.shake(0.015, 300);
-        this.flash(0xff0000, 200, 0.4);
-        this.startSlowMo(0.2, 800);
+        this.shake(0.015, 400);
+        this.queueFlash(150, 0xffffff, 200, 0.35);
     }
 
     onBossPhaseChange() {
@@ -94,6 +104,9 @@ export class ScreenEffects {
                 case "level-up":
                     this.onLevelUp();
                     break;
+                case "crit-hit":
+                    this.shake(0.006, 100);
+                    break;
                 case "victory":
                     this.flash(0x00ff00, 200, 0.3);
                     this.startSlowMo(0.3, 600);
@@ -114,9 +127,15 @@ export class ScreenEffects {
         this.slowMoEnabled = enabled;
     }
 
+    queueFlash(delay, color = 0xffffff, duration = 120, alpha = 0.3) {
+        if (!this.flashEnabled) return;
+        this.flashQueue.push({ delay, color, duration, alpha });
+    }
+
     destroy() {
         this.slowMoActive = false;
         this.slowMoScale = 1;
+        this.flashQueue = [];
     }
 }
 

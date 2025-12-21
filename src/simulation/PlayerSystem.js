@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import {
     ARENA_WIDTH,
     ARENA_HEIGHT,
@@ -5,6 +6,9 @@ import {
     TICK_RATE,
 } from "../utils/constants.js";
 import { clamp, normalize } from "../utils/math.js";
+
+const PLAYER_PROJECTILE_MIN_RANGE =
+    Math.max(ARENA_WIDTH, ARENA_HEIGHT) * 1.5;
 
 const EMPTY_INPUT = {
     moveX: 0,
@@ -28,18 +32,32 @@ export const PlayerSystem = {
             if (player.dashCooldown > 0) {
                 player.dashCooldown -= 1;
             }
+            if (player.shieldFrames > 0) {
+                player.shieldFrames -= 1;
+                if (player.shieldFrames <= 0) {
+                    player.shieldActive = false;
+                    player.shieldFrames = 0;
+                }
+            }
+            if (player.shieldCooldown > 0) {
+                player.shieldCooldown -= 1;
+            }
+            if (player.lifestealCooldown > 0) {
+                player.lifestealCooldown -= 1;
+            }
 
             player.prevX = player.x;
             player.prevY = player.y;
 
-            this.applyDash(state, player, input);
+            this.applyDash(state, player, input, rng);
             this.applyMovement(player, input);
             this.applyAim(player, input);
+            this.updateMomentum(player, input);
             this.applyFire(state, player, input, rng);
         }
     },
 
-    applyDash(state, player, input) {
+    applyDash(state, player, input, rng) {
         if (!input.dash || player.dashCooldown > 0) return;
 
         const move = normalize(input.moveX, input.moveY);
@@ -48,8 +66,8 @@ export const PlayerSystem = {
         const dirY = move.x !== 0 || move.y !== 0 ? move.y : player.aimY;
         if (dirX === 0 && dirY === 0) return;
 
-        // Dash distance: 2 ship widths
-        const dashDistance = PLAYER_RADIUS * 4;
+        // Dash distance: 4 ship lengths
+        const dashDistance = PLAYER_RADIUS * 8;
 
         player.x = clamp(
             player.x + dirX * dashDistance,
@@ -77,6 +95,16 @@ export const PlayerSystem = {
             y: player.y,
             angle: Math.atan2(dirY, dirX),
         });
+
+        if ((player.dashSparksCount ?? 0) > 0) {
+            this.spawnDashSparks(state, player, rng);
+            state.events.push({
+                type: "dash-sparks",
+                playerId: player.id,
+                x: player.x,
+                y: player.y,
+            });
+        }
     },
 
     applyMovement(player, input) {
@@ -147,8 +175,14 @@ export const PlayerSystem = {
                 const chargeRatio = player.chargeTicks / 60;
                 const damageMultiplier =
                     1 + player.chargedShotDamagePct * chargeRatio;
-                this.spawnProjectiles(state, player, rng, damageMultiplier);
-                player.fireCooldown = player.fireCooldownTicks;
+                this.applyBloodFuelCost(player);
+                this.spawnProjectiles(state, player, rng, damageMultiplier, {
+                    pierceOverride: Math.max(
+                        player.bulletPierce,
+                        player.chargePierce ?? 0
+                    ),
+                });
+                player.fireCooldown = this.getFireCooldownTicks(player);
             }
 
             player.chargeTicks = 0;
@@ -158,16 +192,22 @@ export const PlayerSystem = {
 
         if (!input.fire || player.fireCooldown > 0) return;
 
+        this.applyBloodFuelCost(player);
         this.spawnProjectiles(state, player, rng, 1);
-        player.fireCooldown = player.fireCooldownTicks;
+        player.fireCooldown = this.getFireCooldownTicks(player);
     },
 
-    spawnProjectiles(state, player, rng, damageMultiplier) {
+    spawnProjectiles(state, player, rng, damageMultiplier, options = {}) {
         const count = player.projectileCount ?? 1;
         const spreadRad = ((player.spreadDeg ?? 0) * Math.PI) / 180;
         const baseAngle = Math.atan2(player.aimY, player.aimX);
         const startAngle = count > 1 ? baseAngle - spreadRad / 2 : baseAngle;
         const step = count > 1 ? spreadRad / (count - 1) : 0;
+        const bulletSpeed = Math.max(1, player.bulletSpeed ?? 0);
+        const minTtl = Math.ceil(
+            (PLAYER_PROJECTILE_MIN_RANGE / bulletSpeed) * TICK_RATE
+        );
+        const ttl = Math.max(player.bulletTtl ?? 0, minTtl);
 
         for (let i = 0; i < count; i += 1) {
             const angle =
@@ -189,15 +229,19 @@ export const PlayerSystem = {
                 vx: dirX * player.bulletSpeed,
                 vy: dirY * player.bulletSpeed,
                 damage: player.bulletDamage * damageMultiplier,
-                pierce: player.bulletPierce,
-                ttl: player.bulletTtl,
+                pierce: options.pierceOverride ?? player.bulletPierce,
+                ttl,
                 radius: player.bulletRadius,
                 homingStrength: player.homingStrength ?? 0,
+                homingRange: player.homingRange ?? 0,
                 explosiveRadius: player.explosiveRadius ?? 0,
                 explosiveDamagePct: player.explosiveDamagePct ?? undefined,
                 splitShot: player.splitShot,
                 critChance: player.critChance ?? 0,
-                critDamage: player.critDamage ?? 1.5,
+                critDamage: player.critDamage ?? 2.0,
+                ricochet: player.ricochet ?? 0,
+                phaseThrough: player.canPhaseShots ?? false,
+                blockShots: player.neutronCore ?? false,
                 alive: true,
             });
         }
@@ -221,5 +265,85 @@ export const PlayerSystem = {
         if (accuracy >= 1) return 0;
         const maxOffset = (1 - accuracy) * 0.6;
         return rng.nextRange(-maxOffset, maxOffset);
+    },
+
+    updateMomentum(player, input) {
+        if ((player.momentumMaxBonus ?? 0) <= 0) return;
+        const moving = Math.hypot(input.moveX, input.moveY) > 0.1;
+        const buildRate = player.momentumBuildRate ?? 0;
+        const step = buildRate / TICK_RATE;
+        if (step <= 0) return;
+        if (moving) {
+            player.momentum = Math.min(1, (player.momentum ?? 0) + step);
+        } else {
+            player.momentum = Math.max(0, (player.momentum ?? 0) - step * 1.2);
+        }
+    },
+
+    getFireCooldownTicks(player) {
+        let bonus = 0;
+        if ((player.momentumMaxBonus ?? 0) > 0) {
+            bonus += (player.momentum ?? 0) * player.momentumMaxBonus;
+        }
+        if ((player.berserkMaxBonus ?? 0) > 0) {
+            const healthRatio = player.maxHealth > 0 ? player.health / player.maxHealth : 0;
+            bonus += (1 - healthRatio) * player.berserkMaxBonus;
+        }
+        const multiplier = Math.max(0.1, 1 + bonus);
+        return Math.max(1, Math.round(player.fireCooldownTicks / multiplier));
+    },
+
+    applyBloodFuelCost(player) {
+        if ((player.bloodFuelFireCost ?? 0) <= 0) return;
+        const cost = Math.max(
+            1,
+            Math.ceil(player.health * player.bloodFuelFireCost)
+        );
+        player.health = Math.max(1, player.health - cost);
+    },
+
+    spawnDashSparks(state, player, rng) {
+        const count = player.dashSparksCount ?? 0;
+        if (count <= 0) return;
+        const speed = Math.max(280, (player.bulletSpeed ?? 0) * 0.65);
+        const damage = Math.max(1, player.bulletDamage * 0.45);
+        const sparkRadius = Math.max(2, (player.bulletRadius ?? 2) * 0.7);
+        const range = Math.max(ARENA_WIDTH, ARENA_HEIGHT) * 0.35;
+        const ttl = Math.max(
+            45,
+            Math.ceil((range / Math.max(1, speed)) * TICK_RATE)
+        );
+        for (let i = 0; i < count; i += 1) {
+            const angle = (Math.PI * 2 * i) / count;
+            const jitter = rng ? rng.nextRange(-0.2, 0.2) : (Math.random() - 0.5) * 0.4;
+            const dirX = Math.cos(angle + jitter);
+            const dirY = Math.sin(angle + jitter);
+            state.bullets.push({
+                id: state.nextBulletId++,
+                owner: player.id,
+                x: player.x,
+                y: player.y,
+                prevX: player.x,
+                prevY: player.y,
+                vx: dirX * speed,
+                vy: dirY * speed,
+                damage,
+                pierce: 0,
+                ttl,
+                radius: sparkRadius,
+                collisionScale: 1.8,
+                homingStrength: 0,
+                homingRange: 0,
+                explosiveRadius: 0,
+                splitShot: null,
+                critChance: 0,
+                critDamage: 1,
+                ricochet: 0,
+                phaseThrough: false,
+                blockShots: player.neutronCore ?? false,
+                alive: true,
+                isShrapnel: true,
+            });
+        }
     },
 };

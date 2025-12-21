@@ -26,6 +26,7 @@ export function GameScreen() {
   const session = useGameStore((s) => s.session);
   const lastRunRef = useRef(null);
   const rendererRef = useRef(null);
+  const summaryTimeoutRef = useRef(null);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
@@ -107,6 +108,10 @@ export function GameScreen() {
     }
 
     return () => {
+      if (summaryTimeoutRef.current) {
+        clearTimeout(summaryTimeoutRef.current);
+        summaryTimeoutRef.current = null;
+      }
       renderer.destroy();
       inputManager.destroy();
       if (disconnectHandlerRef.current) {
@@ -145,7 +150,13 @@ export function GameScreen() {
       notifyAchievement(achievement);
     }
 
-    useUIStore.getState().actions.setScreen("summary");
+    const navigate = () =>
+      useUIStore.getState().actions.setScreen("summary");
+    if (runSummary.victory === false) {
+      summaryTimeoutRef.current = setTimeout(navigate, 600);
+    } else {
+      navigate();
+    }
   }, [runSummary, phase]);
 
   return (

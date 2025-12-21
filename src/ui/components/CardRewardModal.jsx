@@ -1,22 +1,23 @@
 import React from "react";
+import { UpgradeCard } from "./UpgradeCard.jsx";
 
-export function CardRewardModal({ active }) {
-  if (!active) return null;
+export function CardRewardModal({ options, onSelect }) {
+  if (!options || options.length === 0) return null;
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        background: "rgba(3, 5, 8, 0.88)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "var(--qq-text)",
-        zIndex: 15
-      }}
-    >
-      <div className="qq-panel">Card rewards are coming soon.</div>
+    <div className="qq-upgrade-overlay">
+      <div className="qq-upgrade-panel">
+        <div className="qq-upgrade-title">BOSS REWARD</div>
+        <div className="qq-upgrade-grid">
+          {options.map((option) => (
+            <UpgradeCard
+              key={option}
+              upgradeId={option}
+              onSelect={() => onSelect(option)}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

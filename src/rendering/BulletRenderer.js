@@ -35,10 +35,12 @@ export class BulletRenderer {
       const radius = bullet.radius ?? 3;
       const size = getBulletSize(radius, poolKey);
       sprite.setDisplaySize(size.width, size.height);
-      sprite.rotation =
-        Math.atan2(bullet.vy, bullet.vx) +
-        Math.PI / 2 +
-        (poolKey === "player" ? Math.PI / 2 : 0);
+      sprite.rotation = Math.atan2(bullet.vy, bullet.vx) + Math.PI;
+      if (bullet.phaseThrough) {
+        sprite.setAlpha(0.6);
+      } else {
+        sprite.setAlpha(1);
+      }
       sprite.setVisible(true);
       used[poolKey] += 1;
     }
@@ -54,7 +56,9 @@ export class BulletRenderer {
     const sprite = this.scene.add.image(-100, -100, key);
     sprite.setOrigin(0.5, 0.5);
     sprite.setVisible(false);
-    if (poolKey === "boss") {
+    if (poolKey === "player") {
+      sprite.setTint(0x6dd6ff);
+    } else if (poolKey === "boss") {
       sprite.setTint(0xff00ff);
     }
     return sprite;
@@ -76,7 +80,7 @@ function getPoolKey(bullet) {
 function getBulletSize(radius, poolKey) {
   const scale = 1.5;
   if (poolKey === "player") {
-    return { width: radius * 7 * scale, height: radius * 14 * scale };
+    return { width: radius * 9 * scale, height: radius * 14 * scale };
   }
   if (poolKey === "boss") {
     return { width: radius * 8 * scale, height: radius * 16 * scale };

@@ -11,6 +11,16 @@ const TRACKS = {
     ending: "/music/Juhani Junkala [Retro Game Music Pack] Ending.mp3",
 };
 
+const LEVEL_SEQUENCE = ["level1", "level2", "level3"];
+
+function trackForWaveNumber(waveNumber) {
+    if (waveNumber <= 1) {
+        return "ending";
+    }
+    const index = (waveNumber - 2) % LEVEL_SEQUENCE.length;
+    return LEVEL_SEQUENCE[index];
+}
+
 export class MusicManager {
     constructor() {
         this.masterVolume = 0.5;
@@ -92,41 +102,18 @@ export class MusicManager {
     updateFromGameState(state) {
         if (!state || !this.initialized) return;
 
-        let intensityLevel = 0;
-        let targetTrack = "level1";
+        const waveNumber = (state.wave?.current ?? 0) + 1;
+        let targetTrack = trackForWaveNumber(waveNumber);
 
-        if (state.phase === "boss") {
-            intensityLevel = 3;
-            targetTrack = "level3";
-        } else if (state.phase === "wave") {
-            const wave = state.wave?.current ?? 1;
-            if (wave >= 8) {
-                intensityLevel = 2;
-                targetTrack = "level2";
-            } else if (wave >= 4) {
-                intensityLevel = 1;
-                targetTrack = "level2";
-            } else {
-                intensityLevel = 0;
-                targetTrack = "level1";
-            }
-        } else if (state.phase === "intermission") {
-            targetTrack = this.currentTrack || "level1";
-        } else if (state.phase === "ended") {
+        if (state.phase === "ended") {
             targetTrack = "ending";
         }
 
-        if (
-            this.lastIntensityLevel !== intensityLevel ||
-            this.currentTrack !== targetTrack
-        ) {
-            this.lastIntensityLevel = intensityLevel;
-            if (this.currentTrack !== targetTrack) {
-                this.play(targetTrack);
-            }
+        if (this.currentTrack !== targetTrack) {
+            this.play(targetTrack);
         }
 
-        this.setIntensity(intensityLevel / 3);
+        this.setIntensity(0);
     }
 
     setMasterVolume(volume) {

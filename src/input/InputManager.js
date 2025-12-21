@@ -74,7 +74,7 @@ export class InputManager {
         this.audioResumed = true;
         soundManager.resume();
         musicManager.resume();
-        musicManager.play("level1");
+        musicManager.play(musicManager.currentTrack ?? "ending");
     }
 
     attach(target) {

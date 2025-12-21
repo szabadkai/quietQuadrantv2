@@ -4,6 +4,8 @@
  */
 
 const MAX_SIMULTANEOUS = 8;
+const SFX_GAIN_BOOST = 1.8;
+const SYNTH_GAIN_SCALE = 0.6;
 
 const SOUND_DEFS = {
     shoot: { priority: 3, volume: 0.3, cooldown: 50 },
@@ -18,6 +20,8 @@ const SOUND_DEFS = {
     waveStart: { priority: 2, volume: 0.5, cooldown: 500 },
     victory: { priority: 1, volume: 0.8, cooldown: 2000 },
     defeat: { priority: 1, volume: 0.7, cooldown: 2000 },
+    defeatBoom: { priority: 1, volume: 0.8, cooldown: 2000 },
+    defeatShatter: { priority: 1, volume: 0.6, cooldown: 2000 },
     menuHover: { priority: 5, volume: 0.25, cooldown: 30 },
     menuSelect: { priority: 4, volume: 0.4, cooldown: 50 },
 };
@@ -98,11 +102,12 @@ export class SoundManager {
         source.buffer = buffer;
 
         const gain = this.context.createGain();
-        gain.gain.value = def.volume * (options.volume ?? 1);
+        gain.gain.value = def.volume * (options.volume ?? 1) * SFX_GAIN_BOOST;
         source.connect(gain);
         gain.connect(this.masterGain);
 
-        source.start();
+        const delay = Math.max(0, options.delay ?? 0);
+        source.start(this.context.currentTime + delay);
 
         const soundRef = { name, source, gain, priority: def.priority };
         this.activeSounds.push(soundRef);
@@ -121,19 +126,32 @@ export class SoundManager {
         if (!synth) return;
 
         osc.type = synth.type ?? "sine";
-        osc.frequency.value = synth.freq ?? 440;
+        const duration = synth.duration ?? 0.1;
+        const delay = Math.max(0, options.delay ?? 0);
+        const startTime = this.context.currentTime + delay;
+        const startFreq = synth.freq ?? 440;
+        osc.frequency.setValueAtTime(startFreq, startTime);
+        if (synth.freqEnd) {
+            osc.frequency.exponentialRampToValueAtTime(
+                Math.max(1, synth.freqEnd),
+                startTime + duration
+            );
+        }
 
-        gain.gain.value = def.volume * (options.volume ?? 1) * 0.3;
+        const volume =
+            def.volume * (options.volume ?? 1) * SYNTH_GAIN_SCALE * SFX_GAIN_BOOST;
+        gain.gain.value = 0.001;
+        gain.gain.setValueAtTime(volume, startTime);
         gain.gain.exponentialRampToValueAtTime(
             0.001,
-            this.context.currentTime + (synth.duration ?? 0.1)
+            startTime + duration
         );
 
         osc.connect(gain);
         gain.connect(this.masterGain);
 
-        osc.start();
-        osc.stop(this.context.currentTime + (synth.duration ?? 0.1));
+        osc.start(startTime);
+        osc.stop(startTime + duration);
 
         const soundRef = { name, source: osc, gain, priority: def.priority };
         this.activeSounds.push(soundRef);
@@ -227,6 +245,8 @@ export class SoundManager {
                     break;
                 case "defeat":
                     this.play("defeat");
+                    this.play("defeatBoom", { delay: 0.08 });
+                    this.play("defeatShatter", { delay: 0.18 });
                     break;
             }
         }
@@ -263,7 +283,9 @@ const SYNTH_SOUNDS = {
     bossPhase: { type: "square", freq: 200, duration: 0.5 },
     waveStart: { type: "sine", freq: 550, duration: 0.2 },
     victory: { type: "sine", freq: 660, duration: 0.5 },
-    defeat: { type: "sawtooth", freq: 100, duration: 0.4 },
+    defeat: { type: "sawtooth", freq: 140, freqEnd: 60, duration: 0.5 },
+    defeatBoom: { type: "sawtooth", freq: 90, freqEnd: 40, duration: 0.7 },
+    defeatShatter: { type: "square", freq: 520, freqEnd: 220, duration: 0.25 },
     menuHover: { type: "sine", freq: 600, duration: 0.04 },
     menuSelect: { type: "square", freq: 800, duration: 0.08 },
 };

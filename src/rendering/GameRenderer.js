@@ -15,13 +15,32 @@ import { soundManager } from "../audio/SoundManager.js";
 import { musicManager } from "../audio/MusicManager.js";
 
 const SETTINGS_KEY = "quiet-quadrant-settings";
+const DEFAULT_SETTINGS = {
+    screenShake: true,
+    screenFlash: true,
+    reducedMotion: false,
+    damageNumbers: false,
+    highContrast: false,
+};
 
 function loadSettings() {
     try {
         const stored = localStorage.getItem(SETTINGS_KEY);
-        if (stored) return JSON.parse(stored);
+        if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
     } catch (e) {}
-    return { screenShake: true, screenFlash: true };
+    return { ...DEFAULT_SETTINGS };
+}
+
+function applyBodyClasses(settings) {
+    if (typeof document === "undefined") return;
+    document.body.classList.toggle(
+        "qq-high-contrast",
+        settings.highContrast ?? false
+    );
+    document.body.classList.toggle(
+        "qq-reduced-motion",
+        settings.reducedMotion ?? false
+    );
 }
 
 class GameScene extends Phaser.Scene {
@@ -97,12 +116,25 @@ export class GameRenderer {
         musicManager.init();
 
         const settings = loadSettings();
-        this.screenEffects.setShakeEnabled(settings.screenShake);
-        this.screenEffects.setFlashEnabled(settings.screenFlash);
+        this.applySettings(settings);
+        this.settingsListener = (event) => {
+            if (event?.detail) {
+                this.applySettings(event.detail);
+            }
+        };
+        window.addEventListener("qq-settings-changed", this.settingsListener);
 
         if (this.onReady) {
             this.onReady(this.game.canvas);
         }
+    }
+
+    applySettings(settings) {
+        this.screenEffects.setShakeEnabled(settings.screenShake);
+        this.screenEffects.setFlashEnabled(settings.screenFlash);
+        this.screenEffects.setSlowMoEnabled(!(settings.reducedMotion ?? false));
+        this.effectsRenderer.setSettings(settings);
+        applyBodyClasses(settings);
     }
 
     resumeAudio() {
@@ -110,7 +142,7 @@ export class GameRenderer {
         this.audioResumed = true;
         soundManager.resume();
         musicManager.resume();
-        musicManager.play("level1");
+        musicManager.play(musicManager.currentTrack ?? "ending");
     }
 
     preload(scene) {
@@ -162,6 +194,13 @@ export class GameRenderer {
         this.telegraphRenderer?.destroy();
         soundManager.destroy();
         musicManager.destroy();
+        if (this.settingsListener) {
+            window.removeEventListener(
+                "qq-settings-changed",
+                this.settingsListener
+            );
+            this.settingsListener = null;
+        }
         this.game.destroy(true);
     }
 }

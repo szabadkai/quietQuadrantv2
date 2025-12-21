@@ -5,12 +5,25 @@ export const GameEndSystem = {
     const alivePlayers = state.players.some((player) => player.alive);
     if (!alivePlayers) {
       state.phase = "ended";
-      state.events.push({ type: "defeat" });
+      const leadPlayer = state.players[0];
+      state.events.push({
+        type: "defeat",
+        x: leadPlayer?.x,
+        y: leadPlayer?.y
+      });
       this.finalizeRun(state, false);
       return;
     }
 
     if (state.phase === "boss" && !state.boss) {
+      if (
+        state.pendingUpgrade ||
+        state.players.some(
+          (player) => player.alive && (player.pendingUpgrades ?? 0) > 0
+        )
+      ) {
+        return;
+      }
       state.phase = "ended";
       state.events.push({ type: "victory" });
       this.finalizeRun(state, true);
@@ -29,6 +42,7 @@ export const GameEndSystem = {
     state.runSummary = {
       victory,
       duration,
+      completedAt: Date.now(),
       wave: state.wave.current,
       kills: stats.kills,
       bossDefeated: stats.bossDefeated,

@@ -1,5 +1,6 @@
 import { UPGRADE_BY_ID } from "../config/upgrades.js";
 import { SYNERGIES } from "../config/synergies.js";
+import { TICK_RATE } from "../utils/constants.js";
 import { clamp } from "../utils/math.js";
 
 export const PlayerStats = {
@@ -19,15 +20,41 @@ export const PlayerStats = {
         let spreadTightenPct = 0;
         let bulletRadius = base.bulletRadius;
         let homingStrength = 0;
+        let homingRange = 0;
         let explosiveRadius = 0;
         let splitShot = null;
         let explosiveDamagePct = null;
         let chargedShotDamagePct = 0;
+        let chargePierce = 0;
         let accuracyPct = base.accuracyPct ?? 1;
         let maxHealthCap = null;
         let xpPickupRadiusPct = 0;
-        let critChance = 0;
-        let critDamage = 1.5; // Base crit multiplier
+        let critChance = base.critChance ?? 0.05;
+        let critDamage = base.critDamage ?? 2.0;
+        let damageReductionPct = base.damageReduction ?? 0;
+        let collisionDamageReductionPct = 0;
+        let ricochet = 0;
+        let dashSparksCount = 0;
+        let shrapnelCount = 0;
+        let shrapnelDamagePct = 0;
+        let xpShieldDurationSec = 0;
+        let xpShieldCooldownSec = 0;
+        let lifestealAmount = 0;
+        let lifestealCooldownSec = 0;
+        let momentumMaxBonus = 0;
+        let momentumBuildRate = 0;
+        let chainArcDamagePct = 0;
+        let chainArcRange = 0;
+        let bloodFuelHealOnKill = 0;
+        let bloodFuelFireCost = 0;
+        let chainReactionDamagePct = 0;
+        let chainReactionRadius = 0;
+        let canPhaseShots = false;
+        let berserkMaxBonus = 0;
+        let neutronCore = false;
+        let neutronBlockRadius = 0;
+        let singularityPullStrength = 0;
+        let singularityRadius = 0;
 
         for (const [upgradeId, count] of Object.entries(stacks)) {
             const upgrade = UPGRADE_BY_ID[upgradeId];
@@ -52,14 +79,23 @@ export const PlayerStats = {
                     base.bulletRadius * effects.projectileSizePct * count;
             if (effects.homingStrength)
                 homingStrength += effects.homingStrength * count;
+            if (effects.homingRange)
+                homingRange = Math.max(homingRange, effects.homingRange * count);
             if (effects.accuracyPct) accuracyPct += effects.accuracyPct * count;
             if (effects.chargedShotDamagePct)
                 chargedShotDamagePct += effects.chargedShotDamagePct * count;
+            if (effects.chargePierce) chargePierce += effects.chargePierce * count;
             if (effects.maxHealthCap) maxHealthCap = effects.maxHealthCap;
             if (effects.xpPickupRadiusPct)
                 xpPickupRadiusPct += effects.xpPickupRadiusPct * count;
             if (effects.critChance) critChance += effects.critChance * count;
             if (effects.critDamage) critDamage += effects.critDamage * count;
+            if (effects.damageReductionPct)
+                damageReductionPct += effects.damageReductionPct * count;
+            if (effects.collisionDamageReductionPct)
+                collisionDamageReductionPct +=
+                    effects.collisionDamageReductionPct * count;
+            if (effects.ricochet) ricochet += effects.ricochet * count;
 
             if (effects.special === "explosive-impact") {
                 const baseRadius = effects.radius ?? 40;
@@ -81,6 +117,102 @@ export const PlayerStats = {
                     angleRad: 0.4,
                     damagePct: effects.shardDamage ?? 0.5,
                 };
+            }
+
+            if (effects.special === "dash-sparks") {
+                dashSparksCount += (effects.shrapnelCount ?? 6) * count;
+            }
+
+            if (effects.special === "shrapnel") {
+                shrapnelCount += (effects.fragmentCount ?? 5) * count;
+                const baseDamagePct = effects.fragmentDamage ?? 0.3;
+                shrapnelDamagePct = Math.max(
+                    shrapnelDamagePct,
+                    baseDamagePct + baseDamagePct * 0.25 * (count - 1)
+                );
+            }
+
+            if (effects.special === "xp-shield") {
+                xpShieldDurationSec = Math.max(
+                    xpShieldDurationSec,
+                    (effects.duration ?? 2) * count
+                );
+                xpShieldCooldownSec = Math.max(
+                    xpShieldCooldownSec,
+                    effects.cooldown ?? 5
+                );
+            }
+
+            if (effects.special === "lifesteal") {
+                lifestealAmount += (effects.healAmount ?? 1) * count;
+                lifestealCooldownSec = Math.max(
+                    lifestealCooldownSec,
+                    effects.cooldown ?? 3
+                );
+            }
+
+            if (effects.special === "momentum") {
+                momentumMaxBonus += (effects.maxBonus ?? 0.25) * count;
+                momentumBuildRate += (effects.buildRate ?? 0.05) * count;
+            }
+
+            if (effects.special === "chain-arc") {
+                chainArcDamagePct = Math.max(
+                    chainArcDamagePct,
+                    (effects.arcDamage ?? 0.4) * count
+                );
+                chainArcRange = Math.max(
+                    chainArcRange,
+                    (effects.arcRange ?? 100) + (count - 1) * 20
+                );
+            }
+
+            if (effects.special === "blood-fuel") {
+                bloodFuelHealOnKill = Math.max(
+                    bloodFuelHealOnKill,
+                    effects.healOnKill ?? 1
+                );
+                bloodFuelFireCost = Math.max(
+                    bloodFuelFireCost,
+                    effects.fireCost ?? 0.02
+                );
+            }
+
+            if (effects.special === "chain-reaction") {
+                chainReactionDamagePct = Math.max(
+                    chainReactionDamagePct,
+                    effects.explosionDamage ?? 0.5
+                );
+                chainReactionRadius = Math.max(
+                    chainReactionRadius,
+                    (effects.explosionRadius ?? 50) + (count - 1) * 10
+                );
+            }
+
+            if (effects.special === "quantum-tunneling") {
+                canPhaseShots = true;
+            }
+
+            if (effects.special === "berserk") {
+                berserkMaxBonus = Math.max(
+                    berserkMaxBonus,
+                    (effects.maxBonus ?? 1.0) * count
+                );
+            }
+
+            if (effects.special === "neutron-core") {
+                neutronCore = true;
+            }
+
+            if (effects.special === "singularity") {
+                singularityPullStrength = Math.max(
+                    singularityPullStrength,
+                    effects.pullStrength ?? 200
+                );
+                singularityRadius = Math.max(
+                    singularityRadius,
+                    effects.pullRadius ?? 80
+                );
             }
         }
 
@@ -133,15 +265,49 @@ export const PlayerStats = {
         player.spreadDeg = Math.max(0, spreadDeg);
         player.bulletRadius = Math.max(2, bulletRadius);
         player.homingStrength = Math.max(0, homingStrength);
+        player.homingRange = Math.max(0, homingRange);
         player.explosiveRadius = Math.max(0, explosiveRadius);
         player.explosiveDamagePct = explosiveDamagePct;
         player.splitShot = splitShot;
         player.chargedShotDamagePct = Math.max(0, chargedShotDamagePct);
+        player.chargePierce = Math.max(0, Math.floor(chargePierce));
         player.accuracyPct = clamp(accuracyPct, 0.2, 1.2);
         player.xpPickupRadiusPct = Math.max(0, xpPickupRadiusPct);
         player.critChance = clamp(critChance, 0, 1);
-        player.critDamage = Math.max(1.5, critDamage);
+        player.critDamage = Math.max(2.0, critDamage);
         player.synergies = synergies.map((synergy) => synergy.id);
+        player.damageReduction = clamp(damageReductionPct, 0, 0.8);
+        player.collisionDamageReduction = clamp(
+            collisionDamageReductionPct,
+            0,
+            0.9
+        );
+        player.ricochet = Math.max(0, Math.floor(ricochet));
+        player.dashSparksCount = Math.max(0, Math.floor(dashSparksCount));
+        player.shrapnelCount = Math.max(0, Math.floor(shrapnelCount));
+        player.shrapnelDamagePct = Math.max(0, shrapnelDamagePct);
+        player.xpShieldDurationTicks = Math.round(xpShieldDurationSec * TICK_RATE);
+        player.xpShieldCooldownTicks = Math.round(xpShieldCooldownSec * TICK_RATE);
+        player.lifestealAmount = Math.max(0, lifestealAmount);
+        player.lifestealCooldownTicks = Math.round(
+            lifestealCooldownSec * TICK_RATE
+        );
+        player.momentumMaxBonus = Math.max(0, momentumMaxBonus);
+        player.momentumBuildRate = Math.max(0, momentumBuildRate);
+        player.chainArcDamagePct = Math.max(0, chainArcDamagePct);
+        player.chainArcRange = Math.max(0, chainArcRange);
+        player.bloodFuelHealOnKill = Math.max(0, bloodFuelHealOnKill);
+        player.bloodFuelFireCost = Math.max(0, bloodFuelFireCost);
+        player.chainReactionDamagePct = Math.max(0, chainReactionDamagePct);
+        player.chainReactionRadius = Math.max(0, chainReactionRadius);
+        player.canPhaseShots = canPhaseShots;
+        player.berserkMaxBonus = Math.max(0, berserkMaxBonus);
+        player.neutronCore = neutronCore;
+        player.neutronBlockRadius = neutronCore
+            ? Math.max(neutronBlockRadius, player.radius * 2.4)
+            : 0;
+        player.singularityPullStrength = Math.max(0, singularityPullStrength);
+        player.singularityRadius = Math.max(0, singularityRadius);
 
         return player;
     },

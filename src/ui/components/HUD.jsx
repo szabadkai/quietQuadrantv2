@@ -14,6 +14,9 @@ export function HUD({ state }) {
   const clock = formatClock(seconds);
   const affixName = state.affix?.name ?? "Standard";
   const bossName = state.boss?.name ?? "-";
+  const xpCurrent = Math.round(player.xp);
+  const xpTotal = Math.round(player.xp + player.xpToNext);
+  const hullValue = `${player.health.toFixed(1)} / ${Math.round(player.maxHealth)}`;
 
   return (
     <div
@@ -23,40 +26,47 @@ export function HUD({ state }) {
         pointerEvents: "none"
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          top: "12px",
-          left: "12px",
-          right: "12px"
-        }}
-      >
+      <div className="qq-hud-wrap">
         <div className="qq-hud-bar">
-          <div className="qq-panel">
-            <div className="qq-hud-label">HULL</div>
-            <div className="qq-hud-value">
-              {Math.round(player.health)} / {Math.round(player.maxHealth)}
+          <div className="qq-panel qq-hud-panel">
+            <div className="qq-hud-row">
+              <div className="qq-hud-label">HULL</div>
+              <div className="qq-hud-value">{hullValue}</div>
             </div>
             <HealthBar current={player.health} max={player.maxHealth} />
           </div>
-          <div className="qq-panel">
-            <div className="qq-hud-label">XP</div>
-            <div className="qq-hud-value">LV {player.level}</div>
+          <div className="qq-panel qq-hud-panel">
+            <div className="qq-hud-row">
+              <div className="qq-hud-label">XP</div>
+              <div className="qq-hud-value">
+                LV {player.level} {xpCurrent} / {xpTotal}
+              </div>
+            </div>
             <XPBar current={player.xp} toNext={player.xpToNext} />
           </div>
-          <div className="qq-panel">
-            <div className="qq-hud-label">WAVE</div>
-            <WaveIndicator wave={state.wave.current} phase={state.phase} total={WAVES.length} />
+          <div className="qq-panel qq-hud-panel">
+            <div className="qq-hud-row">
+              <div className="qq-hud-label">WAVE</div>
+              <div className="qq-hud-value qq-hud-value-large">
+                <WaveIndicator wave={state.wave.current} phase={state.phase} total={WAVES.length} />
+              </div>
+            </div>
           </div>
-          <div className="qq-panel">
-            <div className="qq-hud-label">CLOCK</div>
-            <div className="qq-hud-value">{clock}</div>
+          <div className="qq-panel qq-hud-panel">
+            <div className="qq-hud-row">
+              <div className="qq-hud-label">CLOCK</div>
+              <div className="qq-hud-value qq-hud-value-large">{clock}</div>
+            </div>
           </div>
-          <div className="qq-panel glow">
-            <div className="qq-hud-label">WEEKLY</div>
-            <div className="qq-hud-sub">Seed {state.seed}</div>
-            <div className="qq-hud-sub">Boss: {bossName}</div>
-            <div className="qq-hud-sub">Affix: {affixName}</div>
+          <div className="qq-panel qq-hud-panel glow">
+            <div className="qq-hud-row">
+              <div className="qq-hud-label">WEEKLY</div>
+              <div className="qq-hud-meta">Seed {state.seed}</div>
+            </div>
+            <div className="qq-hud-row">
+              <div className="qq-hud-meta">{bossName}</div>
+              <div className="qq-hud-meta">{affixName}</div>
+            </div>
           </div>
         </div>
       </div>

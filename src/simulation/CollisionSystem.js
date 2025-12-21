@@ -1,10 +1,14 @@
+/* eslint-disable max-lines */
 import { clamp, distanceSq } from "../utils/math.js";
 import { ARENA_HEIGHT, ARENA_WIDTH } from "../utils/constants.js";
+
+const PLAYER_BULLET_COLLISION_SCALE = 3;
 
 export const CollisionSystem = {
     update(state) {
         this.playerBulletsVsEnemies(state);
         this.playerBulletsVsBoss(state);
+        this.playerBulletsVsEnemyBullets(state);
         this.enemyBulletsVsPlayers(state);
         this.enemiesVsEnemies(state);
         this.enemiesVsPlayers(state);
@@ -45,7 +49,8 @@ export const CollisionSystem = {
                         explosiveDamagePct: bullet.explosiveDamagePct,
                         splitShot: bullet.splitShot,
                         critChance: bullet.critChance ?? 0,
-                        critDamage: bullet.critDamage ?? 1.5,
+                        critDamage: bullet.critDamage ?? 2.0,
+                        blockShots: bullet.blockShots ?? false,
                     },
                 });
                 if (state.runStats) {
@@ -73,12 +78,28 @@ export const CollisionSystem = {
             for (const player of state.players) {
                 if (!player.alive) continue;
 
+                if (player.neutronCore) {
+                    const dx = bullet.x - player.x;
+                    const dy = bullet.y - player.y;
+                    const radius = player.neutronBlockRadius ?? player.radius * 2.4;
+                    if (dx * dx + dy * dy <= radius * radius) {
+                        bullet.alive = false;
+                        state.events.push({
+                            type: "neutron-block",
+                            x: bullet.x,
+                            y: bullet.y,
+                        });
+                        break;
+                    }
+                }
+
                 if (!this.hitTest(bullet, player)) continue;
 
                 state.damageQueue.push({
                     target: "player",
                     id: player.id,
                     amount: bullet.damage,
+                    source: { type: "bullet" },
                 });
 
                 bullet.alive = false;
@@ -120,7 +141,8 @@ export const CollisionSystem = {
                     explosiveDamagePct: bullet.explosiveDamagePct,
                     splitShot: bullet.splitShot,
                     critChance: bullet.critChance ?? 0,
-                    critDamage: bullet.critDamage ?? 1.5,
+                    critDamage: bullet.critDamage ?? 2.0,
+                    blockShots: bullet.blockShots ?? false,
                 },
             });
 
@@ -136,6 +158,39 @@ export const CollisionSystem = {
         }
     },
 
+    playerBulletsVsEnemyBullets(state) {
+        if (!state.players.some((player) => player.alive && player.neutronCore)) {
+            return;
+        }
+        const blockers = state.bullets.filter(
+            (bullet) =>
+                bullet.alive &&
+                this.isPlayerBullet(bullet) &&
+                bullet.blockShots
+        );
+        if (!blockers.length) return;
+
+        for (const bullet of state.bullets) {
+            if (
+                !bullet.alive ||
+                (bullet.owner !== "enemy" && bullet.owner !== "boss")
+            )
+                continue;
+
+            for (const blocker of blockers) {
+                if (!blocker.alive) continue;
+                if (!this.hitTest(bullet, blocker)) continue;
+                bullet.alive = false;
+                state.events.push({
+                    type: "neutron-block",
+                    x: bullet.x,
+                    y: bullet.y,
+                });
+                break;
+            }
+        }
+    },
+
     enemiesVsPlayers(state) {
         for (const enemy of state.enemies) {
             if (!enemy.alive) continue;
@@ -146,11 +201,18 @@ export const CollisionSystem = {
                 if (!this.hitTest(enemy, player)) continue;
 
                 this.resolveOverlap(enemy, player, 0.4, 0.6);
+                const knockbackReduction =
+                    player.collisionDamageReduction ?? 0;
+                if (knockbackReduction > 0) {
+                    player.vx *= 1 - knockbackReduction;
+                    player.vy *= 1 - knockbackReduction;
+                }
 
                 state.damageQueue.push({
                     target: "player",
                     id: player.id,
                     amount: enemy.contactDamage,
+                    source: { type: "contact" },
                 });
             }
         }
@@ -192,6 +254,21 @@ export const CollisionSystem = {
                         x: pickup.x,
                         y: pickup.y,
                     });
+
+                    if ((player.xpShieldDurationTicks ?? 0) > 0) {
+                        const ready = (player.shieldCooldown ?? 0) <= 0;
+                        if (ready) {
+                            player.shieldActive = true;
+                            player.shieldFrames = player.xpShieldDurationTicks;
+                            player.shieldCooldown = player.xpShieldCooldownTicks ?? 0;
+                            state.events.push({
+                                type: "shield-activate",
+                                playerId: player.id,
+                                x: player.x,
+                                y: player.y,
+                            });
+                        }
+                    }
                 }
 
                 pickup.alive = false;
@@ -201,7 +278,7 @@ export const CollisionSystem = {
     },
 
     hitTest(a, b) {
-        const radius = (a.radius ?? 0) + (b.radius ?? 0);
+        const radius = getCollisionRadius(a) + getCollisionRadius(b);
         return distanceSq(a.x, a.y, b.x, b.y) <= radius * radius;
     },
 
@@ -261,3 +338,14 @@ export const CollisionSystem = {
         return bullet.owner === "p1" || bullet.owner === "p2";
     },
 };
+
+function getCollisionRadius(entity) {
+    const base = entity.collisionRadius ?? entity.radius ?? 0;
+    if (entity.collisionScale !== undefined) {
+        return base * entity.collisionScale;
+    }
+    if (entity.owner === "p1" || entity.owner === "p2") {
+        return base * PLAYER_BULLET_COLLISION_SCALE;
+    }
+    return base;
+}
