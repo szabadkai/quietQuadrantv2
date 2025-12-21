@@ -178,6 +178,11 @@ body.qq-reduced-motion * {
   font-variant-numeric: tabular-nums;
 }
 
+.qq-hud-tag {
+  color: var(--qq-health);
+  text-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+}
+
 .qq-hud-barline {
   margin-top: 2px;
   height: clamp(3px, 0.8vw, 5px);
