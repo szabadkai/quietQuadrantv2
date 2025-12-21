@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { soundManager } from "../../audio/SoundManager.js";
 
 /**
  * Hook for keyboard/gamepad menu navigation.
@@ -23,6 +24,17 @@ export function useMenuNavigation(items, options = {}) {
         [items, loop]
     );
 
+    const setFocusedIndexWithSound = useCallback((newIndex) => {
+        setFocusedIndex((prevIndex) => {
+            const nextIndex =
+                typeof newIndex === "function" ? newIndex(prevIndex) : newIndex;
+            if (nextIndex !== prevIndex) {
+                soundManager.play("menuHover");
+            }
+            return nextIndex;
+        });
+    }, []);
+
     useEffect(() => {
         if (!enabled) return;
 
@@ -33,11 +45,11 @@ export function useMenuNavigation(items, options = {}) {
                 case "ArrowUp":
                     e.preventDefault();
                     if (columns === 1) {
-                        setFocusedIndex((i) => findNextEnabled(i, -1));
+                        setFocusedIndexWithSound((i) => findNextEnabled(i, -1));
                     } else {
                         const newIdx = focusedIndex - columns;
                         if (newIdx >= 0 || loop) {
-                            setFocusedIndex(
+                            setFocusedIndexWithSound(
                                 findNextEnabled(focusedIndex, -columns)
                             );
                         }
@@ -47,11 +59,11 @@ export function useMenuNavigation(items, options = {}) {
                 case "ArrowDown":
                     e.preventDefault();
                     if (columns === 1) {
-                        setFocusedIndex((i) => findNextEnabled(i, 1));
+                        setFocusedIndexWithSound((i) => findNextEnabled(i, 1));
                     } else {
                         const newIdx = focusedIndex + columns;
                         if (newIdx < items.length || loop) {
-                            setFocusedIndex(
+                            setFocusedIndexWithSound(
                                 findNextEnabled(focusedIndex, columns)
                             );
                         }
@@ -63,7 +75,7 @@ export function useMenuNavigation(items, options = {}) {
                     if (current?.onAdjust) {
                         current.onAdjust(-1);
                     } else if (columns > 1) {
-                        setFocusedIndex((i) => findNextEnabled(i, -1));
+                        setFocusedIndexWithSound((i) => findNextEnabled(i, -1));
                     }
                     break;
 
@@ -72,7 +84,7 @@ export function useMenuNavigation(items, options = {}) {
                     if (current?.onAdjust) {
                         current.onAdjust(1);
                     } else if (columns > 1) {
-                        setFocusedIndex((i) => findNextEnabled(i, 1));
+                        setFocusedIndexWithSound((i) => findNextEnabled(i, 1));
                     }
                     break;
 
@@ -80,6 +92,7 @@ export function useMenuNavigation(items, options = {}) {
                 case " ":
                     e.preventDefault();
                     if (current?.onActivate && !current.disabled) {
+                        soundManager.play("menuSelect");
                         current.onActivate();
                     }
                     break;
@@ -94,7 +107,8 @@ export function useMenuNavigation(items, options = {}) {
                 case "3":
                     const quickIdx = parseInt(e.key, 10) - 1;
                     if (quickIdx < items.length && !items[quickIdx]?.disabled) {
-                        setFocusedIndex(quickIdx);
+                        setFocusedIndexWithSound(quickIdx);
+                        soundManager.play("menuSelect");
                         items[quickIdx]?.onActivate?.();
                     }
                     break;
@@ -103,7 +117,16 @@ export function useMenuNavigation(items, options = {}) {
 
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [enabled, items, focusedIndex, columns, onBack, loop, findNextEnabled]);
+    }, [
+        enabled,
+        items,
+        focusedIndex,
+        columns,
+        onBack,
+        loop,
+        findNextEnabled,
+        setFocusedIndexWithSound,
+    ]);
 
     useEffect(() => {
         if (items[focusedIndex]?.disabled) {

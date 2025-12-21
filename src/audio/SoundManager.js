@@ -18,6 +18,8 @@ const SOUND_DEFS = {
     waveStart: { priority: 2, volume: 0.5, cooldown: 500 },
     victory: { priority: 1, volume: 0.8, cooldown: 2000 },
     defeat: { priority: 1, volume: 0.7, cooldown: 2000 },
+    menuHover: { priority: 5, volume: 0.25, cooldown: 30 },
+    menuSelect: { priority: 4, volume: 0.4, cooldown: 50 },
 };
 
 export class SoundManager {
@@ -262,6 +264,8 @@ const SYNTH_SOUNDS = {
     waveStart: { type: "sine", freq: 550, duration: 0.2 },
     victory: { type: "sine", freq: 660, duration: 0.5 },
     defeat: { type: "sawtooth", freq: 100, duration: 0.4 },
+    menuHover: { type: "sine", freq: 600, duration: 0.04 },
+    menuSelect: { type: "square", freq: 800, duration: 0.08 },
 };
 
 export const soundManager = new SoundManager();

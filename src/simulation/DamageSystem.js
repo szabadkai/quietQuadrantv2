@@ -97,9 +97,22 @@ export const DamageSystem = {
         }
         player.invulnFrames = PLAYER_INVULN_FRAMES;
 
+        // Emit player-hit event for sound/visual effects
+        state.events.push({
+            type: "player-hit",
+            playerId: player.id,
+            x: player.x,
+            y: player.y,
+        });
+
         if (player.health <= 0) {
             player.alive = false;
-            state.events.push({ type: "player-down", playerId: player.id });
+            state.events.push({
+                type: "player-down",
+                playerId: player.id,
+                x: player.x,
+                y: player.y,
+            });
         }
     },
 
@@ -203,6 +216,14 @@ DamageSystem.applyExplosion = function applyExplosion(state, enemy, damage) {
     const radius = damage.source.explosiveRadius;
     const damagePct = damage.source.explosiveDamagePct ?? 0.5;
     const radiusSq = radius * radius;
+
+    // Emit explosion visual effect
+    state.events.push({
+        type: "explosion",
+        x: enemy.x,
+        y: enemy.y,
+        radius: radius,
+    });
 
     for (const target of state.enemies) {
         if (!target.alive || target.id === enemy.id) continue;

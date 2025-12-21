@@ -184,6 +184,14 @@ export const CollisionSystem = {
                         playerId: player.id,
                         amount: pickup.value,
                     });
+
+                    // Emit xp-pickup event for sound/visual effects
+                    state.events.push({
+                        type: "xp-pickup",
+                        playerId: player.id,
+                        x: pickup.x,
+                        y: pickup.y,
+                    });
                 }
 
                 pickup.alive = false;

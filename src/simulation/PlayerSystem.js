@@ -25,13 +25,58 @@ export const PlayerSystem = {
                 player.invulnFrames -= 1;
             }
 
+            if (player.dashCooldown > 0) {
+                player.dashCooldown -= 1;
+            }
+
             player.prevX = player.x;
             player.prevY = player.y;
 
+            this.applyDash(state, player, input);
             this.applyMovement(player, input);
             this.applyAim(player, input);
             this.applyFire(state, player, input, rng);
         }
+    },
+
+    applyDash(state, player, input) {
+        if (!input.dash || player.dashCooldown > 0) return;
+
+        const move = normalize(input.moveX, input.moveY);
+        // If not moving, dash in aim direction
+        const dirX = move.x !== 0 || move.y !== 0 ? move.x : player.aimX;
+        const dirY = move.x !== 0 || move.y !== 0 ? move.y : player.aimY;
+        if (dirX === 0 && dirY === 0) return;
+
+        // Dash distance: 2 ship widths
+        const dashDistance = PLAYER_RADIUS * 4;
+
+        player.x = clamp(
+            player.x + dirX * dashDistance,
+            PLAYER_RADIUS,
+            ARENA_WIDTH - PLAYER_RADIUS
+        );
+        player.y = clamp(
+            player.y + dirY * dashDistance,
+            PLAYER_RADIUS,
+            ARENA_HEIGHT - PLAYER_RADIUS
+        );
+
+        // Brief invulnerability during dash
+        player.invulnFrames = Math.max(player.invulnFrames, 10);
+
+        // Set cooldown (convert ms to ticks)
+        const cooldownMs = player.dashCooldownMs ?? 1600;
+        player.dashCooldown = Math.round((cooldownMs / 1000) * TICK_RATE);
+
+        // Emit dash event for sound/visual effects
+        state.events.push({
+            type: "dash",
+            playerId: player.id,
+            x: player.x,
+            y: player.y,
+            angle: Math.atan2(dirY, dirX),
+        });
     },
 
     applyMovement(player, input) {
@@ -160,6 +205,14 @@ export const PlayerSystem = {
         if (state.runStats) {
             state.runStats.shotsFired += count;
         }
+
+        // Emit shoot event for sound effects
+        state.events.push({
+            type: "shoot",
+            playerId: player.id,
+            x: player.x,
+            y: player.y,
+        });
     },
 
     randomSpread(rng, player) {
