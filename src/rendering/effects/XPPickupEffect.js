@@ -2,17 +2,25 @@
 import { PALETTE_HEX } from "../../utils/palette.js";
 
 export function spawnXPPickup(renderer, x, y) {
-    for (let i = 0, n = Math.min(3, renderer.getAvailable()); i < n; i++) {
-        renderer.spawnParticle({
+    renderer.spawnRing(x, y, PALETTE_HEX.xp, 12, 0.12, false, PALETTE_HEX.white);
+
+    const dirs = [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+    ];
+    for (const [dx, dy] of dirs) {
+        renderer.spawnRectParticle({
             x,
             y,
-            vx: (Math.random() - 0.5) * 30,
-            vy: -40 - Math.random() * 20,
-            color: PALETTE_HEX.xp,
-            size: 2,
-            life: 0.3,
+            size: 3,
+            color: Math.random() > 0.5 ? PALETTE_HEX.xp : PALETTE_HEX.white,
+            vx: dx * 70,
+            vy: dy * 70,
+            life: 0.14,
             fade: true,
-            gravity: 80,
+            shrink: true,
         });
     }
 }
