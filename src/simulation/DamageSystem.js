@@ -359,7 +359,7 @@ export const DamageSystem = {
         const radiusSq = radius * radius;
 
         state.events.push({
-            type: "explosion",
+            type: "chain-reaction",
             x: enemy.x,
             y: enemy.y,
             radius,

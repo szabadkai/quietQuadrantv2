@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
+    "build:pages": "tsc -b && BUILD_TARGET=pages vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",

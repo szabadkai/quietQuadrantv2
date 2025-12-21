@@ -16,6 +16,7 @@ import { spawnShieldBreak } from "./effects/ShieldBreakEffect.js";
 import { spawnShrapnelBurst } from "./effects/ShrapnelBurstEffect.js";
 import { spawnSingularity } from "./effects/SingularityEffect.js";
 import { spawnSynergyUnlock } from "./effects/SynergyUnlockEffect.js";
+import { spawnVolatileBurst } from "./effects/VolatileBurstEffect.js";
 import { spawnWaveStart } from "./effects/WaveStartEffect.js";
 import { spawnXPPickup } from "./effects/XPPickupEffect.js";
 
@@ -324,6 +325,8 @@ export class EffectsRenderer {
             spawnShrapnelBurst(this, x, y, PALETTE_HEX.cyan);
         else if (t === "explosion")
             spawnExplosionRing(this, x, y, radius ?? 40);
+        else if (t === "chain-reaction")
+            spawnVolatileBurst(this, x, y, radius ?? 40);
         else if (t === "chain-arc")
             spawnChainArc(this, x1, y1, x2, y2);
         else if (t === "singularity") spawnSingularity(this, x, y);

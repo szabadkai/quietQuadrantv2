@@ -17,6 +17,7 @@ export function HUD({ state }) {
   const xpCurrent = Math.round(player.xp);
   const xpTotal = Math.round(player.xp + player.xpToNext);
   const hullValue = `${player.health.toFixed(1)} / ${Math.round(player.maxHealth)}`;
+  const volatileActive = (player.chainReactionRadius ?? 0) > 0;
 
   return (
     <div
@@ -65,7 +66,12 @@ export function HUD({ state }) {
             </div>
             <div className="qq-hud-row">
               <div className="qq-hud-meta">{bossName}</div>
-              <div className="qq-hud-meta">{affixName}</div>
+              <div className="qq-hud-meta">
+                {affixName}
+                {volatileActive ? (
+                  <span className="qq-hud-tag"> / VOLATILE</span>
+                ) : null}
+              </div>
             </div>
           </div>
         </div>
