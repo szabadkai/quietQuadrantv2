@@ -3,7 +3,20 @@
  * Handles ambient tracks that respond to game state.
  */
 
-import { resolveAssetPath } from "../utils/assets.js";
+function resolveAssetPath(path) {
+    const cleaned = String(path || "").replace(/^\/+/, "");
+    let base = import.meta.env?.BASE_URL ?? "/";
+    if (typeof window !== "undefined") {
+        const runtimeBase = new URL("./", window.location.href).pathname;
+        if (base === "/" && runtimeBase !== "/") {
+            base = runtimeBase;
+        }
+    }
+    if (base !== "" && !base.endsWith("/")) {
+        base += "/";
+    }
+    return `${base}${cleaned}`;
+}
 
 const TRACKS = {
     title: resolveAssetPath("music/Juhani Junkala [Retro Game Music Pack] Title Screen.mp3"),

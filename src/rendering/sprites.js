@@ -1,4 +1,17 @@
-import { resolveAssetPath } from "../utils/assets.js";
+function resolveAssetPath(path) {
+  const cleaned = String(path || "").replace(/^\/+/, "");
+  let base = import.meta.env?.BASE_URL ?? "/";
+  if (typeof window !== "undefined") {
+    const runtimeBase = new URL("./", window.location.href).pathname;
+    if (base === "/" && runtimeBase !== "/") {
+      base = runtimeBase;
+    }
+  }
+  if (base !== "" && !base.endsWith("/")) {
+    base += "/";
+  }
+  return `${base}${cleaned}`;
+}
 
 export const SPRITE_ASSETS = [
   { key: "player", file: resolveAssetPath("sprites/player.svg"), size: 64 },
