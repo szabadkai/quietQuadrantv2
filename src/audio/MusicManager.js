@@ -3,15 +3,14 @@
  * Handles ambient tracks that respond to game state.
  */
 
-const BASE_URL = import.meta.env?.BASE_URL ?? "./";
-const withBase = (path) => `${BASE_URL}${path.replace(/^\//, "")}`;
+import { resolveAssetPath } from "../utils/assets.js";
 
 const TRACKS = {
-    title: withBase("music/Juhani Junkala [Retro Game Music Pack] Title Screen.mp3"),
-    level1: withBase("music/Juhani Junkala [Retro Game Music Pack] Level 1.mp3"),
-    level2: withBase("music/Juhani Junkala [Retro Game Music Pack] Level 2.mp3"),
-    level3: withBase("music/Juhani Junkala [Retro Game Music Pack] Level 3.mp3"),
-    ending: withBase("music/Juhani Junkala [Retro Game Music Pack] Ending.mp3"),
+    title: resolveAssetPath("music/Juhani Junkala [Retro Game Music Pack] Title Screen.mp3"),
+    level1: resolveAssetPath("music/Juhani Junkala [Retro Game Music Pack] Level 1.mp3"),
+    level2: resolveAssetPath("music/Juhani Junkala [Retro Game Music Pack] Level 2.mp3"),
+    level3: resolveAssetPath("music/Juhani Junkala [Retro Game Music Pack] Level 3.mp3"),
+    ending: resolveAssetPath("music/Juhani Junkala [Retro Game Music Pack] Ending.mp3"),
 };
 
 const LEVEL_SEQUENCE = ["level1", "level2", "level3"];
