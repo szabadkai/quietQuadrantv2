@@ -3,8 +3,11 @@ import { SYNERGIES } from "../config/synergies.js";
 import { TICK_RATE } from "../utils/constants.js";
 import { clamp } from "../utils/math.js";
 
+// Each boost level adds 4% effectiveness to the upgrade
+const BOOST_BONUS_PER_LEVEL = 0.04;
+
 export const PlayerStats = {
-    recalculate(player) {
+    recalculate(player, cardBoosts = {}) {
         const stacks = getUpgradeStacks(player.upgrades);
         const synergies = getSynergies(player.upgrades);
 
@@ -61,40 +64,65 @@ export const PlayerStats = {
             if (!upgrade) continue;
             const effects = upgrade.effects ?? {};
 
-            if (effects.damagePct) damagePct += effects.damagePct * count;
-            if (effects.fireRatePct) fireRatePct += effects.fireRatePct * count;
+            // Apply card boost multiplier (each boost level adds 4% effectiveness)
+            const boostLevel = cardBoosts[upgradeId] ?? 0;
+            const boostMultiplier = 1 + boostLevel * BOOST_BONUS_PER_LEVEL;
+
+            if (effects.damagePct)
+                damagePct += effects.damagePct * count * boostMultiplier;
+            if (effects.fireRatePct)
+                fireRatePct += effects.fireRatePct * count * boostMultiplier;
             if (effects.projectileSpeedPct)
-                projectileSpeedPct += effects.projectileSpeedPct * count;
+                projectileSpeedPct +=
+                    effects.projectileSpeedPct * count * boostMultiplier;
             if (effects.moveSpeedPct)
-                moveSpeedPct += effects.moveSpeedPct * count;
-            if (effects.maxHealth) maxHealth += effects.maxHealth * count;
+                moveSpeedPct += effects.moveSpeedPct * count * boostMultiplier;
+            if (effects.maxHealth)
+                maxHealth += effects.maxHealth * count * boostMultiplier;
             if (effects.pierce) pierce += effects.pierce * count;
             if (effects.extraProjectiles)
                 projectileCount += effects.extraProjectiles * count;
             if (effects.spreadDeg) spreadDeg += effects.spreadDeg * count;
             if (effects.spreadTightenPct)
-                spreadTightenPct += effects.spreadTightenPct * count;
+                spreadTightenPct +=
+                    effects.spreadTightenPct * count * boostMultiplier;
             if (effects.projectileSizePct)
                 bulletRadius +=
-                    base.bulletRadius * effects.projectileSizePct * count;
+                    base.bulletRadius *
+                    effects.projectileSizePct *
+                    count *
+                    boostMultiplier;
             if (effects.homingStrength)
-                homingStrength += effects.homingStrength * count;
+                homingStrength +=
+                    effects.homingStrength * count * boostMultiplier;
             if (effects.homingRange)
-                homingRange = Math.max(homingRange, effects.homingRange * count);
-            if (effects.accuracyPct) accuracyPct += effects.accuracyPct * count;
+                homingRange = Math.max(
+                    homingRange,
+                    effects.homingRange * count * boostMultiplier
+                );
+            if (effects.accuracyPct)
+                accuracyPct += effects.accuracyPct * count * boostMultiplier;
             if (effects.chargedShotDamagePct)
-                chargedShotDamagePct += effects.chargedShotDamagePct * count;
-            if (effects.chargePierce) chargePierce += effects.chargePierce * count;
+                chargedShotDamagePct +=
+                    effects.chargedShotDamagePct * count * boostMultiplier;
+            if (effects.chargePierce)
+                chargePierce += effects.chargePierce * count;
             if (effects.maxHealthCap) maxHealthCap = effects.maxHealthCap;
             if (effects.xpPickupRadiusPct)
-                xpPickupRadiusPct += effects.xpPickupRadiusPct * count;
-            if (effects.critChance) critChance += effects.critChance * count;
-            if (effects.critDamage) critDamage += effects.critDamage * count;
+                xpPickupRadiusPct +=
+                    effects.xpPickupRadiusPct * count * boostMultiplier;
+            if (effects.critChance)
+                critChance += effects.critChance * count * boostMultiplier;
+            if (effects.critDamage)
+                critDamage += effects.critDamage * count * boostMultiplier;
             if (effects.damageReductionPct)
-                damageReductionPct += effects.damageReductionPct * count;
+                damageReductionPct +=
+                    effects.damageReductionPct * count * boostMultiplier;
             if (effects.collisionDamageReductionPct)
                 collisionDamageReductionPct +=
-                    effects.collisionDamageReductionPct * count;
+                    effects.collisionDamageReductionPct *
+                    count *
+                    boostMultiplier;
             if (effects.ricochet) ricochet += effects.ricochet * count;
 
             if (effects.special === "explosive-impact") {
@@ -286,8 +314,12 @@ export const PlayerStats = {
         player.dashSparksCount = Math.max(0, Math.floor(dashSparksCount));
         player.shrapnelCount = Math.max(0, Math.floor(shrapnelCount));
         player.shrapnelDamagePct = Math.max(0, shrapnelDamagePct);
-        player.xpShieldDurationTicks = Math.round(xpShieldDurationSec * TICK_RATE);
-        player.xpShieldCooldownTicks = Math.round(xpShieldCooldownSec * TICK_RATE);
+        player.xpShieldDurationTicks = Math.round(
+            xpShieldDurationSec * TICK_RATE
+        );
+        player.xpShieldCooldownTicks = Math.round(
+            xpShieldCooldownSec * TICK_RATE
+        );
         player.lifestealAmount = Math.max(0, lifestealAmount);
         player.lifestealCooldownTicks = Math.round(
             lifestealCooldownSec * TICK_RATE

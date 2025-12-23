@@ -1870,3 +1870,53 @@ body.qq-no-scanlines .qq-game-frame canvas {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* CARD REWARD STATUS */
+.qq-reward-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qq-reward-status {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.qq-unlock-indicator {
+  color: var(--qq-xp);
+  text-shadow: 
+    0 0 6px var(--qq-xp),
+    0 0 12px var(--qq-xp);
+  animation: qq-pulse 1.5s infinite;
+}
+
+.qq-boost-indicator {
+  color: var(--qq-rare);
+  text-shadow: 
+    0 0 6px var(--qq-rare),
+    0 0 12px var(--qq-rare);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.qq-boost-pips {
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.qq-boost-indicator .qq-boost-pip {
+  color: var(--qq-panel-border);
+}
+
+.qq-boost-indicator .qq-boost-pip.filled {
+  color: var(--qq-rare);
+  text-shadow: 
+    0 0 4px var(--qq-rare),
+    0 0 8px var(--qq-rare);
+}
