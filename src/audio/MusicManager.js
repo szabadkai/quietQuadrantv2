@@ -33,8 +33,8 @@ function trackForWaveNumber(waveNumber) {
     if (waveNumber <= 1) {
         return "ending";
     }
-    const index = (waveNumber - 2) % LEVEL_SEQUENCE.length;
-    return LEVEL_SEQUENCE[index];
+    // After first level, always play level1 to avoid interruptions
+    return "level1";
 }
 
 export class MusicManager {
