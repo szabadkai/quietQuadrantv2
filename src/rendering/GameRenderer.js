@@ -13,6 +13,8 @@ import { TelegraphRenderer } from "./TelegraphRenderer.js";
 import { SPRITE_ASSETS } from "./sprites.js";
 import { soundManager } from "../audio/SoundManager.js";
 import { musicManager } from "../audio/MusicManager.js";
+import { setTheme } from "../utils/palette.js";
+import { GlowManager } from "./GlowManager.js";
 
 const SETTINGS_KEY = "quiet-quadrant-settings";
 const DEFAULT_SETTINGS = {
@@ -23,6 +25,7 @@ const DEFAULT_SETTINGS = {
     highContrast: false,
     crtScanlines: true,
     crtIntensity: 0.5,
+    colorTheme: "vectrex",
 };
 
 function loadSettings() {
@@ -52,6 +55,10 @@ function applyBodyClasses(settings) {
     const intensity = settings.crtIntensity ?? 0.5;
     document.documentElement.style.setProperty("--crt-intensity", intensity);
     document.documentElement.style.setProperty("--glow-intensity", intensity);
+
+    // Apply color theme
+    const theme = settings.colorTheme || "vectrex";
+    document.body.setAttribute("data-theme", theme);
 }
 
 class GameScene extends Phaser.Scene {
@@ -146,6 +153,11 @@ export class GameRenderer {
         this.screenEffects.setSlowMoEnabled(!(settings.reducedMotion ?? false));
         this.effectsRenderer.setSettings(settings);
         applyBodyClasses(settings);
+
+        // Apply color theme
+        const theme = settings.colorTheme || "vectrex";
+        setTheme(theme);
+        GlowManager.setTheme(theme);
 
         // Apply CRT intensity to sprite glows
         const intensity = settings.crtIntensity ?? 0.5;

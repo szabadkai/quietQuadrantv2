@@ -24,6 +24,25 @@
   --glow-intensity: 0.5;
 }
 
+/* CHRISTMAS THEME */
+body[data-theme="christmas"] {
+  --qq-panel-border: #228B22;
+  --qq-text: #228B22;
+  --qq-muted: #145214;
+  --qq-accent: #228B22;
+  --qq-accent-soft: #1A6B1A;
+  --qq-player: #228B22;
+  --qq-safe: #228B22;
+  --qq-danger: #FF0000;
+  --qq-enemy: #FF0000;
+  --qq-elite: #FFD700;
+  --qq-health: #FF0000;
+  --qq-xp: #228B22;
+  --qq-rare: #FFD700;
+  --qq-legendary: #FF0000;
+  --qq-synergy: #228B22;
+}
+
 /* CRT SCANLINE EFFECT */
 @keyframes crt-flicker {
   0% { opacity: 0.97; }

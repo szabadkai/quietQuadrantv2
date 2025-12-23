@@ -17,7 +17,8 @@ const DEFAULT_SETTINGS = {
   highContrast: false,
   reducedMotion: false,
   crtScanlines: true,
-  crtIntensity: 0.5
+  crtIntensity: 0.5,
+  colorTheme: "vectrex"
 };
 
 function loadSettings() {
@@ -44,6 +45,10 @@ function applyVisualSettings(settings) {
   const intensity = settings.crtIntensity ?? 0.5;
   document.documentElement.style.setProperty('--crt-intensity', intensity);
   document.documentElement.style.setProperty('--glow-intensity', intensity);
+  
+  // Apply color theme
+  const theme = settings.colorTheme || "vectrex";
+  document.body.setAttribute('data-theme', theme);
 }
 
 function notifySettingsChanged(settings) {
@@ -191,6 +196,17 @@ export function PauseModal({ onResume }) {
               onChange={(v) => updateSetting("crtIntensity", v)}
             />
           )}
+
+          <div className="qq-toggle-row">
+            <span>Color Theme</span>
+            <button
+              type="button"
+              className={`qq-toggle ${settings.colorTheme === "christmas" ? "active" : ""}`}
+              onClick={() => updateSetting("colorTheme", settings.colorTheme === "christmas" ? "vectrex" : "christmas")}
+            >
+              {settings.colorTheme === "christmas" ? "CHRISTMAS" : "VECTREX"}
+            </button>
+          </div>
         </div>
 
         <div className="qq-modal-actions">
