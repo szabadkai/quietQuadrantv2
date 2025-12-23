@@ -5,20 +5,20 @@
  */
 
 const TRANSMISSION_FILES = [
-    "/transmissions/transmission-01.mp3",
-    "/transmissions/transmission-02.mp3",
-    "/transmissions/transmission-03.mp3",
-    "/transmissions/transmission-04.mp3",
-    "/transmissions/transmission-05.mp3",
-    "/transmissions/transmission-06.mp3",
-    "/transmissions/transmission-07.mp3",
-    "/transmissions/transmission.mp3",
-    "/transmissions/untitled-2.mp3",
-    "/transmissions/untitled-3.mp3",
-    "/transmissions/untitled-4.mp3",
-    "/transmissions/untitled-5.mp3",
-    "/transmissions/untitled-6.mp3",
-    "/transmissions/untitled.mp3",
+    "./transmissions/transmission-01.mp3",
+    "./transmissions/transmission-02.mp3",
+    "./transmissions/transmission-03.mp3",
+    "./transmissions/transmission-04.mp3",
+    "./transmissions/transmission-05.mp3",
+    "./transmissions/transmission-06.mp3",
+    "./transmissions/transmission-07.mp3",
+    "./transmissions/transmission.mp3",
+    "./transmissions/untitled-2.mp3",
+    "./transmissions/untitled-3.mp3",
+    "./transmissions/untitled-4.mp3",
+    "./transmissions/untitled-5.mp3",
+    "./transmissions/untitled-6.mp3",
+    "./transmissions/untitled.mp3",
 ];
 
 class TransmissionManager {
