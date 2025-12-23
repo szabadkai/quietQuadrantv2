@@ -13,7 +13,9 @@ const DEFAULT_SETTINGS = {
   screenFlash: true,
   highContrast: false,
   reducedMotion: false,
-  damageNumbers: false
+  damageNumbers: false,
+  crtScanlines: true,
+  crtIntensity: 0.5
 };
 
 function loadSettings() {
@@ -34,6 +36,12 @@ function applyVisualSettings(settings) {
   if (typeof document === "undefined") return;
   document.body.classList.toggle("qq-high-contrast", settings.highContrast);
   document.body.classList.toggle("qq-reduced-motion", settings.reducedMotion);
+  document.body.classList.toggle("qq-no-scanlines", !(settings.crtScanlines ?? true));
+  
+  // Apply CRT intensity as CSS variable
+  const intensity = settings.crtIntensity ?? 0.5;
+  document.documentElement.style.setProperty('--crt-intensity', intensity);
+  document.documentElement.style.setProperty('--glow-intensity', intensity);
 }
 
 function notifySettingsChanged(settings) {
@@ -115,6 +123,14 @@ export function SettingsModal({ onClose }) {
           <Toggle label="Screen Shake" settingKey="screenShake" />
           <Toggle label="Screen Flash" settingKey="screenFlash" />
           <Toggle label="Damage Numbers" settingKey="damageNumbers" />
+          <Toggle label="CRT Scanlines" settingKey="crtScanlines" />
+          {settings.crtScanlines && (
+            <Slider
+              label="CRT Emulation"
+              value={settings.crtIntensity}
+              onChange={(v) => updateSetting("crtIntensity", v)}
+            />
+          )}
         </div>
 
         <div className="qq-settings-section">

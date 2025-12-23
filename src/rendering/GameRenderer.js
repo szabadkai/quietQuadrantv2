@@ -21,6 +21,8 @@ const DEFAULT_SETTINGS = {
     reducedMotion: false,
     damageNumbers: false,
     highContrast: false,
+    crtScanlines: true,
+    crtIntensity: 0.5,
 };
 
 function loadSettings() {
@@ -41,6 +43,15 @@ function applyBodyClasses(settings) {
         "qq-reduced-motion",
         settings.reducedMotion ?? false
     );
+    document.body.classList.toggle(
+        "qq-no-scanlines",
+        !(settings.crtScanlines ?? true)
+    );
+
+    // Apply CRT intensity as CSS variable
+    const intensity = settings.crtIntensity ?? 0.5;
+    document.documentElement.style.setProperty("--crt-intensity", intensity);
+    document.documentElement.style.setProperty("--glow-intensity", intensity);
 }
 
 class GameScene extends Phaser.Scene {
@@ -88,7 +99,7 @@ export class GameRenderer {
             width: ARENA_WIDTH,
             height: ARENA_HEIGHT,
             parent: this.parent,
-            backgroundColor: "#05070b",
+            backgroundColor: "#000000",
             scale: {
                 mode: Phaser.Scale.FIT,
                 autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -135,6 +146,17 @@ export class GameRenderer {
         this.screenEffects.setSlowMoEnabled(!(settings.reducedMotion ?? false));
         this.effectsRenderer.setSettings(settings);
         applyBodyClasses(settings);
+
+        // Apply CRT intensity to sprite glows
+        const intensity = settings.crtIntensity ?? 0.5;
+        if (this.playerRenderer)
+            this.playerRenderer.setGlowIntensity(intensity);
+        if (this.enemyRenderer) this.enemyRenderer.setGlowIntensity(intensity);
+        if (this.bulletRenderer)
+            this.bulletRenderer.setGlowIntensity(intensity);
+        if (this.pickupRenderer)
+            this.pickupRenderer.setGlowIntensity(intensity);
+        if (this.bossRenderer) this.bossRenderer.setGlowIntensity(intensity);
     }
 
     resumeAudio() {

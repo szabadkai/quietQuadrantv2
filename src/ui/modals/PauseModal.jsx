@@ -15,7 +15,9 @@ const DEFAULT_SETTINGS = {
   screenFlash: true,
   damageNumbers: false,
   highContrast: false,
-  reducedMotion: false
+  reducedMotion: false,
+  crtScanlines: true,
+  crtIntensity: 0.5
 };
 
 function loadSettings() {
@@ -36,6 +38,12 @@ function applyVisualSettings(settings) {
   if (typeof document === "undefined") return;
   document.body.classList.toggle("qq-high-contrast", settings.highContrast);
   document.body.classList.toggle("qq-reduced-motion", settings.reducedMotion);
+  document.body.classList.toggle("qq-no-scanlines", !(settings.crtScanlines ?? true));
+  
+  // Apply CRT intensity as CSS variable
+  const intensity = settings.crtIntensity ?? 0.5;
+  document.documentElement.style.setProperty('--crt-intensity', intensity);
+  document.documentElement.style.setProperty('--glow-intensity', intensity);
 }
 
 function notifySettingsChanged(settings) {
@@ -162,6 +170,27 @@ export function PauseModal({ onResume }) {
               {settings.reducedMotion ? "ON" : "OFF"}
             </button>
           </div>
+
+          <div className="qq-toggle-row">
+            <span>CRT Emulation</span>
+            <button
+              type="button"
+              className={`qq-toggle ${settings.crtScanlines ? "active" : ""}`}
+              onClick={() =>
+                updateSetting("crtScanlines", !settings.crtScanlines)
+              }
+            >
+              {settings.crtScanlines ? "ON" : "OFF"}
+            </button>
+          </div>
+
+          {settings.crtScanlines && (
+            <Slider
+              label="CRT Intensity"
+              value={settings.crtIntensity}
+              onChange={(v) => updateSetting("crtIntensity", v)}
+            />
+          )}
         </div>
 
         <div className="qq-modal-actions">

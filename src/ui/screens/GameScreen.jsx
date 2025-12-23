@@ -32,7 +32,14 @@ export function GameScreen() {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape" && !pendingUpgrade) {
-        setPaused((p) => !p);
+        // Allow pause in single-player modes (not online or twin multiplayer)
+        const currentSession = useGameStore.getState().session;
+        const isMultiplayer = currentSession?.mode === "online" || currentSession?.mode === "twin";
+        
+        if (!isMultiplayer) {
+          e.preventDefault();
+          setPaused((p) => !p);
+        }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -124,7 +131,7 @@ export function GameScreen() {
       }
       actions.stopGame();
     };
-  }, []);
+  }, [paused]);
 
   useEffect(() => {
     if (!runSummary || phase !== "ended") return;
