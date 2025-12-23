@@ -101,9 +101,17 @@ jobs:
                   git config user.email "github-actions[bot]@users.noreply.github.com"
                   git add package.json package-lock.json
                   git commit -m "chore: bump version to ${{ steps.version.outputs.NEW_VERSION }} [skip ci]"
-                  git tag "v${{ steps.version.outputs.NEW_VERSION }}"
+
+                  # Create tag if it doesn't exist, or force update if it does
+                  if git rev-parse "v${{ steps.version.outputs.NEW_VERSION }}" >/dev/null 2>&1; then
+                    echo "Tag v${{ steps.version.outputs.NEW_VERSION }} already exists, updating it"
+                    git tag -f "v${{ steps.version.outputs.NEW_VERSION }}"
+                  else
+                    git tag "v${{ steps.version.outputs.NEW_VERSION }}"
+                  fi
+
                   git push
-                  git push --tags
+                  git push --tags --force
 
             - name: Setup Pages
               if: github.event_name == 'push'
