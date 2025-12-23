@@ -5,25 +5,26 @@
 
 function resolveAssetPath(path) {
     const cleaned = String(path || "").replace(/^\/+/, "");
-    let base = import.meta.env?.BASE_URL ?? "/";
-    if (typeof window !== "undefined") {
-        const runtimeBase = new URL("./", window.location.href).pathname;
-        if (base === "/" && runtimeBase !== "/") {
-            base = runtimeBase;
-        }
-    }
-    if (base !== "" && !base.endsWith("/")) {
-        base += "/";
-    }
-    return `${base}${cleaned}`;
+    // Always use relative paths for better compatibility with GitHub Pages
+    return `./${cleaned}`;
 }
 
 const TRACKS = {
-    title: resolveAssetPath("music/Juhani Junkala [Retro Game Music Pack] Title Screen.mp3"),
-    level1: resolveAssetPath("music/Juhani Junkala [Retro Game Music Pack] Level 1.mp3"),
-    level2: resolveAssetPath("music/Juhani Junkala [Retro Game Music Pack] Level 2.mp3"),
-    level3: resolveAssetPath("music/Juhani Junkala [Retro Game Music Pack] Level 3.mp3"),
-    ending: resolveAssetPath("music/Juhani Junkala [Retro Game Music Pack] Ending.mp3"),
+    title: resolveAssetPath(
+        "music/Juhani Junkala [Retro Game Music Pack] Title Screen.mp3"
+    ),
+    level1: resolveAssetPath(
+        "music/Juhani Junkala [Retro Game Music Pack] Level 1.mp3"
+    ),
+    level2: resolveAssetPath(
+        "music/Juhani Junkala [Retro Game Music Pack] Level 2.mp3"
+    ),
+    level3: resolveAssetPath(
+        "music/Juhani Junkala [Retro Game Music Pack] Level 3.mp3"
+    ),
+    ending: resolveAssetPath(
+        "music/Juhani Junkala [Retro Game Music Pack] Ending.mp3"
+    ),
 };
 
 const LEVEL_SEQUENCE = ["level1", "level2", "level3"];
