@@ -43,6 +43,12 @@ export const WaveSystem = {
 
             state.phase = "intermission";
             state.wave.intermission = 180;
+
+            // Emit intermission event for UI popup
+            state.events.push({
+                type: "wave-intermission",
+                nextWave: state.wave.current,
+            });
         }
     },
 
@@ -62,12 +68,6 @@ export const WaveSystem = {
         state.wave.spawnQueue = this.buildSpawnQueue(waveConfig, state, rng);
         state.wave.enemiesRemaining = state.wave.spawnQueue.length;
         state.wave.spawnCooldown = 0;
-
-        // Emit wave-start event for sound effects
-        state.events.push({
-            type: "wave-start",
-            waveNumber: state.wave.current,
-        });
     },
 
     buildSpawnQueue(waveConfig, state, rng) {

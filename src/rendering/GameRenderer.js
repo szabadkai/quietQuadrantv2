@@ -212,6 +212,17 @@ export class GameRenderer {
             this.effectsRenderer.processEvents(events);
             this.screenEffects.processEvents(events);
             soundManager.processEvents(events);
+
+            // Emit wave events to UI
+            for (const event of events) {
+                if (event.type === "wave-intermission") {
+                    window.dispatchEvent(
+                        new CustomEvent("qq-wave-intermission", {
+                            detail: { nextWave: event.nextWave },
+                        })
+                    );
+                }
+            }
         }
 
         if (state.boss) {

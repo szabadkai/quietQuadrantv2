@@ -80,6 +80,8 @@ export class PlayerRenderer {
 
         for (const [id, sprite] of this.sprites) {
             if (!activeIds.has(id)) {
+                // Clear FX before destroying to prevent Phaser FXPipeline crash
+                GlowManager.clearGlow(sprite);
                 sprite.destroy();
                 this.sprites.delete(id);
                 const ring = this.neutronRings.get(id);

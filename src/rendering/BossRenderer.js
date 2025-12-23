@@ -18,6 +18,8 @@ export class BossRenderer {
     render(boss, interpolation) {
         if (!boss) {
             if (this.sprite) {
+                // Clear FX before destroying to prevent Phaser FXPipeline crash
+                GlowManager.clearGlow(this.sprite);
                 this.sprite.destroy();
                 this.sprite = null;
             }
@@ -26,6 +28,8 @@ export class BossRenderer {
 
         if (!this.sprite || this.sprite.bossId !== boss.id) {
             if (this.sprite) {
+                // Clear FX before destroying to prevent Phaser FXPipeline crash
+                GlowManager.clearGlow(this.sprite);
                 this.sprite.destroy();
             }
             this.sprite = this.createSprite(boss);

@@ -1920,3 +1920,85 @@ body.qq-no-scanlines .qq-game-frame canvas {
     0 0 4px var(--qq-rare),
     0 0 8px var(--qq-rare);
 }
+
+
+/* WAVE ANNOUNCEMENT */
+.qq-wave-announcement {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 100;
+  pointer-events: none;
+  animation: qq-wave-announce 3s ease-out forwards;
+}
+
+.qq-wave-announcement-box {
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid var(--qq-accent);
+  padding: 24px 48px;
+  box-shadow: 
+    0 0 16px var(--qq-accent),
+    0 0 32px rgba(0, 255, 255, 0.3),
+    inset 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+@keyframes qq-wave-announce {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  15% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.qq-wave-round {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--qq-accent);
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border: 1px solid var(--qq-accent);
+  display: inline-block;
+  margin-bottom: 12px;
+  text-shadow: 
+    0 0 4px var(--qq-accent),
+    0 0 8px var(--qq-accent);
+}
+
+.qq-wave-countdown {
+  font-size: 72px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  color: var(--qq-accent);
+  text-shadow: 
+    0 0 12px var(--qq-accent),
+    0 0 24px var(--qq-accent),
+    0 0 48px var(--qq-accent);
+  margin: 8px 0;
+  animation: vectrex-glow 1s ease-in-out infinite;
+}
+
+.qq-wave-title {
+  font-size: 14px;
+  letter-spacing: 0.3em;
+  color: var(--qq-text);
+  text-transform: uppercase;
+  text-shadow: 
+    0 0 6px var(--qq-text),
+    0 0 12px var(--qq-text);
+  margin-top: 8px;
+}

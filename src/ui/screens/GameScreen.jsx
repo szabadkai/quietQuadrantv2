@@ -8,11 +8,13 @@ import { UpgradeModal } from "../components/UpgradeModal.jsx";
 import { HUD } from "../components/HUD.jsx";
 import { DisconnectOverlay } from "../components/DisconnectOverlay.jsx";
 import { PauseModal } from "../modals/PauseModal.jsx";
+import { WaveAnnouncement } from "../components/WaveAnnouncement.jsx";
 import { useUIStore } from "../../state/useUIStore.js";
 import { useMetaStore } from "../../state/useMetaStore.js";
 import { checkAchievements } from "../../systems/AchievementChecker.js";
 import { notifyAchievement, notifyRankUp } from "../../state/useNotificationStore.js";
 import { DisconnectHandler } from "../../network/DisconnectHandler.js";
+import { transmissionManager } from "../../audio/TransmissionManager.js";
 
 export function GameScreen() {
   const containerRef = useRef(null);
@@ -28,6 +30,34 @@ export function GameScreen() {
   const rendererRef = useRef(null);
   const summaryTimeoutRef = useRef(null);
   const [paused, setPaused] = useState(false);
+  const pausedRef = useRef(false);
+  const [waveAnnouncement, setWaveAnnouncement] = useState(null);
+
+  // Keep pausedRef in sync with paused state
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
+
+  // Listen for wave-intermission events from the game renderer
+  useEffect(() => {
+    const handleIntermission = (e) => {
+      const nextWave = e.detail.nextWave;
+      // Show wave announcement (wave display is 1-indexed)
+      setWaveAnnouncement(nextWave + 1);
+      // Play random transmission
+      transmissionManager.playRandom();
+    };
+    
+    window.addEventListener("qq-wave-intermission", handleIntermission);
+    return () => window.removeEventListener("qq-wave-intermission", handleIntermission);
+  }, []);
+
+  // Clear wave announcement when upgrade popup appears
+  useEffect(() => {
+    if (pendingUpgrade) {
+      setWaveAnnouncement(null);
+    }
+  }, [pendingUpgrade]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -66,7 +96,7 @@ export function GameScreen() {
         if (uiState.paused && uiState.pauseReason === "peer-disconnected") {
           return;
         }
-        if (paused) return;
+        if (pausedRef.current) return;
         const gameState = useGameStore.getState().state;
         const sess = useGameStore.getState().session;
         const inputs = inputBuffer.capture(gameState, inputManager, {
@@ -131,7 +161,7 @@ export function GameScreen() {
       }
       actions.stopGame();
     };
-  }, [paused]);
+  }, []);
 
   useEffect(() => {
     if (!runSummary || phase !== "ended") return;
@@ -190,6 +220,12 @@ export function GameScreen() {
         <UpgradeModal pendingUpgrade={pendingUpgrade} onSelect={applyUpgrade} />
         <HUD state={state} />
         <DisconnectOverlay />
+        {waveAnnouncement !== null && !pendingUpgrade && (
+          <WaveAnnouncement 
+            waveNumber={waveAnnouncement} 
+            onComplete={() => setWaveAnnouncement(null)} 
+          />
+        )}
         {paused && <PauseModal onResume={() => setPaused(false)} />}
       </div>
     </div>

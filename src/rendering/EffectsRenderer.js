@@ -17,7 +17,6 @@ import { spawnShrapnelBurst } from "./effects/ShrapnelBurstEffect.js";
 import { spawnSingularity } from "./effects/SingularityEffect.js";
 import { spawnSynergyUnlock } from "./effects/SynergyUnlockEffect.js";
 import { spawnVolatileBurst } from "./effects/VolatileBurstEffect.js";
-import { spawnWaveStart } from "./effects/WaveStartEffect.js";
 import { spawnXPPickup } from "./effects/XPPickupEffect.js";
 
 const MAX_PARTICLES = 300,
@@ -99,7 +98,15 @@ export class EffectsRenderer {
         return MAX_PARTICLES - this.activeCount;
     }
 
-    spawnRing(x, y, color, maxRadius, duration, inward = false, accentColor = 0xffffff) {
+    spawnRing(
+        x,
+        y,
+        color,
+        maxRadius,
+        duration,
+        inward = false,
+        accentColor = 0xffffff
+    ) {
         const ring = this.ringPool.find((r) => !r.visible);
         if (!ring) return;
         ring.clear();
@@ -277,7 +284,10 @@ export class EffectsRenderer {
                 step.fired = true;
                 step.action?.();
             }
-            if (seq.elapsed >= seq.duration && seq.steps.every((s) => s.fired)) {
+            if (
+                seq.elapsed >= seq.duration &&
+                seq.steps.every((s) => s.fired)
+            ) {
                 this.activeSequences.splice(i, 1);
             }
         }
@@ -307,8 +317,7 @@ export class EffectsRenderer {
     handleEvent(e) {
         const { x, y, x1, y1, x2, y2, radius } = e,
             t = e.type;
-        if (t === "enemy-death")
-            spawnExplosion(this, x, y, PALETTE_HEX.enemy);
+        if (t === "enemy-death") spawnExplosion(this, x, y, PALETTE_HEX.enemy);
         else if (t === "player-hit")
             spawnHitSpark(this, x, y, PALETTE_HEX.danger);
         else if (t === "enemy-hit")
@@ -319,33 +328,26 @@ export class EffectsRenderer {
         else if (t === "boss-death")
             spawnExplosion(this, x, y, PALETTE_HEX.boss, 24);
         else if (t === "crit-hit") spawnExplosion(this, x, y);
-        else if (t === "shrapnel")
-            spawnShrapnelBurst(this, x, y);
+        else if (t === "shrapnel") spawnShrapnelBurst(this, x, y);
         else if (t === "dash-sparks")
             spawnShrapnelBurst(this, x, y, PALETTE_HEX.cyan);
         else if (t === "explosion")
             spawnExplosionRing(this, x, y, radius ?? 40);
         else if (t === "chain-reaction")
             spawnVolatileBurst(this, x, y, radius ?? 40);
-        else if (t === "chain-arc")
-            spawnChainArc(this, x1, y1, x2, y2);
+        else if (t === "chain-arc") spawnChainArc(this, x1, y1, x2, y2);
         else if (t === "singularity") spawnSingularity(this, x, y);
         else if (t === "synergy-unlocked" && x !== undefined)
             spawnSynergyUnlock(this, x, y);
         else if (t === "boss-spawn" && x !== undefined)
             spawnBossEntrance(this, x, y);
-        else if (t === "wave-start")
-            spawnWaveStart(this, 480, 270);
         else if (t === "player-down" && x !== undefined)
             spawnPlayerDown(this, x, y);
-        else if (t === "shield-activate")
-            spawnShieldActivate(this, x, y);
-        else if (t === "shield-break")
-            spawnShieldBreak(this, x, y);
+        else if (t === "shield-activate") spawnShieldActivate(this, x, y);
+        else if (t === "shield-break") spawnShieldBreak(this, x, y);
         else if (t === "heal") spawnHeal(this, x, y);
         else if (t === "ricochet") spawnHitSpark(this, x, y, PALETTE_HEX.white);
-        else if (t === "neutron-block")
-            spawnShieldBreak(this, x, y);
+        else if (t === "neutron-block") spawnShieldBreak(this, x, y);
         else if (t === "defeat" && x !== undefined)
             spawnPlayerDefeat(this, x, y);
         else if (t === "damage-number" && this.settings.damageNumbers)

@@ -139,13 +139,13 @@ export class SoundManager {
         }
 
         const volume =
-            def.volume * (options.volume ?? 1) * SYNTH_GAIN_SCALE * SFX_GAIN_BOOST;
+            def.volume *
+            (options.volume ?? 1) *
+            SYNTH_GAIN_SCALE *
+            SFX_GAIN_BOOST;
         gain.gain.value = 0.001;
         gain.gain.setValueAtTime(volume, startTime);
-        gain.gain.exponentialRampToValueAtTime(
-            0.001,
-            startTime + duration
-        );
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
 
         osc.connect(gain);
         gain.connect(this.masterGain);
@@ -236,9 +236,6 @@ export class SoundManager {
                     break;
                 case "boss-phase":
                     this.play("bossPhase");
-                    break;
-                case "wave-start":
-                    this.play("waveStart");
                     break;
                 case "victory":
                     this.play("victory");

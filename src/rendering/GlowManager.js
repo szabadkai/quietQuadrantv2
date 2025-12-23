@@ -129,6 +129,10 @@ export class GlowManager {
     static applyGlow(sprite, presetKey) {
         if (!sprite || !sprite.preFX) return;
 
+        // Ensure sprite has a valid texture frame before applying FX
+        // This prevents "Cannot read properties of undefined (reading 'width')" errors
+        if (!sprite.frame || !sprite.frame.width) return;
+
         sprite.preFX.clear();
 
         const config = GLOW_PRESETS_BASE[GlowManager.theme][presetKey];
