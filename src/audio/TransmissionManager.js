@@ -87,7 +87,7 @@ class TransmissionManager {
 
     async playRandom(phase = null) {
         await this.init();
-        
+
         let pool;
         if (phase === "intermission") {
             pool = this.getPool("wave", "intermission");
@@ -111,7 +111,7 @@ class TransmissionManager {
     async playWaveBriefing(enemies = [], hasElite = false) {
         await this.init();
         const types = enemies.filter((type) => type && type !== "boss");
-        
+
         // Find if any type is new
         const newTypes = types.filter(type => !this.announcedEnemies.has(type));
         const primary = newTypes.length > 0 ? newTypes[0] : types[0];
@@ -123,7 +123,7 @@ class TransmissionManager {
             if (pool.length) {
                 await this.player.playFromPool(pool, `enemy-intro-${primary}`, null, {
                     chance: 0.9,
-                    bypassCooldown: true 
+                    bypassCooldown: true
                 });
                 return;
             }
@@ -218,7 +218,7 @@ class TransmissionManager {
 
     async playHealthWarning(tier) {
         await this.init();
-        
+
         // Prevent health warning spamming (e.g. bouncing around thresholds)
         const now = Date.now();
         const healthGap = now - this.lastHealthWarningMs;

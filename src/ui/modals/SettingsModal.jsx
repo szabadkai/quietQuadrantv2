@@ -6,160 +6,160 @@ import { musicManager } from "../../audio/MusicManager.js";
 
 const SETTINGS_KEY = "quiet-quadrant-settings";
 const DEFAULT_SETTINGS = {
-  masterVolume: 0.7,
-  musicVolume: 0.25,
-  sfxVolume: 1.0,
-  screenShake: true,
-  screenFlash: true,
-  highContrast: false,
-  reducedMotion: false,
-  damageNumbers: false,
-  crtScanlines: true,
-  crtIntensity: 0.5,
-  colorTheme: "vectrex"
+    masterVolume: 0.7,
+    musicVolume: 0.25,
+    sfxVolume: 1.0,
+    screenShake: true,
+    screenFlash: true,
+    highContrast: false,
+    reducedMotion: false,
+    damageNumbers: false,
+    crtScanlines: true,
+    crtIntensity: 0.5,
+    colorTheme: "vectrex"
 };
 
 function loadSettings() {
-  try {
-    const stored = localStorage.getItem(SETTINGS_KEY);
-    if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
-  } catch (e) {}
-  return { ...DEFAULT_SETTINGS };
+    try {
+        const stored = localStorage.getItem(SETTINGS_KEY);
+        if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+    } catch (e) {}
+    return { ...DEFAULT_SETTINGS };
 }
 
 function saveSettings(settings) {
-  try {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  } catch (e) {}
+    try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    } catch (e) {}
 }
 
 function applyVisualSettings(settings) {
-  if (typeof document === "undefined") return;
-  document.body.classList.toggle("qq-high-contrast", settings.highContrast);
-  document.body.classList.toggle("qq-reduced-motion", settings.reducedMotion);
-  document.body.classList.toggle("qq-no-scanlines", !(settings.crtScanlines ?? true));
-  
-  // Apply CRT intensity as CSS variable
-  const intensity = settings.crtScanlines ? (settings.crtIntensity ?? 0.5) : 0;
-  document.documentElement.style.setProperty("--crt-intensity", intensity);
-  document.documentElement.style.setProperty("--glow-intensity", intensity);
-  
-  // Apply color theme
-  const theme = settings.colorTheme || "vectrex";
-  document.body.setAttribute('data-theme', theme);
+    if (typeof document === "undefined") return;
+    document.body.classList.toggle("qq-high-contrast", settings.highContrast);
+    document.body.classList.toggle("qq-reduced-motion", settings.reducedMotion);
+    document.body.classList.toggle("qq-no-scanlines", !(settings.crtScanlines ?? true));
+
+    // Apply CRT intensity as CSS variable
+    const intensity = settings.crtScanlines ? (settings.crtIntensity ?? 0.5) : 0;
+    document.documentElement.style.setProperty("--crt-intensity", intensity);
+    document.documentElement.style.setProperty("--glow-intensity", intensity);
+
+    // Apply color theme
+    const theme = settings.colorTheme || "vectrex";
+    document.body.setAttribute('data-theme', theme);
 }
 
 function notifySettingsChanged(settings) {
-  if (typeof window === "undefined") return;
-  window.dispatchEvent(
-    new CustomEvent("qq-settings-changed", { detail: settings })
-  );
+    if (typeof window === "undefined") return;
+    window.dispatchEvent(
+        new CustomEvent("qq-settings-changed", { detail: settings })
+    );
 }
 
 export function SettingsModal({ onClose }) {
-  const [settings, setSettings] = useState(loadSettings);
+    const [settings, setSettings] = useState(loadSettings);
 
-  useEffect(() => {
-    soundManager.setMasterVolume(settings.masterVolume);
-    soundManager.setSFXVolume(settings.sfxVolume);
-    musicManager.setMasterVolume(settings.masterVolume);
-    musicManager.setMusicVolume(settings.musicVolume);
-    saveSettings(settings);
-    applyVisualSettings(settings);
-    notifySettingsChanged(settings);
-  }, [settings]);
+    useEffect(() => {
+        soundManager.setMasterVolume(settings.masterVolume);
+        soundManager.setSFXVolume(settings.sfxVolume);
+        musicManager.setMasterVolume(settings.masterVolume);
+        musicManager.setMusicVolume(settings.musicVolume);
+        saveSettings(settings);
+        applyVisualSettings(settings);
+        notifySettingsChanged(settings);
+    }, [settings]);
 
-  useEffect(() => {
-    const handleKey = (e) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        onClose();
-      }
+    useEffect(() => {
+        const handleKey = (e) => {
+            if (e.key === "Escape") {
+                e.preventDefault();
+                onClose();
+            }
+        };
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
+    }, [onClose]);
+
+    const updateSetting = (key, value) => {
+        setSettings((prev) => ({ ...prev, [key]: value }));
     };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
 
-  const updateSetting = (key, value) => {
-    setSettings((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const Toggle = ({ label, settingKey }) => (
-    <div className="qq-toggle-row">
-      <span>{label}</span>
-      <button
-        type="button"
-        className={`qq-toggle ${settings[settingKey] ? "active" : ""}`}
-        onClick={() => updateSetting(settingKey, !settings[settingKey])}
-      >
-        {settings[settingKey] ? "ON" : "OFF"}
-      </button>
-    </div>
-  );
-
-  return (
-    <div className="qq-modal-overlay">
-      <div className="qq-modal qq-settings-modal">
-        <div className="qq-modal-header">
-          <span className="qq-label">SETTINGS</span>
-        </div>
-
-        <div className="qq-settings-section">
-          <h3>Audio</h3>
-          <Slider
-            label="Master Volume"
-            value={settings.masterVolume}
-            onChange={(v) => updateSetting("masterVolume", v)}
-          />
-          <Slider
-            label="Music Volume"
-            value={settings.musicVolume}
-            onChange={(v) => updateSetting("musicVolume", v)}
-          />
-          <Slider
-            label="SFX Volume"
-            value={settings.sfxVolume}
-            onChange={(v) => updateSetting("sfxVolume", v)}
-          />
-        </div>
-
-        <div className="qq-settings-section">
-          <h3>Display</h3>
-          <Toggle label="Screen Shake" settingKey="screenShake" />
-          <Toggle label="Screen Flash" settingKey="screenFlash" />
-          <Toggle label="Damage Numbers" settingKey="damageNumbers" />
-          <Toggle label="CRT Scanlines" settingKey="crtScanlines" />
-          {settings.crtScanlines && (
-            <Slider
-              label="CRT Emulation"
-              value={settings.crtIntensity}
-              onChange={(v) => updateSetting("crtIntensity", v)}
-            />
-          )}
-          <div className="qq-toggle-row">
-            <span>Color Theme</span>
+    const Toggle = ({ label, settingKey }) => (
+        <div className="qq-toggle-row">
+            <span>{label}</span>
             <button
-              type="button"
-              className={`qq-toggle ${settings.colorTheme === "christmas" ? "active" : ""}`}
-              onClick={() => updateSetting("colorTheme", settings.colorTheme === "christmas" ? "vectrex" : "christmas")}
+                type="button"
+                className={`qq-toggle ${settings[settingKey] ? "active" : ""}`}
+                onClick={() => updateSetting(settingKey, !settings[settingKey])}
             >
-              {settings.colorTheme === "christmas" ? "CHRISTMAS" : "VECTREX"}
+                {settings[settingKey] ? "ON" : "OFF"}
             </button>
-          </div>
         </div>
+    );
 
-        <div className="qq-settings-section">
-          <h3>Accessibility</h3>
-          <Toggle label="High Contrast" settingKey="highContrast" />
-          <Toggle label="Reduced Motion" settingKey="reducedMotion" />
-        </div>
+    return (
+        <div className="qq-modal-overlay">
+            <div className="qq-modal qq-settings-modal">
+                <div className="qq-modal-header">
+                    <span className="qq-label">SETTINGS</span>
+                </div>
 
-        <div className="qq-modal-actions">
-          <Button primary onClick={onClose}>
+                <div className="qq-settings-section">
+                    <h3>Audio</h3>
+                    <Slider
+                        label="Master Volume"
+                        value={settings.masterVolume}
+                        onChange={(v) => updateSetting("masterVolume", v)}
+                    />
+                    <Slider
+                        label="Music Volume"
+                        value={settings.musicVolume}
+                        onChange={(v) => updateSetting("musicVolume", v)}
+                    />
+                    <Slider
+                        label="SFX Volume"
+                        value={settings.sfxVolume}
+                        onChange={(v) => updateSetting("sfxVolume", v)}
+                    />
+                </div>
+
+                <div className="qq-settings-section">
+                    <h3>Display</h3>
+                    <Toggle label="Screen Shake" settingKey="screenShake" />
+                    <Toggle label="Screen Flash" settingKey="screenFlash" />
+                    <Toggle label="Damage Numbers" settingKey="damageNumbers" />
+                    <Toggle label="CRT Scanlines" settingKey="crtScanlines" />
+                    {settings.crtScanlines && (
+                        <Slider
+                            label="CRT Emulation"
+                            value={settings.crtIntensity}
+                            onChange={(v) => updateSetting("crtIntensity", v)}
+                        />
+                    )}
+                    <div className="qq-toggle-row">
+                        <span>Color Theme</span>
+                        <button
+                            type="button"
+                            className={`qq-toggle ${settings.colorTheme === "christmas" ? "active" : ""}`}
+                            onClick={() => updateSetting("colorTheme", settings.colorTheme === "christmas" ? "vectrex" : "christmas")}
+                        >
+                            {settings.colorTheme === "christmas" ? "CHRISTMAS" : "VECTREX"}
+                        </button>
+                    </div>
+                </div>
+
+                <div className="qq-settings-section">
+                    <h3>Accessibility</h3>
+                    <Toggle label="High Contrast" settingKey="highContrast" />
+                    <Toggle label="Reduced Motion" settingKey="reducedMotion" />
+                </div>
+
+                <div className="qq-modal-actions">
+                    <Button primary onClick={onClose}>
             Close
-          </Button>
+                    </Button>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }

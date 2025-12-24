@@ -104,7 +104,7 @@ export function useMenuNavigation(items, options = {}) {
 
             case "1":
             case "2":
-            case "3":
+            case "3": {
                 const quickIdx = parseInt(e.key, 10) - 1;
                 if (quickIdx < items.length && !items[quickIdx]?.disabled) {
                     setFocusedIndexWithSound(quickIdx);
@@ -112,6 +112,7 @@ export function useMenuNavigation(items, options = {}) {
                     items[quickIdx]?.onActivate?.();
                 }
                 break;
+            }
             }
         };
 

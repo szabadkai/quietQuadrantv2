@@ -17,56 +17,56 @@ import { useGlobalNavigation } from "./ui/hooks/useGlobalNavigation.js";
 
 const SETTINGS_KEY = "quiet-quadrant-settings";
 const DEFAULT_SETTINGS = {
-  crtScanlines: true,
-  crtIntensity: 0.5,
-  highContrast: false,
-  reducedMotion: false
+    crtScanlines: true,
+    crtIntensity: 0.5,
+    highContrast: false,
+    reducedMotion: false
 };
 
 function loadSettings() {
-  try {
-    const stored = localStorage.getItem(SETTINGS_KEY);
-    if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
-  } catch (e) {}
-  return { ...DEFAULT_SETTINGS };
+    try {
+        const stored = localStorage.getItem(SETTINGS_KEY);
+        if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+    } catch (e) {}
+    return { ...DEFAULT_SETTINGS };
 }
 
 function applyInitialSettings() {
-  const settings = loadSettings();
-  if (typeof document === "undefined") return;
-  
-  document.body.classList.toggle("qq-high-contrast", settings.highContrast ?? false);
-  document.body.classList.toggle("qq-reduced-motion", settings.reducedMotion ?? false);
-  document.body.classList.toggle("qq-no-scanlines", !(settings.crtScanlines ?? true));
-  
-  // Apply CRT intensity as CSS variable
-  const intensity = settings.crtScanlines ? (settings.crtIntensity ?? 0.5) : 0;
-  document.documentElement.style.setProperty("--crt-intensity", intensity);
-  document.documentElement.style.setProperty("--glow-intensity", intensity);
+    const settings = loadSettings();
+    if (typeof document === "undefined") return;
+
+    document.body.classList.toggle("qq-high-contrast", settings.highContrast ?? false);
+    document.body.classList.toggle("qq-reduced-motion", settings.reducedMotion ?? false);
+    document.body.classList.toggle("qq-no-scanlines", !(settings.crtScanlines ?? true));
+
+    // Apply CRT intensity as CSS variable
+    const intensity = settings.crtScanlines ? (settings.crtIntensity ?? 0.5) : 0;
+    document.documentElement.style.setProperty("--crt-intensity", intensity);
+    document.documentElement.style.setProperty("--glow-intensity", intensity);
 }
 
 export function App() {
-  const screen = useUIStore((s) => s.screen);
-  useGlobalNavigation();
+    const screen = useUIStore((s) => s.screen);
+    useGlobalNavigation();
 
-  useEffect(() => {
-    applyInitialSettings();
-  }, []);
+    useEffect(() => {
+        applyInitialSettings();
+    }, []);
 
-  return (
-    <div style={{ position: "relative" }}>
-      {screen === "title" && <TitleScreen />}
-      {screen === "game" && <GameScreen />}
-      {screen === "summary" && <SummaryScreen />}
-      {screen === "stats" && <StatsScreen />}
-      {screen === "collection" && <CollectionScreen />}
-      {screen === "howtoplay" && <HowToPlayScreen />}
-      {screen === "multiplayer" && <MultiplayerSetupScreen />}
-      {screen === "host" && <HostGameScreen />}
-      {screen === "join" && <JoinGameScreen />}
-      {screen === "twin" && <TwinSetupScreen />}
-      <NotificationToast />
-      <AchievementPopup />
-    </div>
-  );
+    return (
+        <div style={{ position: "relative" }}>
+            {screen === "title" && <TitleScreen />}
+            {screen === "game" && <GameScreen />}
+            {screen === "summary" && <SummaryScreen />}
+            {screen === "stats" && <StatsScreen />}
+            {screen === "collection" && <CollectionScreen />}
+            {screen === "howtoplay" && <HowToPlayScreen />}
+            {screen === "multiplayer" && <MultiplayerSetupScreen />}
+            {screen === "host" && <HostGameScreen />}
+            {screen === "join" && <JoinGameScreen />}
+            {screen === "twin" && <TwinSetupScreen />}
+            <NotificationToast />
+            <AchievementPopup />
+        </div>
+    );
 }
