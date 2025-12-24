@@ -1,5 +1,8 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { readFileSync } from "fs";
+
+const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
 
 export default defineConfig({
     base: "./",
@@ -8,8 +11,6 @@ export default defineConfig({
         outDir: "dist",
     },
     define: {
-        __BUILD_VERSION__: JSON.stringify(
-            process.env.VITE_BUILD_VERSION || "dev"
-        ),
+        "import.meta.env.VITE_APP_VERSION": JSON.stringify(pkg.version),
     },
 });
