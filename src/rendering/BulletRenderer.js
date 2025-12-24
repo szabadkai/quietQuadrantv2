@@ -2,6 +2,7 @@ import { lerp } from "../utils/math.js";
 import { SPRITE_KEYS } from "./sprites.js";
 import { GlowManager, GLOW_PRESETS } from "./GlowManager.js";
 import { safeNumber, safeSize } from "./sizeUtils.js";
+import { ARENA_WIDTH, ARENA_HEIGHT } from "../utils/constants.js";
 
 export class BulletRenderer {
     constructor(scene, maxBullets = 200) {
@@ -35,7 +36,7 @@ export class BulletRenderer {
         }
     }
 
-    render(bullets, interpolation, arenaWidth = 800, arenaHeight = 600) {
+    render(bullets, interpolation) {
         const used = { player: 0, enemy: 0, boss: 0 };
         
         // Off-screen culling margin (accounts for bullet size and glow)
@@ -47,8 +48,8 @@ export class BulletRenderer {
             // PERFORMANCE: Skip rendering bullets that are off-screen
             const x = lerp(bullet.prevX, bullet.x, interpolation);
             const y = lerp(bullet.prevY, bullet.y, interpolation);
-            if (x < -CULL_MARGIN || x > arenaWidth + CULL_MARGIN ||
-                y < -CULL_MARGIN || y > arenaHeight + CULL_MARGIN) {
+            if (x < -CULL_MARGIN || x > ARENA_WIDTH + CULL_MARGIN ||
+                y < -CULL_MARGIN || y > ARENA_HEIGHT + CULL_MARGIN) {
                 continue;
             }
             
