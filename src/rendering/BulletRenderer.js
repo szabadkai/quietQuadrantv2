@@ -35,11 +35,23 @@ export class BulletRenderer {
         }
     }
 
-    render(bullets, interpolation) {
+    render(bullets, interpolation, arenaWidth = 800, arenaHeight = 600) {
         const used = { player: 0, enemy: 0, boss: 0 };
+        
+        // Off-screen culling margin (accounts for bullet size and glow)
+        const CULL_MARGIN = 50;
 
         for (const bullet of bullets) {
             if (!bullet.alive) continue;
+            
+            // PERFORMANCE: Skip rendering bullets that are off-screen
+            const x = lerp(bullet.prevX, bullet.x, interpolation);
+            const y = lerp(bullet.prevY, bullet.y, interpolation);
+            if (x < -CULL_MARGIN || x > arenaWidth + CULL_MARGIN ||
+                y < -CULL_MARGIN || y > arenaHeight + CULL_MARGIN) {
+                continue;
+            }
+            
             const poolKey = getPoolKey(bullet);
             let sprite = this.pools[poolKey][used[poolKey]];
             if (!sprite) {
@@ -47,8 +59,6 @@ export class BulletRenderer {
                 this.pools[poolKey].push(sprite);
             }
 
-            const x = lerp(bullet.prevX, bullet.x, interpolation);
-            const y = lerp(bullet.prevY, bullet.y, interpolation);
             sprite.setPosition(
                 safeNumber(x, sprite.x ?? 0),
                 safeNumber(y, sprite.y ?? 0)

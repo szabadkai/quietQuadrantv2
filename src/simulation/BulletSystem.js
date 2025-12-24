@@ -1,8 +1,8 @@
 import { ARENA_WIDTH, ARENA_HEIGHT, TICK_RATE } from "../utils/constants.js";
 import { normalize } from "../utils/math.js";
 
-const PLAYER_PROJECTILE_MARGIN =
-  Math.max(ARENA_WIDTH, ARENA_HEIGHT) * 1.5;
+// PERFORMANCE: Reduced from 1.5x arena size to 50px for faster bullet recycling
+const PLAYER_PROJECTILE_MARGIN = 50;
 
 export const BulletSystem = {
     update(state) {
@@ -36,15 +36,13 @@ export const BulletSystem = {
     },
 
     isOutOfBounds(bullet) {
-        const margin =
-      bullet.owner === "p1" || bullet.owner === "p2"
-          ? PLAYER_PROJECTILE_MARGIN + bullet.radius
-          : bullet.radius;
+        // All bullets now use a consistent small margin
+        const margin = PLAYER_PROJECTILE_MARGIN + bullet.radius;
         return (
             bullet.x < -margin ||
-      bullet.y < -margin ||
-      bullet.x > ARENA_WIDTH + margin ||
-      bullet.y > ARENA_HEIGHT + margin
+            bullet.y < -margin ||
+            bullet.x > ARENA_WIDTH + margin ||
+            bullet.y > ARENA_HEIGHT + margin
         );
     },
 

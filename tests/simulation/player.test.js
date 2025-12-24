@@ -15,27 +15,28 @@ describe("PlayerSystem", () => {
         expect(player.x).toBeLessThanOrEqual(ARENA_WIDTH - PLAYER_RADIUS);
     });
 
-    it("spawns bullets and respects TTL", () => {
+    it("spawns bullets and respects out-of-bounds", () => {
         const sim = new GameSimulation(1);
         const player = sim.getState().players[0];
-        player.bulletTtl = 10;
-        player.bulletSpeed = 960;
+        player.bulletSpeed = 300;
+        player.x = ARENA_WIDTH - 100; // Position near right edge
+        player.y = ARENA_HEIGHT / 2;
 
         sim.tick({ p1: { moveX: 0, moveY: 0, aimX: 1, aimY: 0, fire: true, dash: false } });
         expect(sim.getState().bullets.length).toBe(1);
 
-        const bullet = sim.getState().bullets[0];
-        const minRange = Math.max(ARENA_WIDTH, ARENA_HEIGHT) * 1.5;
-        const expectedMinTtl = Math.ceil((minRange / player.bulletSpeed) * TICK_RATE);
-        expect(bullet.ttl + 1).toBeGreaterThanOrEqual(expectedMinTtl);
-
-        for (let i = 0; i < expectedMinTtl - 2; i += 1) {
+        // Bullet travels right at 300px/sec = 5px per tick at 60 ticks/sec
+        // From x=700, it needs to travel ~150px to reach out-of-bounds (800 + 50 margin)
+        // That should take about 30 ticks
+        for (let i = 0; i < 25; i += 1) {
             sim.tick({});
         }
-        expect(sim.getState().bullets.length).toBe(1);
+        expect(sim.getState().bullets.length).toBe(1); // Still alive
 
-        sim.tick({});
-        sim.tick({});
-        expect(sim.getState().bullets.length).toBe(0);
+        // After more ticks, it should be out of bounds
+        for (let i = 0; i < 20; i += 1) {
+            sim.tick({});
+        }
+        expect(sim.getState().bullets.length).toBe(0); // Dead
     });
 });
