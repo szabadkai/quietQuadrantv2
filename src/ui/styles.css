@@ -613,6 +613,126 @@ body.qq-no-scanlines::after {
     saturate(calc(1 + 0.2 * var(--glow-intensity)));
 }
 
+.qq-touch-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  display: flex;
+  justify-content: space-between;
+}
+
+.qq-touch-layer.qq-touch-disabled {
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+.qq-touch-layer.qq-touch-disabled .qq-touch-zone,
+.qq-touch-layer.qq-touch-disabled .qq-touch-button {
+  pointer-events: none;
+}
+
+.qq-touch-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.qq-touch-zone.left {
+  left: 0;
+  /* Use the space to the left of the game frame */
+  width: calc((100vw - min(100vw, calc(100vh * 16 / 10))) / 2 + 80px);
+  min-width: 120px;
+}
+
+.qq-touch-zone.right {
+  right: 0;
+  /* Use the space to the right of the game frame */
+  width: calc((100vw - min(100vw, calc(100vh * 16 / 10))) / 2 + 80px);
+  min-width: 120px;
+}
+
+.qq-touch-stick {
+  position: absolute;
+  bottom: 18px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 2px solid var(--qq-accent);
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow:
+    0 0 12px rgba(0, 255, 255, 0.25),
+    inset 0 0 18px rgba(0, 255, 255, 0.15);
+  pointer-events: none;
+  touch-action: none;
+}
+
+.qq-touch-stick.dynamic {
+  position: fixed;
+  bottom: auto;
+}
+
+.qq-touch-stick.left {
+  left: 18px;
+}
+
+.qq-touch-stick.right {
+  right: 18px;
+}
+
+.qq-touch-ring {
+  position: absolute;
+  inset: 10px;
+  border: 1px dashed var(--qq-muted);
+  border-radius: 50%;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.qq-touch-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--qq-accent);
+  box-shadow:
+    0 0 10px rgba(0, 255, 255, 0.4),
+    0 0 16px rgba(0, 255, 255, 0.25);
+  transform: translate(-50%, -50%);
+  transition: transform 0.05s linear;
+  pointer-events: none;
+}
+
+.qq-touch-button {
+  position: absolute;
+  right: 34px;
+  bottom: 188px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--qq-accent);
+  color: var(--qq-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: bold;
+  box-shadow:
+    0 0 10px rgba(0, 255, 255, 0.3),
+    inset 0 0 10px rgba(0, 255, 255, 0.2);
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.qq-touch-button.active {
+  background: var(--qq-accent);
+  color: #000000;
+  box-shadow:
+    0 0 18px rgba(0, 255, 255, 0.6),
+    0 0 28px rgba(0, 255, 255, 0.4);
+}
+
 /* CRT screen effect on game canvas */
 .qq-game-frame::before {
   content: "";
@@ -2214,4 +2334,527 @@ body.qq-no-scanlines .qq-game-frame canvas {
     0 0 6px var(--qq-text),
     0 0 12px var(--qq-text);
   margin-top: 8px;
+}
+
+
+/* ===========================================
+   MOBILE RESPONSIVE STYLES
+   =========================================== */
+
+/* Mobile detection - target touch devices and small screens */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  /* TITLE SCREEN - prevent scrolling, compact layout */
+  .qq-screen {
+    padding: 12px;
+    min-height: 100dvh;
+    max-height: 100dvh;
+  }
+
+  .qq-panel-narrow {
+    padding: 16px;
+    max-height: calc(100dvh - 24px);
+  }
+
+  .qq-title-header {
+    margin-bottom: 16px;
+  }
+
+  .qq-title-header h1 {
+    font-size: 14px;
+    margin: 8px 0 0;
+  }
+
+  .qq-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+  }
+
+  /* Compact menu buttons */
+  .qq-menu-list {
+    gap: 8px;
+  }
+
+  .qq-button,
+  .qq-btn {
+    padding: 10px 16px;
+    font-size: 11px;
+  }
+
+  /* Compact season card */
+  .qq-season-card {
+    margin-top: 16px;
+    padding: 12px;
+  }
+
+  .qq-season-info {
+    margin: 8px 0;
+  }
+
+  .qq-season-row {
+    padding: 3px 0;
+    font-size: 11px;
+  }
+
+  .qq-affix-desc {
+    font-size: 10px;
+    margin-top: 6px;
+    padding-top: 6px;
+  }
+
+  .qq-version {
+    margin-top: 12px;
+    font-size: 9px;
+  }
+
+  /* HUD - scale down for mobile */
+  .qq-hud-wrap {
+    top: 8px;
+    width: calc(100% - 12px);
+  }
+
+  .qq-hud-bar {
+    gap: 4px;
+  }
+
+  .qq-hud-panel {
+    padding: 3px 6px;
+    min-height: clamp(28px, 4vw, 36px);
+    border-width: 1px;
+  }
+
+  .qq-hud-label {
+    font-size: clamp(6px, 1.4vw, 8px);
+    letter-spacing: 0.15em;
+  }
+
+  .qq-hud-value {
+    font-size: clamp(8px, 2vw, 10px);
+  }
+
+  .qq-hud-value-large {
+    font-size: clamp(9px, 2.5vw, 12px);
+  }
+
+  .qq-hud-sub,
+  .qq-hud-meta {
+    font-size: clamp(6px, 1.2vw, 7px);
+  }
+
+  .qq-hud-barline {
+    height: clamp(2px, 0.6vw, 4px);
+    margin-top: 1px;
+  }
+
+  /* UPGRADE MODAL - single column on mobile */
+  .qq-upgrade-overlay {
+    padding: 12px;
+    align-items: flex-start;
+    padding-top: 5vh;
+  }
+
+  .qq-upgrade-panel {
+    width: 100%;
+    max-width: none;
+    padding: 14px 12px 16px;
+    max-height: calc(100dvh - 10vh);
+    overflow-y: auto;
+  }
+
+  .qq-upgrade-title {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    margin-bottom: 12px;
+  }
+
+  .qq-upgrade-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .qq-upgrade-card {
+    padding: 12px 14px 14px;
+    min-height: auto;
+  }
+
+  .qq-upgrade-rarity {
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    margin-bottom: 8px;
+  }
+
+  .qq-upgrade-name {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .qq-upgrade-description {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .qq-upgrade-card::after {
+    inset: 4px;
+  }
+
+  /* PAUSE MODAL - compact */
+  .qq-modal {
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  .qq-modal-header {
+    margin-bottom: 16px;
+  }
+
+  .qq-modal-actions {
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .qq-pause-settings,
+  .qq-settings-section {
+    margin-bottom: 14px;
+  }
+
+  .qq-slider-group {
+    margin-bottom: 12px;
+  }
+
+  /* SETTINGS MODAL */
+  .qq-settings-modal {
+    max-width: 95%;
+  }
+
+  .qq-settings-panel {
+    padding: 16px;
+    min-width: auto;
+  }
+
+  .qq-settings-title {
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+
+  .qq-toggle-row {
+    font-size: 10px;
+    padding: 6px 0;
+  }
+
+  /* HOW TO PLAY */
+  .qq-panel-wide {
+    padding: 16px;
+    max-height: calc(100dvh - 24px);
+  }
+
+  .qq-howto-section {
+    padding: 12px;
+  }
+
+  .qq-howto-section h2 {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .qq-howto-list {
+    font-size: 10px;
+    line-height: 1.6;
+    padding-left: 16px;
+  }
+
+  /* STATS & COLLECTION */
+  .qq-panel-stats,
+  .qq-panel-collection {
+    padding: 16px;
+    max-height: calc(100dvh - 24px);
+  }
+
+  .qq-stat-card {
+    padding: 8px 10px;
+  }
+
+  .qq-stat-label {
+    font-size: 9px;
+  }
+
+  .qq-stat-value {
+    font-size: 15px;
+  }
+
+  /* MULTIPLAYER */
+  .qq-room-code {
+    font-size: 28px;
+    letter-spacing: 0.3em;
+  }
+
+  .qq-code-input {
+    padding: 12px;
+    font-size: 20px;
+  }
+
+  .qq-twin-player {
+    padding: 12px;
+  }
+
+  .qq-twin-player h3 {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .qq-control-row {
+    font-size: 10px;
+  }
+
+  /* TOUCH CONTROLS - larger for mobile */
+  .qq-touch-stick {
+    width: 120px;
+    height: 120px;
+  }
+
+  .qq-touch-handle {
+    width: 44px;
+    height: 44px;
+  }
+
+  .qq-touch-button {
+    padding: 10px 14px;
+    font-size: 11px;
+    right: 24px;
+    bottom: 150px;
+  }
+
+  /* SUMMARY SCREEN */
+  .qq-result {
+    font-size: 22px;
+    letter-spacing: 0.2em;
+  }
+
+  .qq-summary-stats {
+    padding: 12px;
+  }
+
+  .qq-summary-row {
+    font-size: 11px;
+    padding: 6px 0;
+  }
+
+  /* WAVE ANNOUNCEMENT */
+  .qq-wave-announcement-box {
+    padding: 16px 32px;
+  }
+
+  .qq-wave-countdown {
+    font-size: 48px;
+  }
+
+  .qq-wave-round {
+    font-size: 9px;
+    padding: 3px 10px;
+  }
+
+  .qq-wave-title {
+    font-size: 11px;
+  }
+
+  /* DISCONNECT MODAL */
+  .qq-disconnect-modal {
+    padding: 24px 32px;
+  }
+
+  .qq-disconnect-icon {
+    font-size: 36px;
+  }
+
+  .qq-disconnect-modal h2 {
+    font-size: 14px;
+  }
+
+  .qq-disconnect-modal p {
+    font-size: 12px;
+  }
+}
+
+/* Extra small screens (phones in portrait) */
+@media (max-width: 480px) {
+  .qq-screen {
+    padding: 8px;
+  }
+
+  .qq-panel-narrow {
+    padding: 12px;
+    max-height: calc(100dvh - 16px);
+  }
+
+  .qq-title-header h1 {
+    font-size: 12px;
+  }
+
+  .qq-button,
+  .qq-btn {
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+
+  .qq-menu-list {
+    gap: 6px;
+  }
+
+  .qq-hud-bar {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 3px;
+  }
+
+  .qq-hud-panel {
+    padding: 2px 4px;
+  }
+
+  .qq-upgrade-panel {
+    padding: 10px 8px 12px;
+  }
+
+  .qq-upgrade-card {
+    padding: 10px 12px 12px;
+  }
+
+  .qq-upgrade-name {
+    font-size: 12px;
+  }
+
+  .qq-upgrade-description {
+    font-size: 10px;
+  }
+
+  .qq-touch-stick {
+    width: 100px;
+    height: 100px;
+  }
+
+  .qq-touch-handle {
+    width: 36px;
+    height: 36px;
+  }
+
+  .qq-touch-button {
+    bottom: 120px;
+    right: 16px;
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+}
+
+/* Landscape mobile - optimize for horizontal space */
+@media (max-height: 500px) and (orientation: landscape) {
+  .qq-screen {
+    padding: 8px 16px;
+  }
+
+  .qq-panel-narrow {
+    max-width: 380px;
+    padding: 12px 16px;
+  }
+
+  .qq-title-header {
+    margin-bottom: 10px;
+  }
+
+  .qq-title-header h1 {
+    font-size: 11px;
+    margin-top: 4px;
+  }
+
+  .qq-menu-list {
+    gap: 5px;
+  }
+
+  .qq-button,
+  .qq-btn {
+    padding: 6px 12px;
+    font-size: 10px;
+  }
+
+  .qq-season-card {
+    display: none;
+  }
+
+  .qq-version {
+    margin-top: 8px;
+  }
+
+  /* HUD in landscape */
+  .qq-hud-wrap {
+    top: 4px;
+  }
+
+  .qq-hud-panel {
+    min-height: 24px;
+    padding: 2px 4px;
+  }
+
+  /* Upgrade modal in landscape - horizontal layout */
+  .qq-upgrade-overlay {
+    padding: 8px;
+    align-items: center;
+    padding-top: 0;
+  }
+
+  .qq-upgrade-panel {
+    max-height: calc(100dvh - 16px);
+    padding: 10px 12px;
+  }
+
+  .qq-upgrade-title {
+    font-size: 10px;
+    margin-bottom: 8px;
+  }
+
+  .qq-upgrade-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .qq-upgrade-card {
+    padding: 8px 10px;
+    min-height: auto;
+  }
+
+  .qq-upgrade-rarity {
+    font-size: 7px;
+    margin-bottom: 4px;
+  }
+
+  .qq-upgrade-name {
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+
+  .qq-upgrade-description {
+    font-size: 9px;
+    line-height: 1.3;
+  }
+
+  /* Touch controls in landscape */
+  .qq-touch-stick {
+    width: 90px;
+    height: 90px;
+    bottom: 10px;
+  }
+
+  .qq-touch-stick.left {
+    left: 10px;
+  }
+
+  .qq-touch-stick.right {
+    right: 10px;
+  }
+
+  .qq-touch-handle {
+    width: 32px;
+    height: 32px;
+  }
+
+  .qq-touch-button {
+    bottom: 110px;
+    right: 20px;
+    padding: 6px 10px;
+    font-size: 9px;
+  }
 }

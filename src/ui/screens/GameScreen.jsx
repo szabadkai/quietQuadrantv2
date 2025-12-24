@@ -19,6 +19,8 @@ import { WAVES } from "../../config/waves.js";
 import { UPGRADE_BY_ID } from "../../config/upgrades.js";
 import { SYNERGY_BY_ID } from "../../config/synergies.js";
 import { readGamepad } from "../../input/gamepad.js";
+import { TouchTwinSticks } from "../components/TouchTwinSticks.jsx";
+import { isMobileDevice } from "../../utils/isMobileDevice.js";
 
 export function GameScreen() {
   const containerRef = useRef(null);
@@ -27,6 +29,7 @@ export function GameScreen() {
   const pendingUpgrade = useGameStore((s) => s.state?.pendingUpgrade);
   const applyUpgrade = useGameStore((s) => s.actions.applyUpgrade);
   const state = useGameStore((s) => s.state);
+  const uiPaused = useUIStore((s) => s.paused);
   const runSummary = useGameStore((s) => s.state?.runSummary);
   const phase = useGameStore((s) => s.state?.phase);
   const session = useGameStore((s) => s.session);
@@ -39,6 +42,8 @@ export function GameScreen() {
   const lastHealthTierRef = useRef("healthy");
   const lastAnnouncedWaveRef = useRef(null);
   const startPressedRef = useRef(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const touchControlsDisabled = paused || uiPaused || !!pendingUpgrade;
 
   // Keep pausedRef in sync with paused state
   useEffect(() => {
@@ -84,6 +89,10 @@ export function GameScreen() {
       setWaveAnnouncement(null);
     }
   }, [waveAnnouncement, state?.phase, state?.wave?.current]);
+
+  useEffect(() => {
+    setIsMobile(isMobileDevice());
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -323,6 +332,7 @@ export function GameScreen() {
 
   return (
     <div
+      className="qq-game-container"
       style={{
         display: "flex",
         alignItems: "center",
@@ -332,15 +342,16 @@ export function GameScreen() {
         position: "relative"
       }}
     >
+      <TouchTwinSticks active={isMobile} disabled={touchControlsDisabled} />
       <div className="qq-game-frame">
         <div
           ref={containerRef}
-          style={{
-            width: "100%",
-            height: "100%",
-            border: "1px solid var(--qq-panel-border)",
-            boxShadow: "0 0 18px rgba(159, 240, 255, 0.08)"
-          }}
+        style={{
+          width: "100%",
+          height: "100%",
+          border: "1px solid var(--qq-panel-border)",
+          boxShadow: "0 0 18px rgba(159, 240, 255, 0.08)"
+        }}
         />
         <UpgradeModal pendingUpgrade={pendingUpgrade} onSelect={applyUpgrade} />
         <HUD state={state} />

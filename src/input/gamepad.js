@@ -1,3 +1,5 @@
+import { getVirtualGamepad } from "./virtualGamepad.js";
+
 const AXIS_DEADZONE = 0.2;
 const FIRE_THRESHOLD = 0.35;
 
@@ -14,6 +16,9 @@ function normalizeAxisPair(x, y) {
 }
 
 export function readGamepad(index = 0) {
+    const virtualPad = getVirtualGamepad(index);
+    if (virtualPad) return virtualPad;
+
     if (typeof navigator === "undefined" || !navigator.getGamepads) {
         return null;
     }
@@ -51,8 +56,8 @@ export function readGamepad(index = 0) {
             dpadUp: buttons[12]?.pressed ?? false,
             dpadDown: buttons[13]?.pressed ?? false,
             dpadLeft: buttons[14]?.pressed ?? false,
-            dpadRight: buttons[15]?.pressed ?? false,
-        },
+            dpadRight: buttons[15]?.pressed ?? false
+        }
     };
 }
 
@@ -60,9 +65,9 @@ export function hasFireIntent(gamepad) {
     if (!gamepad) return false;
     return (
         gamepad.right.magnitude > FIRE_THRESHOLD ||
-        gamepad.buttons.rightTrigger > FIRE_THRESHOLD ||
-        gamepad.buttons.rightShoulder ||
-        gamepad.buttons.south
+    gamepad.buttons.rightTrigger > FIRE_THRESHOLD ||
+    gamepad.buttons.rightShoulder ||
+    gamepad.buttons.south
     );
 }
 
@@ -70,7 +75,7 @@ export function hasDashIntent(gamepad) {
     if (!gamepad) return false;
     return (
         gamepad.buttons.leftTrigger > FIRE_THRESHOLD ||
-        gamepad.buttons.leftShoulder ||
-        gamepad.buttons.east
+    gamepad.buttons.leftShoulder ||
+    gamepad.buttons.east
     );
 }

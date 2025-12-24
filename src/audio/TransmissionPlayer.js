@@ -15,13 +15,22 @@ export class TransmissionPlayer {
     async init() {
         if (this.initialized) return;
         try {
-            this.context = new (window.AudioContext || window.webkitAudioContext)();
+            this.context = new (window.AudioContext ||
+                window.webkitAudioContext)();
             this.masterGain = this.context.createGain();
             this.masterGain.connect(this.context.destination);
             this.masterGain.gain.value = this.volume;
             this.initialized = true;
+
+            // Attempt to resume immediately for WebKit (may require user gesture)
+            if (this.context.state === "suspended") {
+                this.context.resume().catch(() => {});
+            }
         } catch (error) {
-            console.warn("TransmissionPlayer: Audio context not available", error);
+            console.warn(
+                "TransmissionPlayer: Audio context not available",
+                error
+            );
         }
     }
 
@@ -38,12 +47,11 @@ export class TransmissionPlayer {
         }
 
         const index =
-      available.length > 0
-          ? available[Math.floor(Math.random() * available.length)]
-          : Math.floor(Math.random() * validPool.length);
+            available.length > 0
+                ? available[Math.floor(Math.random() * available.length)]
+                : Math.floor(Math.random() * validPool.length);
 
-        const nextHistory =
-      available.length > 0 ? [...history, index] : [];
+        const nextHistory = available.length > 0 ? [...history, index] : [];
         this.playHistory.set(poolKey, nextHistory);
         if (nextHistory.length >= validPool.length) {
             this.playHistory.set(poolKey, []);
@@ -54,7 +62,9 @@ export class TransmissionPlayer {
 
     playFromPool(pool, poolKey, fallbackPool = null, options = {}) {
         this.playQueue = this.playQueue
-            .then(() => this._playFromPool(pool, poolKey, fallbackPool, options))
+            .then(() =>
+                this._playFromPool(pool, poolKey, fallbackPool, options)
+            )
             .catch((error) => {
                 console.warn("TransmissionPlayer: Playback queue error", error);
                 return false;
@@ -67,10 +77,10 @@ export class TransmissionPlayer {
             chance = 1,
             bypassCooldown = false,
             skipThrottle = false,
-            markPlayback
+            markPlayback,
         } = options;
         const shouldMarkPlayback =
-      markPlayback === undefined ? !skipThrottle : markPlayback;
+            markPlayback === undefined ? !skipThrottle : markPlayback;
 
         if (!skipThrottle) {
             if (chance < 1 && Math.random() > chance) {
@@ -86,7 +96,7 @@ export class TransmissionPlayer {
                 return this._playFromPool(fallbackPool, "fallback", null, {
                     ...options,
                     skipThrottle: true,
-                    markPlayback: shouldMarkPlayback
+                    markPlayback: shouldMarkPlayback,
                 });
             }
             return false;
@@ -103,7 +113,7 @@ export class TransmissionPlayer {
                 return this._playFromPool(fallbackPool, "fallback", null, {
                     ...options,
                     skipThrottle: true,
-                    markPlayback: shouldMarkPlayback
+                    markPlayback: shouldMarkPlayback,
                 });
             }
             return false;
@@ -114,7 +124,7 @@ export class TransmissionPlayer {
             return this._playFromPool(fallbackPool, "fallback", null, {
                 ...options,
                 skipThrottle: true,
-                markPlayback: shouldMarkPlayback
+                markPlayback: shouldMarkPlayback,
             });
         }
         if (success && shouldMarkPlayback) {
@@ -125,6 +135,16 @@ export class TransmissionPlayer {
 
     async playClip(file) {
         if (!this.context) return false;
+
+        // Resume suspended context (WebKit/Safari fix)
+        if (this.context.state === "suspended") {
+            try {
+                await this.context.resume();
+            } catch (e) {
+                console.warn("TransmissionPlayer: Failed to resume context", e);
+            }
+        }
+
         try {
             const response = await fetch(file);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -147,7 +167,10 @@ export class TransmissionPlayer {
             };
             return true;
         } catch (error) {
-            console.warn("TransmissionPlayer: Failed to play transmission", error);
+            console.warn(
+                "TransmissionPlayer: Failed to play transmission",
+                error
+            );
             this.failedClips.add(file);
             return false;
         }

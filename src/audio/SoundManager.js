@@ -48,6 +48,11 @@ export class SoundManager {
             this.masterGain.connect(this.context.destination);
             this.masterGain.gain.value = this.masterVolume * this.sfxVolume;
             this.initialized = true;
+
+            // Attempt to resume immediately for WebKit (may require user gesture)
+            if (this.context.state === "suspended") {
+                this.context.resume().catch(() => {});
+            }
         } catch (error) {
             console.warn("Audio context not available:", error);
             this.enabled = false;
@@ -69,6 +74,11 @@ export class SoundManager {
 
     play(name, options = {}) {
         if (!this.enabled || !this.context || !this.initialized) return;
+
+        // Resume suspended context for WebKit/Safari
+        if (this.context.state === "suspended") {
+            this.context.resume().catch(() => {});
+        }
 
         const def = SOUND_DEFS[name];
         if (!def) return;

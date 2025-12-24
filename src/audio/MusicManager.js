@@ -51,7 +51,8 @@ export class MusicManager {
     }
 
     clearAutoplayHandler() {
-        if (!this.autoplayUnlockHandler || typeof window === "undefined") return;
+        if (!this.autoplayUnlockHandler || typeof window === "undefined")
+            return;
         window.removeEventListener("pointerdown", this.autoplayUnlockHandler);
         window.removeEventListener("keydown", this.autoplayUnlockHandler);
         this.autoplayUnlockHandler = null;
@@ -93,6 +94,8 @@ export class MusicManager {
         const audio = new Audio(url);
         audio.loop = true;
         audio.volume = this.getScaledVolume();
+        // Explicit load for iOS/WebKit compatibility
+        audio.load();
 
         const handleAutoplayBlock = () => {
             this.clearAutoplayHandler();
@@ -106,9 +109,13 @@ export class MusicManager {
                 console.warn("Music autoplay blocked:", err.message);
                 this.autoplayUnlockHandler = handleAutoplayBlock;
                 if (typeof window !== "undefined") {
-                    window.addEventListener("pointerdown", handleAutoplayBlock, {
-                        once: true,
-                    });
+                    window.addEventListener(
+                        "pointerdown",
+                        handleAutoplayBlock,
+                        {
+                            once: true,
+                        }
+                    );
                     window.addEventListener("keydown", handleAutoplayBlock, {
                         once: true,
                     });
