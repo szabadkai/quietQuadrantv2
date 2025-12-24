@@ -357,7 +357,7 @@ export const DamageSystem = {
         });
     },
 
-    applyChainReaction(state, enemy, player, _damage) {
+    applyChainReaction(state, enemy, player) {
         const radius = player.chainReactionRadius ?? 0;
         if (radius <= 0) return;
         const damagePct = player.chainReactionDamagePct ?? 0.5;

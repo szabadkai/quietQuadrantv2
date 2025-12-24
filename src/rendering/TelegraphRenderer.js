@@ -94,7 +94,7 @@ export class TelegraphRenderer {
         this.graphics.strokeCircle(telegraph.x, telegraph.y, radius);
     }
 
-    renderLine(telegraph, _progress) {
+    renderLine(telegraph) {
         const length = telegraph.height;
         const halfWidth = telegraph.width / 2;
         const cos = Math.cos(telegraph.angle);
@@ -122,7 +122,7 @@ export class TelegraphRenderer {
         this.graphics.strokePath();
     }
 
-    renderCone(telegraph, _progress) {
+    renderCone(telegraph) {
         const radius = telegraph.radius;
         const halfAngle = Math.PI / 6;
         const startAngle = telegraph.angle - halfAngle;
@@ -142,7 +142,7 @@ export class TelegraphRenderer {
         this.graphics.strokePath();
     }
 
-    renderRect(telegraph, _progress) {
+    renderRect(telegraph) {
         const halfW = telegraph.width / 2;
         const halfH = telegraph.height / 2;
         this.graphics.fillRect(
@@ -159,7 +159,7 @@ export class TelegraphRenderer {
         );
     }
 
-    renderRing(telegraph, _progress) {
+    renderRing(telegraph) {
         const innerRadius = telegraph.radius * 0.7;
         const outerRadius = telegraph.radius;
 

@@ -282,7 +282,7 @@ export const useMetaStore = create(
                 name: "quiet-quadrant-meta",
                 version: 3,
                 partialize: (state) => {
-                    const { actions, achievementPopup, ...rest } = state;
+                    const { actions: _, achievementPopup: __, ...rest } = state;
                     return rest;
                 },
                 merge: (persistedState, currentState) => {

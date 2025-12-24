@@ -65,7 +65,6 @@ export const InfiniteScaling = {
     getWaveConfig(baseWaveConfig, wave) {
         if (!baseWaveConfig) return null;
 
-        const scaledWave = this.getScaledWave(wave);
         const extraElites = this.getExtraElites(wave);
         const cycle = this.getCycle(wave);
 
