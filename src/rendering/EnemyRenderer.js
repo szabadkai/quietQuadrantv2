@@ -12,7 +12,7 @@ export class EnemyRenderer {
     setGlowIntensity(intensity) {
         GlowManager.setIntensity(intensity);
         // Update existing sprites
-        for (const [id, sprite] of this.sprites) {
+        for (const [, sprite] of this.sprites) {
             const preset = sprite.isElite
                 ? GLOW_PRESETS.enemyElite
                 : GLOW_PRESETS.enemy;

@@ -28,8 +28,6 @@ const TRACKS = {
 // Music is intentionally scaled down so a UI setting of 20% maps to full legacy loudness.
 const MUSIC_VOLUME_SCALE = 0.2;
 
-const LEVEL_SEQUENCE = ["level1", "level2", "level3"];
-
 function trackForWaveNumber(waveNumber) {
     if (waveNumber <= 1) return "level1";
     return "level2";
@@ -72,7 +70,9 @@ export class MusicManager {
                 this.masterVolume = settings.masterVolume ?? 0.5;
                 this.musicVolume = settings.musicVolume ?? 0.25;
             }
-        } catch (e) {}
+        } catch (e) {
+            // ignore
+        }
     }
 
     play(trackName) {

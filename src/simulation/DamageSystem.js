@@ -357,7 +357,7 @@ export const DamageSystem = {
         });
     },
 
-    applyChainReaction(state, enemy, player, damage) {
+    applyChainReaction(state, enemy, player, _damage) {
         const radius = player.chainReactionRadius ?? 0;
         if (radius <= 0) return;
         const damagePct = player.chainReactionDamagePct ?? 0.5;
@@ -597,14 +597,6 @@ DamageSystem.spawnShrapnel = function spawnShrapnel(
         options.speed ??
         Math.max(200, source ? Math.hypot(source.vx, source.vy) : 0);
     const damage = Math.max(1, options.damage ?? source?.damage ?? 1);
-    let baseAngle = 0;
-    if (source && Number.isFinite(source.vx) && Number.isFinite(source.vy)) {
-        baseAngle = Math.atan2(source.vy, source.vx);
-    } else if (rng) {
-        baseAngle = rng.nextRange(0, Math.PI * 2);
-    } else {
-        baseAngle = Math.random() * Math.PI * 2;
-    }
 
     for (let i = 0; i < count; i++) {
         const jitter = rng

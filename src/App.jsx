@@ -27,7 +27,9 @@ function loadSettings() {
     try {
         const stored = localStorage.getItem(SETTINGS_KEY);
         if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
-    } catch (e) {}
+    } catch (e) {
+        // ignore
+    }
     return { ...DEFAULT_SETTINGS };
 }
 

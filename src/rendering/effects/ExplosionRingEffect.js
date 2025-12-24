@@ -2,7 +2,7 @@
 import { PLAYER_RADIUS } from "../../utils/constants.js";
 import { PALETTE_HEX } from "../../utils/palette.js";
 
-export function spawnExplosionRing(renderer, x, y, radius) {
+export function spawnExplosionRing(renderer, x, y, _radius) {
     const baseRadius = PLAYER_RADIUS * 1.2;
     const target = baseRadius * (0.95 + Math.random() * 0.1);
     renderer.spawnRing(
