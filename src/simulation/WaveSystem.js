@@ -44,7 +44,11 @@ export const WaveSystem = {
             state.phase = "intermission";
             state.wave.intermission = 180;
 
-            // Emit intermission event for UI popup
+            // Emit intermission events for UI and audio
+            state.events.push({
+                type: "wave-cleared",
+                wave: state.wave.current - 1,
+            });
             state.events.push({
                 type: "wave-intermission",
                 nextWave: state.wave.current,

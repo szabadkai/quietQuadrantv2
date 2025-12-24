@@ -68,7 +68,7 @@ export function GameScreen() {
         waveConfig?.enemies?.some((enemy) => enemy.elite) ?? false;
       transmissionManager.playWaveBriefing(upcomingTypes, hasElite);
     };
-    
+
     window.addEventListener("qq-wave-intermission", handleIntermission);
     return () => window.removeEventListener("qq-wave-intermission", handleIntermission);
   }, []);
@@ -100,7 +100,7 @@ export function GameScreen() {
         // Allow pause in single-player modes (not online or twin multiplayer)
         const currentSession = useGameStore.getState().session;
         const isMultiplayer = currentSession?.mode === "online" || currentSession?.mode === "twin";
-        
+
         if (!isMultiplayer) {
           e.preventDefault();
           setPaused((p) => !p);
@@ -233,11 +233,11 @@ export function GameScreen() {
   useEffect(() => {
     if (!runSummary || phase !== "ended") return;
     if (lastRunRef.current === runSummary) return;
-      lastRunRef.current = runSummary;
+    lastRunRef.current = runSummary;
 
-      const metaActions = useMetaStore.getState().actions;
-      metaActions.recordRun(runSummary);
-      metaActions.updateDailyStreak();
+    const metaActions = useMetaStore.getState().actions;
+    metaActions.recordRun(runSummary);
+    metaActions.updateDailyStreak();
     const xpEarned =
       50 +
       (runSummary.wave ?? 0) * 10 +
@@ -247,6 +247,7 @@ export function GameScreen() {
     const xpResult = metaActions.addXP(Math.round(xpEarned));
     if (xpResult.rankUp) {
       notifyRankUp(xpResult.newRank);
+      transmissionManager.playRankUp();
     }
 
     const unlocked = checkAchievements(runSummary);
@@ -274,9 +275,16 @@ export function GameScreen() {
     for (const event of state.events) {
       if (event.type === "boss-spawn") {
         transmissionManager.playBossIntro(event.bossId);
+      } else if (event.type === "victory") {
+        transmissionManager.playVictory();
+      } else if (event.type === "defeat") {
+        transmissionManager.playDefeat();
+      } else if (event.type === "wave-cleared") {
+        transmissionManager.playWaveClear();
       } else if (event.type === "synergy-unlocked") {
         const synergy = SYNERGY_BY_ID[event.synergyId];
         if (synergy) {
+          transmissionManager.playSynergyUnlocked();
           metaActions.showAchievement(
             synergy.id,
             synergy.name,
@@ -284,6 +292,12 @@ export function GameScreen() {
           );
         }
       }
+    }
+
+    // Occasionally play a random transmission if no specific event occurred
+    // We check state.tick to have a stable periodic check
+    if (state.tick % 1800 === 0) { // Every ~30 seconds at 60fps
+      transmissionManager.playRandom(state.phase);
     }
   }, [state?.tick]);
 
@@ -346,20 +360,20 @@ export function GameScreen() {
       <div className="qq-game-frame">
         <div
           ref={containerRef}
-        style={{
-          width: "100%",
-          height: "100%",
-          border: "1px solid var(--qq-panel-border)",
-          boxShadow: "0 0 18px rgba(159, 240, 255, 0.08)"
-        }}
+          style={{
+            width: "100%",
+            height: "100%",
+            border: "1px solid var(--qq-panel-border)",
+            boxShadow: "0 0 18px rgba(159, 240, 255, 0.08)"
+          }}
         />
         <UpgradeModal pendingUpgrade={pendingUpgrade} onSelect={applyUpgrade} />
         <HUD state={state} />
         <DisconnectOverlay />
         {waveAnnouncement !== null && !pendingUpgrade && (
-          <WaveAnnouncement 
-            waveNumber={waveAnnouncement} 
-            onComplete={() => setWaveAnnouncement(null)} 
+          <WaveAnnouncement
+            waveNumber={waveAnnouncement}
+            onComplete={() => setWaveAnnouncement(null)}
           />
         )}
         {paused && <PauseModal onResume={() => setPaused(false)} />}

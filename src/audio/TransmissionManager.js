@@ -49,6 +49,7 @@ class TransmissionManager {
         this.announcedEnemies = new Set();
         this.eliteAnnounced = false;
         this.lastHealthTier = "healthy";
+        this.lastHealthWarningMs = 0;
     }
 
     async init() {
@@ -84,24 +85,51 @@ class TransmissionManager {
         return sourceSection[key];
     }
 
-    async playRandom() {
+    async playRandom(phase = null) {
         await this.init();
-        return this.player.playFromPool(this.getPool("general"), "general", null, {
-            chance: 0.25
+        
+        let pool;
+        if (phase === "intermission") {
+            pool = this.getPool("wave", "intermission");
+        } else if (phase === "wave") {
+            pool = this.getPool("wave", "mid");
+        } else {
+            // Merge multiple for general chatter
+            pool = [
+                ...this.getPool("wave", "mid"),
+                ...this.getPool("general")
+            ];
+        }
+
+        if (!pool.length) pool = this.getPool("general");
+
+        return this.player.playFromPool(pool, "random-chatter", null, {
+            chance: 0.35
         });
     }
 
     async playWaveBriefing(enemies = [], hasElite = false) {
         await this.init();
         const types = enemies.filter((type) => type && type !== "boss");
-        const unseen = types.find((type) => !this.announcedEnemies.has(type));
-        const primary = unseen ?? types[0];
+        
+        // Find if any type is new
+        const newTypes = types.filter(type => !this.announcedEnemies.has(type));
+        const primary = newTypes.length > 0 ? newTypes[0] : types[0];
 
-        if (primary) {
+        if (primary && !this.announcedEnemies.has(primary)) {
             this.announcedEnemies.add(primary);
+            // High chance to play lore/intro on first encounter
+            const pool = this.getPool("enemies", primary);
+            if (pool.length) {
+                await this.player.playFromPool(pool, `enemy-intro-${primary}`, null, {
+                    chance: 0.9,
+                    bypassCooldown: true 
+                });
+                return;
+            }
         }
 
-        if (hasElite && !this.eliteAnnounced && !unseen) {
+        if (hasElite && !this.eliteAnnounced) {
             const elitePool = this.getPool("enemies", "elite");
             if (elitePool.length) {
                 this.eliteAnnounced = true;
@@ -109,7 +137,7 @@ class TransmissionManager {
                     elitePool,
                     "enemy-elite",
                     this.getPool("general"),
-                    { chance: 0.7 }
+                    { chance: 0.7, bypassCooldown: true }
                 );
                 return;
             }
@@ -123,7 +151,7 @@ class TransmissionManager {
             `enemy-${primary ?? "wave"}`,
             fallback,
             {
-                chance: 0.35
+                chance: 0.5 // Slightly increased
             }
         );
     }
@@ -190,8 +218,14 @@ class TransmissionManager {
 
     async playHealthWarning(tier) {
         await this.init();
+        
+        // Prevent health warning spamming (e.g. bouncing around thresholds)
+        const now = Date.now();
+        const healthGap = now - this.lastHealthWarningMs;
+        if (healthGap < 15000) return; // Minimum 15s between ANY health warnings
+
         const key = tier === "critical" ? "critical" : "warning";
-        await this.player.playFromPool(
+        const played = await this.player.playFromPool(
             this.getPool("health", key),
             `health-${key}`,
             this.getPool("general"),
@@ -200,6 +234,55 @@ class TransmissionManager {
                 bypassCooldown: tier === "critical"
             }
         );
+
+        if (played) {
+            this.lastHealthWarningMs = now;
+        }
+    }
+
+    async playWaveClear() {
+        await this.init();
+        const pool = this.getPool("wave", "success");
+        await this.player.playFromPool(pool, "wave-success", null, {
+            chance: 0.7,
+            bypassCooldown: true
+        });
+    }
+
+    async playRankUp() {
+        await this.init();
+        const pool = this.getPool("milestone", "rankUp");
+        await this.player.playFromPool(pool, "milestone-rankup", null, {
+            chance: 1,
+            bypassCooldown: true
+        });
+    }
+
+    async playSynergyUnlocked() {
+        await this.init();
+        const pool = this.getPool("milestone", "synergy");
+        await this.player.playFromPool(pool, "milestone-synergy", null, {
+            chance: 0.9,
+            bypassCooldown: true
+        });
+    }
+
+    async playVictory() {
+        await this.init();
+        const pool = this.getPool("milestone", "victory");
+        await this.player.playFromPool(pool, "milestone-victory", null, {
+            chance: 1,
+            bypassCooldown: true
+        });
+    }
+
+    async playDefeat() {
+        await this.init();
+        const pool = this.getPool("milestone", "defeat");
+        await this.player.playFromPool(pool, "milestone-defeat", null, {
+            chance: 1,
+            bypassCooldown: true
+        });
     }
 
     stop() {
@@ -211,6 +294,7 @@ class TransmissionManager {
         this.announcedEnemies.clear();
         this.eliteAnnounced = false;
         this.lastHealthTier = "healthy";
+        this.lastHealthWarningMs = 0;
     }
 
     setVolume(volume) {
@@ -228,6 +312,7 @@ class TransmissionManager {
         this.announcedEnemies.clear();
         this.eliteAnnounced = false;
         this.lastHealthTier = "healthy";
+        this.lastHealthWarningMs = 0;
     }
 }
 

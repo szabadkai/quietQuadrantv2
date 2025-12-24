@@ -142,22 +142,114 @@ Radio transmissions from Terran Command to fighter pilot callsign "Viper-1". Sho
 -   "Command to Viper-1. Hostiles thinning out. Finish the job."
 -   "Viper-1, you're doing great. Or terrible. Hard to tell from here. Keep shooting either way."
 -   "Solid work out there. The debris field you're creating is almost artistic."
+-   "HQ to Viper-1. You missed one. No, wait, that was just a piece of your wing. Carry on."
+-   "Keep up the pace. The betting pool on your survival just reached critical mass."
+-   "Command here. You’re making them look like target practice. Which they are. And so are you."
+-   "Nice grouping. If only you were this focused during the psychiatric evaluation."
+-   "Viper-1, stop playing with your food. Some of us have lunch breaks at 14:00."
 
-### Wave Clear
+### Wave Clear (Success)
 
 -   "Wave clear, Viper-1. Catch your breath. More incoming shortly."
 -   "HQ here. Hostiles eliminated. Enjoy the three seconds of peace."
 -   "Command to Viper-1. Area secure. Temporarily. Very temporarily."
 -   "Nice work, Viper-1. The void is slightly less hostile now. Slightly."
 -   "Wave down. Grab upgrades, stay sharp. They'll be back. They're always back."
+-   "Wave clear. Your kill-to-debris ratio is statistically significant. Keep it up."
+-   "Hostiles eliminated. The janitorial bots are going to hate you for this mess."
+-   "Area secure. Enjoy the quiet. It’s the only part of this job that's free."
+-   "Nice work. The board of directors is slightly less disappointed in your performance today."
+-   "Wave down. You're still breathing. Command owes the betting pool fifty credits."
 
-### Low Health Warnings
+---
 
--   "Viper-1, hull integrity critical. Maybe try not getting hit? Just a thought."
+## MILESTONES & META
+
+### Rank Up
+
+-   "Promotion confirmed, Viper-1. You’re now authorized to die in more expensive sectors."
+-   "Rank up. You've been upgraded from 'Disposable' to 'Valuable Asset.' Barely."
+-   "Congrats on the rank. Your pension is now worth two extra ration bars. If you survive to claim it."
+-   "Promotion! We’ve updated your flight suit. It now has a slightly larger 'Return to Sender' tag."
+-   "Rank up! You’re officially the best pilot we have left. Mostly because you're the *only* pilot we have left."
+
+### Synergy Unlocked
+
+-   "Synergy detected. Your ship systems are finally talking to each other. Don't let them form a union."
+-   "Unintended system interaction successful. We’ll call it a 'feature' in the report."
+-   "Synergy online. Your weapons are now working together. It's almost like they have a hive mind. Terrifying."
+-   "Advanced synergy detected. If it starts whispering in your ear, just ignore it and keep shooting."
+-   "Synergy online. Your systems are now working in a way that technically violates several treaties."
+-   "Multiple subsystems detected in harmony. It’s like a chorus. A chorus of high-frequency death."
+-   "Combined arms synergy confirmed. You've officially peak-efficiency'd your destructive potential."
+-   "Synergy active. Your ship is now smarter than you. Try to follow its lead."
+
+### Victory
+
+-   "Victory. You survived. Command is frantically rewriting the mission report to take credit."
+-   "Mission complete. Head home. We found a few more 'impossible' tasks for you tomorrow."
+-   "Hostiles neutralized. You’ve earned five minutes of shore leave. Don't spend it all in one void."
+
+### Defeat
+
+-   "Viper-1? Hello? Fine, someone go update the memorial plaque. Again."
+-   "Viper-1? The signal's gone. Guess we're holding another 'New Pilot' seminar tomorrow."
+-   "Static on the line. Well, at least we saved on the return fuel costs."
+-   "Pilot down. Requisitions, send in the next tin can. Callsign: Viper-1. Yes, again."
+
+---
+
+## BORED COMMAND (Random Chatter)
+
+### Periodic Gossip
+
+-   "Viper-1, I’m reading a book on 'Space Safety.' It says you should be dead by now. Interesting."
+-   "HQ here. We’re having a pizza party. Yours is getting cold. Hurry up. Or don't."
+-   "Command to Viper-1. Did you know the void is 99% empty? Just like my coffee cup. Do something interesting."
+-   "Just a reminder: your ship's black box is indestructible. You, however, are not."
+-   "Is it just me, or does the nebula look like a giant 'Game Over' screen? Just me? Okay."
+-   "Viper-1, the scanners are quiet. Too quiet. I'm going to go check if the sensors are plugged in. Try not to die."
+-   "Command here. We’ve noticed you haven't fired your weapons in thirty seconds. Ammunition is expensive, but so is my boredom."
+-   "Viper-1, I've noticed you're doing a lot of 'dodging.' Is that a tactical choice or are you just twitchy?"
+-   "HQ here. Background radiation is up 4%. Or maybe I just left the microwave open. Good luck."
+-   "Command to Viper-1. If you see a giant floating eye that isn't a Watcher, please report it. And then run."
+-   "Trivia: The 'Quadrant' in Quiet Quadrant refers to the four ways you're most likely to die. Do you want the list?"
+-   "Viper-1, I'm playing a simulation of your mission. I've already died ten times. You're doing surprisingly well."
+-   "HQ to Viper-1. Just a reminder: 'Eject' is button 14. We've removed it to save weight, but the thought is what counts."
+-   "Command here. We’re watching your heart rate. If it hits 180, we get a free donut. No pressure."
+-   "Is it cold in the cockpit? Because it's freezing in the command center. The AC is stuck on 'Hoth.'"
+
+### Health Warnings
+
+#### Warning (Minor Damage)
+-   "Viper-1, hull integrity at 45%. Maybe try not getting hit? Just a thought."
 -   "HQ here. You're leaking atmosphere. And probably blood. Prioritize survival."
 -   "Command to Viper-1. Your ship is held together by hope and duct tape. Be careful."
--   "Critical damage detected. On the bright side, your life insurance premiums are about to become irrelevant."
+-   "Warning: minor hull breach detected. On the bright side, the draft might be refreshing."
+-   "Viper-1, stop trying to use your cockpit as a battering ram. It’s not designed for it."
+-   "HQ to Viper-1. Armor plates are rattling. Is that you or the ship? Either way, stabilize."
+-   "Sensors show internal fires. We've disabled the smoke alarm to minimize your distractions. You're welcome."
+-   "Viper-1, your shield is flickering. It's doing its best, which is more than I can say for your dodging."
+-   "HQ here. We're seeing some sparks on the exterior. It's either a short circuit or the universe is trying to tell you something."
+-   "Command to Viper-1. Your hull is thinning. Don't worry, it'll make the ship lighter. And more explode-y."
+-   "Warning: Life support is at 70%. Try to breathe less to compensate."
+-   "Viper-1, you're scratching the paint. That custom metallic finish cost more than your last three clones."
+
+#### Critical (Near Death)
 -   "Viper-1, you're one hit from becoming a memorial plaque. Dodge better."
+-   "Critical damage detected. On the bright side, your life insurance premiums are about to become irrelevant."
+-   "Viper-1, the engine is making a sound I’ve only heard in horror movies. Ejecting is not an option."
+-   "HQ here. Your ship’s vital organs are currently external. Fix that. Fast."
+-   "Command to Viper-1. We’ve started drafting your obituary. 'He died as he lived: expensive.' Give us a reason to delete it."
+-   "Thermal signatures indicate you're melting. Don't melt. It’s bad for the upholstery."
+-   "Viper-1, the signal is flickering. If you're going to explode, do it away from the expensive debris, please."
+-   "Emergency power only. I’d tell you to pray, but the comms are blocked by static anyway."
+-   "Viper-1, the 'Self-Destruct' light is blinking. It's not supposed to do that until *after* you eject. Good luck."
+-   "HQ here. We've stopped the live feed to the junior cadets. We don't want to traumatize them."
+-   "Command to Viper-1. Your reactor is leaking. If it explodes, it'll be a beautiful way to go. For us, watching from here."
+-   "Viper-1, your cockpit glass is spider-webbing. It's a very pretty pattern. Shame it's about to fail."
+-   "Warning: Critical systems are offline. Including the one that tells you everything is fine. Everything is not fine."
+-   "Viper-1, the ship is literally yelling at you. I've muted it so you can focus on your inevitable demise."
 
 ### Elite Encounters
 
@@ -166,6 +258,11 @@ Radio transmissions from Terran Command to fighter pilot callsign "Viper-1". Sho
 -   "Command to Viper-1. Elite on radar. More health, more damage, more reasons to focus fire."
 -   "Elite incoming. They've got special abilities. You've got guns. May the best combatant win."
 -   "Viper-1, elite detected. These ones actually try. How inconsiderate."
+-   "HQ to Viper-1. Elite on scope. It’s got a custom paint job. Make sure to scratch it. With plasma."
+-   "Elite incoming. It’s significantly more expensive than the standard models. Requisitions says 'Take it easy on the salvage.'"
+-   "Elite hostile detected. Think of it as a mini-boss without the healthcare benefits."
+-   "Viper-1, an Elite just called you a 'primitive lifeform' on an open frequency. You going to take that?"
+-   "Elite signature caught. It's radiating confidence. Shoot the confidence until it leaks."
 
 ---
 
@@ -183,6 +280,12 @@ Radio transmissions from Terran Command to fighter pilot callsign "Viper-1". Sho
 -   "Viper-1, fun fact: the void doesn't care about your feelings. Neither do the hostiles. Stay frosty."
 -   "HQ here. Your kill count is impressive. Your damage taken is... less impressive. Work on that."
 -   "Command to Viper-1. Every enemy you kill is one less enemy. Math checks out. Keep mathing."
+-   "Viper-1, Command suggests you 'visualize success.' If that fails, 'visualize not being a debris field.'"
+-   "HQ here. Your mission success probability is currently at 'Who knows?' and dropping."
+-   "Command to Viper-1. We have a new intern. They’re taking bets on which piece of your ship comes back first."
+-   "Viper-1, remember: Heroism is just the polite word for 'expensive mistake.' Stick to the plan."
+-   "HQ here. If you find any strange artifacts, do not touch them. Put them in the cargo hold. Then touch them when we're safe."
+-   "Command to Viper-1. The Void is big. You are small. This has been a lesson in perspective."
 -   "Viper-1, the brass says 'good luck.' I say 'good aim.' One of those is actually useful."
 -   "HQ here. If this mission goes sideways, your callsign will be reassigned. No pressure."
 -   "Command to Viper-1. You're fighting ancient alien war machines. They're fighting one human in a tin can. Somehow, you're winning."
