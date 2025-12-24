@@ -9,38 +9,36 @@ function resolveAssetPath(path) {
     return `./${cleaned}`;
 }
 
+const LEVEL1_TRACK = resolveAssetPath(
+    "music/Juhani Junkala [Retro Game Music Pack] Level 1.mp3"
+);
+
 const TRACKS = {
-    title: resolveAssetPath(
-        "music/Juhani Junkala [Retro Game Music Pack] Title Screen.mp3"
-    ),
-    level1: resolveAssetPath(
-        "music/Juhani Junkala [Retro Game Music Pack] Level 1.mp3"
-    ),
+    title: LEVEL1_TRACK,
+    level1: LEVEL1_TRACK,
     level2: resolveAssetPath(
         "music/Juhani Junkala [Retro Game Music Pack] Level 2.mp3"
     ),
     level3: resolveAssetPath(
         "music/Juhani Junkala [Retro Game Music Pack] Level 3.mp3"
     ),
-    ending: resolveAssetPath(
-        "music/Juhani Junkala [Retro Game Music Pack] Ending.mp3"
-    ),
+    ending: LEVEL1_TRACK,
 };
+
+// Music is intentionally scaled down so a UI setting of 20% maps to full legacy loudness.
+const MUSIC_VOLUME_SCALE = 0.2;
 
 const LEVEL_SEQUENCE = ["level1", "level2", "level3"];
 
 function trackForWaveNumber(waveNumber) {
-    if (waveNumber <= 1) {
-        return "ending";
-    }
-    // After first level, always play level1 to avoid interruptions
+    // Keep a single, longer loop across all phases to avoid jarring restarts.
     return "level1";
 }
 
 export class MusicManager {
     constructor() {
         this.masterVolume = 0.5;
-        this.musicVolume = 1.0;
+        this.musicVolume = 0.25;
         this.enabled = true;
         this.initialized = false;
 
@@ -63,7 +61,7 @@ export class MusicManager {
             if (stored) {
                 const settings = JSON.parse(stored);
                 this.masterVolume = settings.masterVolume ?? 0.5;
-                this.musicVolume = settings.musicVolume ?? 1.0;
+                this.musicVolume = settings.musicVolume ?? 0.25;
             }
         } catch (e) {}
     }
@@ -85,7 +83,7 @@ export class MusicManager {
 
         const audio = new Audio(url);
         audio.loop = true;
-        audio.volume = this.masterVolume * this.musicVolume;
+        audio.volume = this.getScaledVolume();
 
         audio.play().catch((err) => {
             console.warn("Music autoplay blocked:", err.message);
@@ -122,7 +120,7 @@ export class MusicManager {
         let targetTrack = trackForWaveNumber(waveNumber);
 
         if (state.phase === "ended") {
-            targetTrack = "ending";
+            targetTrack = "level1";
         }
 
         if (this.currentTrack !== targetTrack) {
@@ -144,8 +142,12 @@ export class MusicManager {
 
     updateVolume() {
         if (this.currentAudio) {
-            this.currentAudio.volume = this.masterVolume * this.musicVolume;
+            this.currentAudio.volume = this.getScaledVolume();
         }
+    }
+
+    getScaledVolume() {
+        return this.masterVolume * this.musicVolume * MUSIC_VOLUME_SCALE;
     }
 
     setEnabled(enabled) {

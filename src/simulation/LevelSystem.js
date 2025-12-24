@@ -38,7 +38,13 @@ export const LevelSystem = {
       );
       if (nextPlayer) {
         const choiceCount = state.modifiers?.upgradeChoices ?? 3;
-        const options = rollUpgrades(nextPlayer, rng, choiceCount, state.modifiers);
+        const options = rollUpgrades(
+          nextPlayer,
+          rng,
+          choiceCount,
+          state.modifiers,
+          state.unlockedUpgrades
+        );
         if (options.length) {
           nextPlayer.pendingUpgrades -= 1;
           state.pendingUpgrade = {

@@ -1,6 +1,7 @@
 import { lerp } from "../utils/math.js";
 import { BOSS_SPRITES, SPRITE_KEYS } from "./sprites.js";
 import { GlowManager, GLOW_PRESETS } from "./GlowManager.js";
+import { safeNumber, safeSize } from "./sizeUtils.js";
 
 export class BossRenderer {
     constructor(scene) {
@@ -35,9 +36,11 @@ export class BossRenderer {
             this.sprite = this.createSprite(boss);
         }
 
-        this.sprite.x = lerp(boss.prevX, boss.x, interpolation);
-        this.sprite.y = lerp(boss.prevY, boss.y, interpolation);
-        const size = boss.radius * 4;
+        const nextX = lerp(boss.prevX, boss.x, interpolation);
+        const nextY = lerp(boss.prevY, boss.y, interpolation);
+        this.sprite.x = safeNumber(nextX, this.sprite.x ?? 0);
+        this.sprite.y = safeNumber(nextY, this.sprite.y ?? 0);
+        const size = safeSize(boss.radius * 4);
         if (this.sprite.baseSize !== size) {
             this.sprite.baseSize = size;
             this.sprite.setDisplaySize(size, size);
@@ -46,7 +49,7 @@ export class BossRenderer {
 
     createSprite(boss) {
         const key = BOSS_SPRITES[boss.id] ?? SPRITE_KEYS.bossFallback;
-        const size = boss.radius * 4;
+        const size = safeSize(boss.radius * 4);
         const sprite = this.scene.add.image(boss.x, boss.y, key);
         sprite.setOrigin(0.5, 0.5);
         sprite.setDisplaySize(size, size);

@@ -3,7 +3,12 @@ import reactHooks from "eslint-plugin-react-hooks";
 
 export default [
     {
-        ignores: ["dist/**", "node_modules/**", ".history/**"],
+        ignores: [
+            "dist/**",
+            "node_modules/**",
+            ".history/**",
+            "docs/assets/**",
+        ],
         languageOptions: {
             ecmaVersion: 2022,
             sourceType: "module",

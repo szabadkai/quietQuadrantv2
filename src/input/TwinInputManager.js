@@ -84,7 +84,7 @@ export class TwinInputManager {
         this.audioResumed = true;
         soundManager.resume();
         musicManager.resume();
-        musicManager.play(musicManager.currentTrack ?? "ending");
+        musicManager.play(musicManager.currentTrack ?? "level1");
     }
 
     attach(target) {

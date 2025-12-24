@@ -33,6 +33,9 @@ export function createInitialState(seed = 0, config = {}) {
         pendingUpgrade: null,
         affix: null,
         cardBoosts: config.cardBoosts ?? {},
+        unlockedUpgrades: Array.isArray(config.unlockedUpgrades)
+            ? [...config.unlockedUpgrades]
+            : null,
         modifiers: {
             enemyHealth: 1,
             enemySpeed: 1,

@@ -1,6 +1,7 @@
 import { lerp } from "../utils/math.js";
 import { SPRITE_KEYS } from "./sprites.js";
 import { GlowManager, GLOW_PRESETS } from "./GlowManager.js";
+import { safeNumber, safeSize } from "./sizeUtils.js";
 
 export class PlayerRenderer {
     constructor(scene) {
@@ -31,8 +32,10 @@ export class PlayerRenderer {
                 this.sprites.set(player.id, sprite);
             }
 
-            sprite.x = lerp(player.prevX, player.x, interpolation);
-            sprite.y = lerp(player.prevY, player.y, interpolation);
+            const nextX = lerp(player.prevX, player.x, interpolation);
+            const nextY = lerp(player.prevY, player.y, interpolation);
+            sprite.x = safeNumber(nextX, sprite.x ?? 0);
+            sprite.y = safeNumber(nextY, sprite.y ?? 0);
             sprite.rotation = player.rotation;
 
             const blink =
@@ -71,7 +74,7 @@ export class PlayerRenderer {
                 shieldRing.strokeCircle(sprite.x, sprite.y, radius * 0.86);
             }
 
-            const nextSize = player.radius * 4.26;
+            const nextSize = safeSize(player.radius * 4.26);
             if (sprite.baseSize !== nextSize) {
                 sprite.baseSize = nextSize;
                 sprite.setDisplaySize(nextSize, nextSize);
@@ -99,7 +102,7 @@ export class PlayerRenderer {
     }
 
     createSprite(player) {
-        const size = player.radius * 4.26;
+        const size = safeSize(player.radius * 4.26);
         const sprite = this.scene.add.image(
             player.x,
             player.y,

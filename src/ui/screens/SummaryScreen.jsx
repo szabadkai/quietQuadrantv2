@@ -44,7 +44,7 @@ export function SummaryScreen() {
 
   useEffect(() => {
     musicManager.init();
-    musicManager.play("ending");
+    musicManager.play("level1");
   }, []);
 
   useEffect(() => {

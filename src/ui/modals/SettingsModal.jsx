@@ -7,7 +7,7 @@ import { musicManager } from "../../audio/MusicManager.js";
 const SETTINGS_KEY = "quiet-quadrant-settings";
 const DEFAULT_SETTINGS = {
   masterVolume: 0.7,
-  musicVolume: 0.5,
+  musicVolume: 0.25,
   sfxVolume: 1.0,
   screenShake: true,
   screenFlash: true,

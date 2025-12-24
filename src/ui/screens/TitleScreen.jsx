@@ -23,7 +23,7 @@ export function TitleScreen() {
 
   useEffect(() => {
     musicManager.init();
-    musicManager.play("title");
+    musicManager.play("level1");
   }, []);
 
   const handleWeekly = () => {

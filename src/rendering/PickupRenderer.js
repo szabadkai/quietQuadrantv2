@@ -1,6 +1,7 @@
 import { lerp } from "../utils/math.js";
 import { SPRITE_KEYS } from "./sprites.js";
 import { GlowManager, GLOW_PRESETS } from "./GlowManager.js";
+import { safeNumber, safeSize } from "./sizeUtils.js";
 
 export class PickupRenderer {
     constructor(scene, maxPickups = 100) {
@@ -43,8 +44,11 @@ export class PickupRenderer {
             const prevY = pickup.prevY ?? pickup.y;
             const x = lerp(prevX, pickup.x, interpolation);
             const y = lerp(prevY, pickup.y, interpolation);
-            sprite.setPosition(x, y);
-            const size = (pickup.radius ?? 4) * 1.6;
+            sprite.setPosition(
+                safeNumber(x, sprite.x ?? 0),
+                safeNumber(y, sprite.y ?? 0)
+            );
+            const size = safeSize((pickup.radius ?? 4) * 1.6);
             sprite.setDisplaySize(size, size);
             const pulse = (Math.sin(this.scene.time.now * 0.008) + 1) * 0.5;
             sprite.setScale(0.9 + pulse * 0.15);

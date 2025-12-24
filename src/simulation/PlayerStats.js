@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { UPGRADE_BY_ID } from "../config/upgrades.js";
 import { SYNERGIES } from "../config/synergies.js";
 import { TICK_RATE } from "../utils/constants.js";

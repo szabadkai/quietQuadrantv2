@@ -131,7 +131,28 @@ export class GlowManager {
 
         // Ensure sprite has a valid texture frame before applying FX
         // This prevents "Cannot read properties of undefined (reading 'width')" errors
-        if (!sprite.frame || !sprite.frame.width) return;
+        if (!sprite.frame || !sprite.frame.width || !sprite.frame.height) return;
+
+        // Skip FX when transform values are invalid to avoid Phaser FX pipeline crashes
+        if (
+            !Number.isFinite(sprite.x) ||
+            !Number.isFinite(sprite.y) ||
+            !Number.isFinite(sprite.displayWidth) ||
+            !Number.isFinite(sprite.displayHeight)
+        ) {
+            return;
+        }
+
+        const width =
+            Number.isFinite(sprite.displayWidth) && sprite.displayWidth > 0
+                ? sprite.displayWidth
+                : sprite.frame.width;
+        const height =
+            Number.isFinite(sprite.displayHeight) && sprite.displayHeight > 0
+                ? sprite.displayHeight
+                : sprite.frame.height;
+        if (!Number.isFinite(width) || !Number.isFinite(height)) return;
+        if (width <= 0 || height <= 0) return;
 
         sprite.preFX.clear();
 

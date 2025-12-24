@@ -1,6 +1,7 @@
 import { lerp } from "../utils/math.js";
 import { ELITE_SPRITES, ENEMY_SPRITES } from "./sprites.js";
 import { GlowManager, GLOW_PRESETS } from "./GlowManager.js";
+import { safeNumber, safeSize } from "./sizeUtils.js";
 
 export class EnemyRenderer {
     constructor(scene) {
@@ -32,8 +33,10 @@ export class EnemyRenderer {
                 this.sprites.set(enemy.id, sprite);
             }
 
-            sprite.x = lerp(enemy.prevX, enemy.x, interpolation);
-            sprite.y = lerp(enemy.prevY, enemy.y, interpolation);
+            const nextX = lerp(enemy.prevX, enemy.x, interpolation);
+            const nextY = lerp(enemy.prevY, enemy.y, interpolation);
+            sprite.x = safeNumber(nextX, sprite.x ?? 0);
+            sprite.y = safeNumber(nextY, sprite.y ?? 0);
 
             if (enemy.type === "phantom") {
                 const flicker =
@@ -46,9 +49,10 @@ export class EnemyRenderer {
 
             const baseSize = getEnemySize(enemy);
             const size = enemy.elite ? baseSize * 1.2 : baseSize;
-            if (sprite.baseSize !== size) {
-                sprite.baseSize = size;
-                sprite.setDisplaySize(size, size);
+            const safeDisplay = safeSize(size);
+            if (sprite.baseSize !== safeDisplay) {
+                sprite.baseSize = safeDisplay;
+                sprite.setDisplaySize(safeDisplay, safeDisplay);
             }
         }
 
@@ -68,7 +72,7 @@ export class EnemyRenderer {
             : ENEMY_SPRITES[enemy.type];
         const spriteKey = key ?? ENEMY_SPRITES.drifter;
         const size = getEnemySize(enemy);
-        const displaySize = enemy.elite ? size * 1.2 : size;
+        const displaySize = safeSize(enemy.elite ? size * 1.2 : size);
         const sprite = this.scene.add.image(enemy.x, enemy.y, spriteKey);
         sprite.setOrigin(0.5, 0.5);
         sprite.setDisplaySize(displaySize, displaySize);
@@ -87,5 +91,5 @@ export class EnemyRenderer {
 
 function getEnemySize(enemy) {
     const scale = 2;
-    return enemy.radius * scale * 2.4;
+    return safeSize(enemy.radius * scale * 2.4);
 }

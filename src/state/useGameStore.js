@@ -20,6 +20,10 @@ export const useGameStore = create((set, get) => ({
             // Get card boosts from meta store
             const metaState = useMetaStore.getState();
             const cardBoosts = metaState.cardCollection?.upgradeBoosts ?? {};
+            const unlockedUpgrades =
+                config.unlockedUpgrades ??
+                metaState.cardCollection?.unlockedUpgrades ??
+                null;
 
             let simulation = null;
             let session = { mode: "solo", localPlayerId: "p1", role: "host" };
@@ -31,6 +35,7 @@ export const useGameStore = create((set, get) => ({
                     localPlayerId: multiplayer.localPlayerId,
                     network: multiplayer.network,
                     cardBoosts,
+                    unlockedUpgrades,
                 });
                 session = {
                     mode: "online",
@@ -45,6 +50,7 @@ export const useGameStore = create((set, get) => ({
                     playerCount,
                     multiplayer: playerCount > 1,
                     cardBoosts,
+                    unlockedUpgrades,
                 });
                 session = {
                     mode: playerCount > 1 ? "twin" : "solo",

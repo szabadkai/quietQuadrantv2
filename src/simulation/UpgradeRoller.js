@@ -6,8 +6,19 @@ const RARITY_WEIGHTS = [
   { rarity: "legendary", weight: 0.05 }
 ];
 
-export function rollUpgrades(player, rng, count = 3, modifiers = {}) {
+export function rollUpgrades(
+  player,
+  rng,
+  count = 3,
+  modifiers = {},
+  unlockedUpgrades = null
+) {
   const stacks = getUpgradeStacks(player.upgrades);
+  const unlockedSet = Array.isArray(unlockedUpgrades)
+    ? new Set(unlockedUpgrades)
+    : unlockedUpgrades instanceof Set
+      ? unlockedUpgrades
+      : null;
   const options = [];
 
   for (let i = 0; i < count; i += 1) {
@@ -16,14 +27,16 @@ export function rollUpgrades(player, rng, count = 3, modifiers = {}) {
       (upgrade) =>
         upgrade.rarity === rarity &&
         (stacks[upgrade.id] ?? 0) < upgrade.maxStacks &&
-        !options.includes(upgrade.id)
+        !options.includes(upgrade.id) &&
+        (!unlockedSet || unlockedSet.has(upgrade.id))
     );
 
     if (pool.length === 0) {
       const fallback = UPGRADES.filter(
         (upgrade) =>
           (stacks[upgrade.id] ?? 0) < upgrade.maxStacks &&
-          !options.includes(upgrade.id)
+          !options.includes(upgrade.id) &&
+          (!unlockedSet || unlockedSet.has(upgrade.id))
       );
       if (!fallback.length) break;
       options.push(rng.pick(fallback).id);

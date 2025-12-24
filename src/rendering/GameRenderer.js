@@ -176,7 +176,7 @@ export class GameRenderer {
         this.audioResumed = true;
         soundManager.resume();
         musicManager.resume();
-        musicManager.play(musicManager.currentTrack ?? "ending");
+        musicManager.play(musicManager.currentTrack ?? "level1");
     }
 
     preload(scene) {
@@ -215,7 +215,10 @@ export class GameRenderer {
 
             // Emit wave events to UI
             for (const event of events) {
-                if (event.type === "wave-intermission") {
+                if (
+                    event.type === "wave-intermission" &&
+                    state.phase === "intermission"
+                ) {
                     window.dispatchEvent(
                         new CustomEvent("qq-wave-intermission", {
                             detail: { nextWave: event.nextWave },

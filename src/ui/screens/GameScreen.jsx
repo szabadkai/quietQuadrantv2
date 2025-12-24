@@ -15,6 +15,8 @@ import { checkAchievements } from "../../systems/AchievementChecker.js";
 import { notifyAchievement, notifyRankUp } from "../../state/useNotificationStore.js";
 import { DisconnectHandler } from "../../network/DisconnectHandler.js";
 import { transmissionManager } from "../../audio/TransmissionManager.js";
+import { WAVES } from "../../config/waves.js";
+import { UPGRADE_BY_ID } from "../../config/upgrades.js";
 
 export function GameScreen() {
   const containerRef = useRef(null);
@@ -32,6 +34,8 @@ export function GameScreen() {
   const [paused, setPaused] = useState(false);
   const pausedRef = useRef(false);
   const [waveAnnouncement, setWaveAnnouncement] = useState(null);
+  const lastHealthTierRef = useRef("healthy");
+  const lastAnnouncedWaveRef = useRef(null);
 
   // Keep pausedRef in sync with paused state
   useEffect(() => {
@@ -42,22 +46,41 @@ export function GameScreen() {
   useEffect(() => {
     const handleIntermission = (e) => {
       const nextWave = e.detail.nextWave;
+      const gameState = useGameStore.getState().state;
+      if (gameState?.phase !== "intermission") return;
+      if (gameState?.wave?.current !== nextWave) return;
+      if (lastAnnouncedWaveRef.current === nextWave) return;
+      lastAnnouncedWaveRef.current = nextWave;
       // Show wave announcement (wave display is 1-indexed)
       setWaveAnnouncement(nextWave + 1);
-      // Play random transmission
-      transmissionManager.playRandom();
+      const waveConfig = WAVES[nextWave];
+      const upcomingTypes =
+        waveConfig?.enemies?.map((enemy) => enemy.kind) ?? [];
+      const hasElite =
+        waveConfig?.enemies?.some((enemy) => enemy.elite) ?? false;
+      transmissionManager.playWaveBriefing(upcomingTypes, hasElite);
     };
     
     window.addEventListener("qq-wave-intermission", handleIntermission);
     return () => window.removeEventListener("qq-wave-intermission", handleIntermission);
   }, []);
 
-  // Clear wave announcement when upgrade popup appears
   useEffect(() => {
-    if (pendingUpgrade) {
+    if (state?.phase === "pregame") {
+      lastAnnouncedWaveRef.current = null;
+    }
+  }, [state?.phase]);
+
+  // If we somehow still have an announcement when the wave has already started, dismiss it
+  useEffect(() => {
+    if (waveAnnouncement === null) return;
+    const currentWave = state?.wave?.current ?? -1;
+    const expectedWaveIndex = waveAnnouncement - 1;
+    const inIntermission = state?.phase === "intermission";
+    if (!inIntermission || currentWave !== expectedWaveIndex) {
       setWaveAnnouncement(null);
     }
-  }, [pendingUpgrade]);
+  }, [waveAnnouncement, state?.phase, state?.wave?.current]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -166,11 +189,11 @@ export function GameScreen() {
   useEffect(() => {
     if (!runSummary || phase !== "ended") return;
     if (lastRunRef.current === runSummary) return;
-    lastRunRef.current = runSummary;
+      lastRunRef.current = runSummary;
 
-    const metaActions = useMetaStore.getState().actions;
-    metaActions.recordRun(runSummary);
-    metaActions.updateDailyStreak();
+      const metaActions = useMetaStore.getState().actions;
+      metaActions.recordRun(runSummary);
+      metaActions.updateDailyStreak();
     const xpEarned =
       50 +
       (runSummary.wave ?? 0) * 10 +
@@ -195,6 +218,63 @@ export function GameScreen() {
       navigate();
     }
   }, [runSummary, phase]);
+
+  useEffect(() => {
+    transmissionManager.reset();
+    return () => transmissionManager.reset();
+  }, []);
+
+  useEffect(() => {
+    if (!state?.events?.length) return;
+    for (const event of state.events) {
+      if (event.type === "boss-spawn") {
+        transmissionManager.playBossIntro(event.bossId);
+      }
+    }
+  }, [state?.tick]);
+
+  useEffect(() => {
+    if (!pendingUpgrade) return;
+    const upgrades =
+      pendingUpgrade.options
+        ?.map((id) => UPGRADE_BY_ID[id])
+        .filter(Boolean) ?? [];
+    const hasLegendary = upgrades.some(
+      (upgrade) => upgrade.rarity === "legendary"
+    );
+    const rarity = hasLegendary
+      ? "legendary"
+      : upgrades.find((upgrade) => upgrade.rarity === "rare")?.rarity;
+    const categories = upgrades
+      .map((upgrade) => upgrade.category)
+      .filter(Boolean);
+    transmissionManager.playUpgradeIntel({
+      rarity,
+      categories,
+      options: pendingUpgrade.options ?? []
+    });
+  }, [pendingUpgrade]);
+
+  useEffect(() => {
+    if (!state?.players?.length) return;
+    const local =
+      state.players.find((player) => player.id === session?.localPlayerId) ??
+      state.players[0];
+    if (!local) return;
+    const ratio =
+      local.maxHealth > 0 ? local.health / local.maxHealth : 1;
+    const tier = ratio <= 0.2 ? "critical" : ratio <= 0.45 ? "warning" : "healthy";
+    if (tier === "healthy") {
+      if (ratio >= 0.65) {
+        lastHealthTierRef.current = "healthy";
+      }
+      return;
+    }
+    if (lastHealthTierRef.current !== tier) {
+      lastHealthTierRef.current = tier;
+      transmissionManager.playHealthWarning(tier);
+    }
+  }, [state?.tick, session?.localPlayerId]);
 
   return (
     <div

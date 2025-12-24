@@ -1,6 +1,7 @@
 import { lerp } from "../utils/math.js";
 import { SPRITE_KEYS } from "./sprites.js";
 import { GlowManager, GLOW_PRESETS } from "./GlowManager.js";
+import { safeNumber, safeSize } from "./sizeUtils.js";
 
 export class BulletRenderer {
     constructor(scene, maxBullets = 200) {
@@ -48,11 +49,17 @@ export class BulletRenderer {
 
             const x = lerp(bullet.prevX, bullet.x, interpolation);
             const y = lerp(bullet.prevY, bullet.y, interpolation);
-            sprite.setPosition(x, y);
-            const radius = bullet.radius ?? 3;
+            sprite.setPosition(
+                safeNumber(x, sprite.x ?? 0),
+                safeNumber(y, sprite.y ?? 0)
+            );
+            const radius = Number.isFinite(bullet.radius)
+                ? bullet.radius
+                : 3;
             const size = getBulletSize(radius, poolKey);
             sprite.setDisplaySize(size.width, size.height);
-            sprite.rotation = Math.atan2(bullet.vy, bullet.vx) + Math.PI;
+            const rot = Math.atan2(bullet.vy ?? 0, bullet.vx ?? 0) + Math.PI;
+            sprite.rotation = safeNumber(rot, 0);
             if (bullet.phaseThrough) {
                 sprite.setAlpha(0.6);
             } else {
@@ -102,10 +109,19 @@ function getPoolKey(bullet) {
 function getBulletSize(radius, poolKey) {
     const scale = 1.5;
     if (poolKey === "player") {
-        return { width: radius * 9 * scale, height: radius * 14 * scale };
+        return {
+            width: safeSize(radius * 9 * scale),
+            height: safeSize(radius * 14 * scale),
+        };
     }
     if (poolKey === "boss") {
-        return { width: radius * 8 * scale, height: radius * 16 * scale };
+        return {
+            width: safeSize(radius * 8 * scale),
+            height: safeSize(radius * 16 * scale),
+        };
     }
-    return { width: radius * 7.2 * scale, height: radius * 13 * scale };
+    return {
+        width: safeSize(radius * 7.2 * scale),
+        height: safeSize(radius * 13 * scale),
+    };
 }

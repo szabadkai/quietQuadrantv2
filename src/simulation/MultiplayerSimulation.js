@@ -5,14 +5,23 @@ import { StateSync } from "../network/StateSync.js";
 const CORRECTION_INTERVAL = 12;
 
 export class MultiplayerSimulation {
-  constructor({ seed, role = "host", network, localPlayerId } = {}) {
+  constructor({
+    seed,
+    role = "host",
+    network,
+    localPlayerId,
+    cardBoosts,
+    unlockedUpgrades
+  } = {}) {
     this.role = role;
     this.network = network;
     this.localPlayerId = localPlayerId ?? (role === "host" ? "p1" : "p2");
     this.simulation = new GameSimulation({
       seed,
       playerCount: 2,
-      multiplayer: true
+      multiplayer: true,
+      cardBoosts,
+      unlockedUpgrades
     });
     this.inputSync = new InputSync(network);
     this.stateSync = new StateSync();
