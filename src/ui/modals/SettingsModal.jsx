@@ -23,14 +23,18 @@ function loadSettings() {
     try {
         const stored = localStorage.getItem(SETTINGS_KEY);
         if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
-    } catch (e) {}
+    } catch (e) {
+        // ignore
+    }
     return { ...DEFAULT_SETTINGS };
 }
 
 function saveSettings(settings) {
     try {
         localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-    } catch (e) {}
+    } catch (e) {
+        // ignore
+    }
 }
 
 function applyVisualSettings(settings) {
@@ -156,7 +160,7 @@ export function SettingsModal({ onClose }) {
 
                 <div className="qq-modal-actions">
                     <Button primary onClick={onClose}>
-            Close
+                        Close
                     </Button>
                 </div>
             </div>

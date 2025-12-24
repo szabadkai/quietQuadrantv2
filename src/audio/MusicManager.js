@@ -44,8 +44,8 @@ export class MusicManager {
         this.currentAudio = null;
         this.intensity = 0;
         this.targetIntensity = 0;
-        this.lastIntensityLevel = 0;
         this.autoplayUnlockHandler = null;
+        this.visibilityHandler = null;
     }
 
     clearAutoplayHandler() {
@@ -60,6 +60,25 @@ export class MusicManager {
         if (this.initialized) return;
         this.initialized = true;
         this.loadSettings();
+        this.setupVisibilityListener();
+    }
+
+    setupVisibilityListener() {
+        if (typeof document === "undefined") return;
+        this.visibilityHandler = () => {
+            if (document.visibilityState === "hidden") {
+                if (this.currentAudio && !this.currentAudio.paused) {
+                    this.wasPlayingBeforeHide = true;
+                    this.currentAudio.pause();
+                }
+            } else if (document.visibilityState === "visible") {
+                if (this.wasPlayingBeforeHide && this.currentAudio) {
+                    this.currentAudio.play().catch(() => {});
+                    this.wasPlayingBeforeHide = false;
+                }
+            }
+        };
+        document.addEventListener("visibilitychange", this.visibilityHandler);
     }
 
     loadSettings() {
@@ -201,6 +220,9 @@ export class MusicManager {
     destroy() {
         this.stop();
         this.clearAutoplayHandler();
+        if (typeof document !== "undefined" && this.visibilityHandler) {
+            document.removeEventListener("visibilitychange", this.visibilityHandler);
+        }
         this.initialized = false;
     }
 }

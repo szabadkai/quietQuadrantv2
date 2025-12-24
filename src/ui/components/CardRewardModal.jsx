@@ -1,7 +1,6 @@
 import React from "react";
 import { UpgradeCard } from "./UpgradeCard.jsx";
 import { useMetaStore } from "../../state/useMetaStore.js";
-import { UPGRADE_BY_ID } from "../../config/upgrades.js";
 
 export function CardRewardModal({ options, onSelect }) {
     const cardCollection = useMetaStore((s) => s.cardCollection);
@@ -19,7 +18,6 @@ export function CardRewardModal({ options, onSelect }) {
                     {options.map((option) => {
                         const isUnlocked = unlockedSet.has(option);
                         const currentBoost = boosts[option] ?? 0;
-                        const upgrade = UPGRADE_BY_ID[option];
 
                         return (
                             <div key={option} className="qq-reward-card-wrapper">
@@ -30,14 +28,14 @@ export function CardRewardModal({ options, onSelect }) {
                                 <div className="qq-reward-status">
                                     {isUnlocked ? (
                                         <span className="qq-boost-indicator">
-                      BOOST {currentBoost + 1}/5
+                                            BOOST {currentBoost + 1}/5
                                             <span className="qq-boost-pips">
                                                 {[...Array(5)].map((_, i) => (
                                                     <span
                                                         key={i}
                                                         className={`qq-boost-pip ${i <= currentBoost ? "filled" : ""}`}
                                                     >
-                            ●
+                                                        ●
                                                     </span>
                                                 ))}
                                             </span>

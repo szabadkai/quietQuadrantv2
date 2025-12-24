@@ -18,14 +18,18 @@ function loadSettings() {
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
-    } catch (e) {}
+    } catch (e) {
+        // ignore
+    }
     return { ...DEFAULT_SETTINGS };
 }
 
 function saveSettings(settings) {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-    } catch (e) {}
+    } catch (e) {
+        // ignore
+    }
 }
 
 function applyVisualSettings(settings) {
@@ -104,7 +108,7 @@ export function SettingsPanel({ onClose }) {
             <div className="qq-settings-group">
                 <div className="qq-settings-toggle">
                     <span className="qq-settings-label" style={{ marginBottom: 0 }}>
-            Screen Shake
+                        Screen Shake
                     </span>
                     <button
                         type="button"
@@ -118,7 +122,7 @@ export function SettingsPanel({ onClose }) {
             <div className="qq-settings-group">
                 <div className="qq-settings-toggle">
                     <span className="qq-settings-label" style={{ marginBottom: 0 }}>
-            Screen Flash
+                        Screen Flash
                     </span>
                     <button
                         type="button"
@@ -132,7 +136,7 @@ export function SettingsPanel({ onClose }) {
             <div className="qq-settings-group">
                 <div className="qq-settings-toggle">
                     <span className="qq-settings-label" style={{ marginBottom: 0 }}>
-            Damage Numbers
+                        Damage Numbers
                     </span>
                     <button
                         type="button"
@@ -146,7 +150,7 @@ export function SettingsPanel({ onClose }) {
             <div className="qq-settings-group">
                 <div className="qq-settings-toggle">
                     <span className="qq-settings-label" style={{ marginBottom: 0 }}>
-            High Contrast
+                        High Contrast
                     </span>
                     <button
                         type="button"
@@ -160,7 +164,7 @@ export function SettingsPanel({ onClose }) {
             <div className="qq-settings-group">
                 <div className="qq-settings-toggle">
                     <span className="qq-settings-label" style={{ marginBottom: 0 }}>
-            Reduced Motion
+                        Reduced Motion
                     </span>
                     <button
                         type="button"
@@ -178,7 +182,7 @@ export function SettingsPanel({ onClose }) {
                     onClick={onClose}
                     style={{ marginTop: "16px", width: "100%" }}
                 >
-          Close
+                    Close
                 </button>
             )}
         </div>
