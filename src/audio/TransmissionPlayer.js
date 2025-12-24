@@ -9,6 +9,7 @@ export class TransmissionPlayer {
     this.masterGain = null;
     this.currentSource = null;
     this.initialized = false;
+    this.playQueue = Promise.resolve();
   }
 
   async init() {
@@ -51,7 +52,17 @@ export class TransmissionPlayer {
     return validPool[index];
   }
 
-  async playFromPool(pool, poolKey, fallbackPool = null, options = {}) {
+  playFromPool(pool, poolKey, fallbackPool = null, options = {}) {
+    this.playQueue = this.playQueue
+      .then(() => this._playFromPool(pool, poolKey, fallbackPool, options))
+      .catch((error) => {
+        console.warn("TransmissionPlayer: Playback queue error", error);
+        return false;
+      });
+    return this.playQueue;
+  }
+
+  async _playFromPool(pool, poolKey, fallbackPool = null, options = {}) {
     const {
       chance = 1,
       bypassCooldown = false,
@@ -72,7 +83,7 @@ export class TransmissionPlayer {
 
     if (!pool || !pool.length) {
       if (fallbackPool) {
-        return this.playFromPool(fallbackPool, "fallback", null, {
+        return this._playFromPool(fallbackPool, "fallback", null, {
           ...options,
           skipThrottle: true,
           markPlayback: shouldMarkPlayback
@@ -89,7 +100,7 @@ export class TransmissionPlayer {
     const clip = this.pickClip(pool, poolKey);
     if (!clip) {
       if (fallbackPool) {
-        return this.playFromPool(fallbackPool, "fallback", null, {
+        return this._playFromPool(fallbackPool, "fallback", null, {
           ...options,
           skipThrottle: true,
           markPlayback: shouldMarkPlayback
@@ -100,7 +111,7 @@ export class TransmissionPlayer {
 
     const success = await this.playClip(clip);
     if (!success && fallbackPool) {
-      return this.playFromPool(fallbackPool, "fallback", null, {
+      return this._playFromPool(fallbackPool, "fallback", null, {
         ...options,
         skipThrottle: true,
         markPlayback: shouldMarkPlayback
@@ -176,6 +187,7 @@ export class TransmissionPlayer {
     this.playHistory.clear();
     this.failedClips.clear();
     this.lastPlayMs = 0;
+    this.playQueue = Promise.resolve();
   }
 
   destroy() {
