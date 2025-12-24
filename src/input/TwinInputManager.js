@@ -1,5 +1,6 @@
 import { soundManager } from "../audio/SoundManager.js";
 import { musicManager } from "../audio/MusicManager.js";
+import { hasDashIntent, hasFireIntent, readGamepad } from "./gamepad.js";
 
 const P1_MOVE = {
     left: "KeyA",
@@ -26,12 +27,17 @@ const P2_FIRE = ["Numpad0", "NumpadEnter", "Enter"];
 const P2_DASH = ["Numpad1", "ShiftRight"];
 
 export class TwinInputManager {
-    constructor(target = null) {
+    constructor(target = null, options = {}) {
         this.keys = new Set();
         this.pointer = { x: 0, y: 0, down: false, hasPosition: false };
         this.target = null;
         this.bounds = null;
         this.audioResumed = false;
+        this.p1GamepadIndex =
+            options.p1GamepadIndex === undefined ? null : options.p1GamepadIndex;
+        this.p2GamepadIndex =
+            options.p2GamepadIndex === undefined ? 1 : options.p2GamepadIndex;
+        this.p2Input = options.p2Input ?? "keyboard";
 
         this.handleKeyDown = (event) => {
             this.keys.add(event.code);
@@ -116,29 +122,43 @@ export class TwinInputManager {
 
     getInputs(players) {
         const inputs = {};
+        const primaryPad =
+            this.p1GamepadIndex === null ? null : readGamepad(this.p1GamepadIndex);
+        const secondaryPad =
+            this.p2Input === "gamepad" && this.p2GamepadIndex !== null
+                ? readGamepad(this.p2GamepadIndex)
+                : null;
         for (const player of players) {
             if (player.id === "p1") {
-                inputs[player.id] = this.getInputForP1(player);
+                inputs[player.id] = this.getInputForP1(player, primaryPad);
             } else if (player.id === "p2") {
-                inputs[player.id] = this.getInputForP2();
+                inputs[player.id] = this.getInputForP2(secondaryPad);
             }
         }
         return inputs;
     }
 
-    getInputForP1(player) {
-        const moveX = this.axis(
+    getInputForP1(player, gamepad) {
+        let moveX = this.axis(
             this.isDown(P1_MOVE.left),
             this.isDown(P1_MOVE.right)
         );
-        const moveY = this.axis(
+        let moveY = this.axis(
             this.isDown(P1_MOVE.up),
             this.isDown(P1_MOVE.down)
         );
 
+        if (gamepad && (gamepad.left.x !== 0 || gamepad.left.y !== 0)) {
+            moveX = gamepad.left.x;
+            moveY = gamepad.left.y;
+        }
+
         let aimX = 0;
         let aimY = 0;
-        if (this.pointer.hasPosition && player) {
+        if (gamepad && gamepad.right.magnitude > 0.35) {
+            aimX = gamepad.right.x;
+            aimY = gamepad.right.y;
+        } else if (this.pointer.hasPosition && player) {
             aimX = this.pointer.x - player.x;
             aimY = this.pointer.y - player.y;
         }
@@ -148,37 +168,57 @@ export class TwinInputManager {
             moveY,
             aimX,
             aimY,
-            fire: this.pointer.down || this.isDown("Space"),
-            dash: this.isDown("ShiftLeft") || this.isDown("ShiftRight"),
+            fire:
+                this.pointer.down ||
+                this.isDown("Space") ||
+                hasFireIntent(gamepad),
+            dash:
+                this.isDown("ShiftLeft") ||
+                this.isDown("ShiftRight") ||
+                hasDashIntent(gamepad),
         };
     }
 
-    getInputForP2() {
-        const moveX = this.axis(
-            this.isDown(P2_MOVE.left),
-            this.isDown(P2_MOVE.right)
-        );
-        const moveY = this.axis(
-            this.isDown(P2_MOVE.up),
-            this.isDown(P2_MOVE.down)
-        );
+    getInputForP2(gamepad) {
+        let moveX =
+            this.p2Input === "gamepad"
+                ? 0
+                : this.axis(this.isDown(P2_MOVE.left), this.isDown(P2_MOVE.right));
+        let moveY =
+            this.p2Input === "gamepad"
+                ? 0
+                : this.axis(this.isDown(P2_MOVE.up), this.isDown(P2_MOVE.down));
 
-        const aimX = this.axis(
-            this.isDownAny(P2_AIM.left),
-            this.isDownAny(P2_AIM.right)
-        );
-        const aimY = this.axis(
-            this.isDownAny(P2_AIM.up),
-            this.isDownAny(P2_AIM.down)
-        );
+        let aimX =
+            this.p2Input === "gamepad"
+                ? 0
+                : this.axis(this.isDownAny(P2_AIM.left), this.isDownAny(P2_AIM.right));
+        let aimY =
+            this.p2Input === "gamepad"
+                ? 0
+                : this.axis(this.isDownAny(P2_AIM.up), this.isDownAny(P2_AIM.down));
+
+        if (gamepad && (gamepad.left.x !== 0 || gamepad.left.y !== 0)) {
+            moveX = gamepad.left.x;
+            moveY = gamepad.left.y;
+        }
+
+        if (gamepad && gamepad.right.magnitude > 0.35) {
+            aimX = gamepad.right.x;
+            aimY = gamepad.right.y;
+        }
 
         return {
             moveX,
             moveY,
             aimX,
             aimY,
-            fire: this.isDownAny(P2_FIRE),
-            dash: this.isDownAny(P2_DASH),
+            fire:
+                (this.p2Input !== "gamepad" && this.isDownAny(P2_FIRE)) ||
+                hasFireIntent(gamepad),
+            dash:
+                (this.p2Input !== "gamepad" && this.isDownAny(P2_DASH)) ||
+                hasDashIntent(gamepad),
         };
     }
 

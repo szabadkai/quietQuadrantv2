@@ -12,6 +12,7 @@ import { HostGameScreen } from "./ui/screens/HostGameScreen.jsx";
 import { JoinGameScreen } from "./ui/screens/JoinGameScreen.jsx";
 import { TwinSetupScreen } from "./ui/screens/TwinSetupScreen.jsx";
 import { NotificationToast } from "./ui/components/NotificationToast.jsx";
+import { useGlobalNavigation } from "./ui/hooks/useGlobalNavigation.js";
 
 const SETTINGS_KEY = "quiet-quadrant-settings";
 const DEFAULT_SETTINGS = {
@@ -45,6 +46,7 @@ function applyInitialSettings() {
 
 export function App() {
   const screen = useUIStore((s) => s.screen);
+  useGlobalNavigation();
 
   useEffect(() => {
     applyInitialSettings();

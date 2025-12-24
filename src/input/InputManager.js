@@ -1,5 +1,6 @@
 import { soundManager } from "../audio/SoundManager.js";
 import { musicManager } from "../audio/MusicManager.js";
+import { hasDashIntent, hasFireIntent, readGamepad } from "./gamepad.js";
 
 const MOVE_KEYS = new Set([
     "KeyW",
@@ -12,6 +13,8 @@ const MOVE_KEYS = new Set([
     "ArrowRight",
 ]);
 
+const FIRE_STICK_THRESHOLD = 0.35;
+
 export class InputManager {
     constructor(target = null) {
         this.keys = new Set();
@@ -19,6 +22,7 @@ export class InputManager {
         this.target = null;
         this.bounds = null;
         this.audioResumed = false;
+        this.gamepadIndex = 0;
 
         this.handleKeyDown = (event) => {
             if (MOVE_KEYS.has(event.code)) {
@@ -105,18 +109,30 @@ export class InputManager {
     }
 
     getInputForPlayer(player) {
-        const moveX = this.axis(
+        const gamepad = readGamepad(this.gamepadIndex);
+
+        let moveX = this.axis(
             this.isDown("KeyA") || this.isDown("ArrowLeft"),
             this.isDown("KeyD") || this.isDown("ArrowRight")
         );
-        const moveY = this.axis(
+        let moveY = this.axis(
             this.isDown("KeyW") || this.isDown("ArrowUp"),
             this.isDown("KeyS") || this.isDown("ArrowDown")
         );
 
+        if (gamepad) {
+            if (gamepad.left.x !== 0 || gamepad.left.y !== 0) {
+                moveX = gamepad.left.x;
+                moveY = gamepad.left.y;
+            }
+        }
+
         let aimX = 0;
         let aimY = 0;
-        if (this.pointer.hasPosition && player) {
+        if (gamepad && gamepad.right.magnitude > FIRE_STICK_THRESHOLD) {
+            aimX = gamepad.right.x;
+            aimY = gamepad.right.y;
+        } else if (this.pointer.hasPosition && player) {
             aimX = this.pointer.x - player.x;
             aimY = this.pointer.y - player.y;
         }
@@ -126,8 +142,14 @@ export class InputManager {
             moveY,
             aimX,
             aimY,
-            fire: this.pointer.down || this.isDown("Space"),
-            dash: this.isDown("ShiftLeft") || this.isDown("ShiftRight"),
+            fire:
+                this.pointer.down ||
+                this.isDown("Space") ||
+                hasFireIntent(gamepad),
+            dash:
+                this.isDown("ShiftLeft") ||
+                this.isDown("ShiftRight") ||
+                hasDashIntent(gamepad),
         };
     }
 

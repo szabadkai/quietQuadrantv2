@@ -1019,6 +1019,11 @@ body.qq-no-scanlines .qq-game-frame canvas {
   outline-offset: 4px;
   border-radius: 0;
 }
+.qq-slider-group:focus-within {
+  outline: 2px solid var(--qq-accent);
+  outline-offset: 4px;
+  border-radius: 0;
+}
 
 .qq-slider-header {
   display: flex;

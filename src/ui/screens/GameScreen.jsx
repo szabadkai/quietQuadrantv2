@@ -17,6 +17,7 @@ import { DisconnectHandler } from "../../network/DisconnectHandler.js";
 import { transmissionManager } from "../../audio/TransmissionManager.js";
 import { WAVES } from "../../config/waves.js";
 import { UPGRADE_BY_ID } from "../../config/upgrades.js";
+import { readGamepad } from "../../input/gamepad.js";
 
 export function GameScreen() {
   const containerRef = useRef(null);
@@ -36,6 +37,7 @@ export function GameScreen() {
   const [waveAnnouncement, setWaveAnnouncement] = useState(null);
   const lastHealthTierRef = useRef("healthy");
   const lastAnnouncedWaveRef = useRef(null);
+  const startPressedRef = useRef(false);
 
   // Keep pausedRef in sync with paused state
   useEffect(() => {
@@ -100,6 +102,35 @@ export function GameScreen() {
   }, [pendingUpgrade]);
 
   useEffect(() => {
+    let rafId;
+    const tick = () => {
+      const pad = readGamepad(0);
+      const isStart = pad?.buttons.start ?? false;
+      const gameState = useGameStore.getState().state;
+      const currentSession = useGameStore.getState().session;
+      const isMultiplayer =
+        currentSession?.mode === "online" || currentSession?.mode === "twin";
+
+      if (
+        isStart &&
+        !startPressedRef.current &&
+        !gameState?.pendingUpgrade &&
+        !isMultiplayer
+      ) {
+        setPaused((p) => !p);
+      }
+
+      startPressedRef.current = !!isStart;
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  useEffect(() => {
     const { actions, simulation, state: simState } = useGameStore.getState();
     if (!simulation || !simState) {
       actions.startGame({ seed: Date.now() });
@@ -108,7 +139,10 @@ export function GameScreen() {
     const currentSession = useGameStore.getState().session;
     const isTwin = currentSession?.mode === "twin";
     const isOnline = currentSession?.mode === "online";
-    const inputManager = isTwin ? new TwinInputManager() : new InputManager();
+    const twinOptions = currentSession?.twinOptions ?? {};
+    const inputManager = isTwin
+      ? new TwinInputManager(null, twinOptions)
+      : new InputManager();
     const inputBuffer = new InputBuffer();
 
     const renderer = new GameRenderer({

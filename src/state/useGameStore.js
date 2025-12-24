@@ -56,6 +56,7 @@ export const useGameStore = create((set, get) => ({
                     mode: playerCount > 1 ? "twin" : "solo",
                     localPlayerId: "p1",
                     role: "host",
+                    twinOptions: multiplayer?.twinOptions ?? {},
                 };
             }
 
