@@ -36,7 +36,7 @@ export function SummaryScreen() {
   const setScreen = useUIStore((s) => s.actions.setScreen);
   const startGame = useGameStore((s) => s.actions.startGame);
   const lastRun = useMetaStore((s) => s.lastRun);
-  const stats = useMetaStore((s) => s.stats);
+  const stats = useMetaStore((s) => s.lifetimeStats);
   const cardCollection = useMetaStore((s) => s.cardCollection);
   const pendingCardReward = useMetaStore((s) => s.pendingCardReward);
   const lastRewardRunId = useMetaStore((s) => s.lastRewardRunId);
@@ -86,7 +86,8 @@ export function SummaryScreen() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const isNewBest = lastRun.wave > (stats.bestWave - 1);
+  const bestWave = stats.highestWave ?? stats.bestWave ?? 0;
+  const isNewBest = (lastRun.wave ?? 0) > bestWave;
 
   return (
     <div className="qq-screen">

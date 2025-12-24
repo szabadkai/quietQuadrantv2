@@ -17,6 +17,7 @@ import { DisconnectHandler } from "../../network/DisconnectHandler.js";
 import { transmissionManager } from "../../audio/TransmissionManager.js";
 import { WAVES } from "../../config/waves.js";
 import { UPGRADE_BY_ID } from "../../config/upgrades.js";
+import { SYNERGY_BY_ID } from "../../config/synergies.js";
 import { readGamepad } from "../../input/gamepad.js";
 
 export function GameScreen() {
@@ -260,9 +261,19 @@ export function GameScreen() {
 
   useEffect(() => {
     if (!state?.events?.length) return;
+    const metaActions = useMetaStore.getState().actions;
     for (const event of state.events) {
       if (event.type === "boss-spawn") {
         transmissionManager.playBossIntro(event.bossId);
+      } else if (event.type === "synergy-unlocked") {
+        const synergy = SYNERGY_BY_ID[event.synergyId];
+        if (synergy) {
+          metaActions.showAchievement(
+            synergy.id,
+            synergy.name,
+            synergy.description ?? ""
+          );
+        }
       }
     }
   }, [state?.tick]);

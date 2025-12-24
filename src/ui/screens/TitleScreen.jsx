@@ -11,7 +11,7 @@ import { SettingsModal } from "../modals/SettingsModal.jsx";
 export function TitleScreen() {
   const setScreen = useUIStore((s) => s.actions.setScreen);
   const startGame = useGameStore((s) => s.actions.startGame);
-  const stats = useMetaStore((s) => s.stats);
+  const stats = useMetaStore((s) => s.lifetimeStats);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const weeklyAffix = getWeeklyAffix();
@@ -77,7 +77,10 @@ export function TitleScreen() {
             </div>
             <div className="qq-season-row">
               <span>Your Best</span>
-              <span>Wave {stats.bestWave || "—"}</span>
+              <span>Wave {(stats.highestWave ?? stats.bestWave ?? 0) > 0
+                ? (stats.highestWave ?? stats.bestWave)
+                : "—"}
+              </span>
             </div>
           </div>
           <div className="qq-affix-desc">{weeklyAffix.description}</div>

@@ -1464,289 +1464,498 @@ body.qq-no-scanlines .qq-game-frame canvas {
   outline: none;
 }
 
-.qq-collection-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 14px;
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 8px;
-}
-
-.qq-collection-card {
-  background: rgba(0, 0, 0, 0.9);
-  border: 2px solid var(--qq-panel-border);
-  border-radius: 0;
-  padding: 16px;
-  min-height: 140px;
-  box-shadow: 
-    0 0 8px var(--qq-accent),
-    inset 0 0 8px rgba(0, 255, 255, 0.15);
-  transition: all 0.15s ease-out;
-  cursor: pointer;
-}
-
-.qq-collection-card:not(.locked):hover,
-.qq-collection-card:not(.locked):focus {
-  transform: scale(1.05);
-  box-shadow: 
-    0 0 16px var(--qq-accent),
-    0 0 32px rgba(0, 255, 255, 0.6),
-    inset 0 0 16px rgba(0, 255, 255, 0.3);
-  border-color: var(--qq-accent);
-  outline: none;
-}
-
-.qq-collection-card:not(.locked):hover .qq-card-name,
-.qq-collection-card:not(.locked):focus .qq-card-name {
-  text-shadow: 
-    0 0 8px currentColor,
-    0 0 16px currentColor,
-    0 0 24px currentColor;
-}
-
-.qq-collection-card[data-rarity="rare"] {
-  border-color: var(--qq-rare);
-  box-shadow: 
-    0 0 8px var(--qq-rare),
-    inset 0 0 8px rgba(255, 255, 0, 0.15);
-}
-
-.qq-collection-card[data-rarity="rare"]:not(.locked):hover,
-.qq-collection-card[data-rarity="rare"]:not(.locked):focus {
-  box-shadow: 
-    0 0 16px var(--qq-rare),
-    0 0 32px rgba(255, 255, 0, 0.6),
-    inset 0 0 16px rgba(255, 255, 0, 0.3);
-}
-
-.qq-collection-card[data-rarity="legendary"] {
-  border-color: var(--qq-legendary);
-  box-shadow: 
-    0 0 8px var(--qq-legendary),
-    inset 0 0 8px rgba(255, 0, 255, 0.15);
-}
-
-.qq-collection-card[data-rarity="legendary"]:not(.locked):hover,
-.qq-collection-card[data-rarity="legendary"]:not(.locked):focus {
-  box-shadow: 
-    0 0 16px var(--qq-legendary),
-    0 0 32px rgba(255, 0, 255, 0.6),
-    inset 0 0 16px rgba(255, 0, 255, 0.3);
-}
-
-.qq-collection-card.locked {
-  opacity: 0.5;
+.qq-screen-overlay {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #0f1720, #05070b 60%);
+  color: var(--qq-text);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  cursor: default;
+  padding: 24px;
+  overflow-y: auto;
 }
 
-.qq-card-rarity {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
-  color: var(--qq-muted);
-  margin-bottom: 8px;
-  text-shadow: 
-    0 0 4px currentColor,
-    0 0 6px currentColor;
+.qq-panel-stats {
+  max-width: 600px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px;
+  border: 1px solid rgba(159, 240, 255, 0.35);
+  background: rgba(5, 9, 14, 0.92);
+  box-shadow: 0 0 24px rgba(0, 255, 255, 0.08);
+  border-radius: 10px;
 }
 
-.qq-card-name {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  text-shadow: 
-    0 0 4px currentColor,
-    0 0 8px currentColor;
-  line-height: 1.3;
+.qq-panel-collection {
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px 22px 26px;
+  border: 1px solid rgba(159, 240, 255, 0.35);
+  background: rgba(5, 9, 14, 0.92);
+  box-shadow: 0 0 24px rgba(0, 255, 255, 0.08);
+  border-radius: 10px;
 }
 
-.qq-card-desc {
-  font-size: 12px;
-  color: var(--qq-muted);
-  line-height: 1.5;
+.qq-section {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(159, 240, 255, 0.14);
 }
 
-.qq-card-boosts {
-  margin-top: 12px;
-  font-size: 12px;
-  letter-spacing: 3px;
-}
-
-.qq-boost-pip {
-  color: var(--qq-panel-border);
-}
-
-.qq-boost-pip.filled {
-  color: var(--qq-accent);
-  text-shadow: 
-    0 0 4px var(--qq-accent),
-    0 0 8px var(--qq-accent);
-}
-
-.qq-card-mystery {
-  font-size: 36px;
-  color: var(--qq-muted);
-}
-
-.qq-card-hint {
-  font-size: 12px;
-  color: var(--qq-muted);
-  text-transform: capitalize;
-}
-
-/* STATS */
-.qq-stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.qq-stats-section {
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.9);
-  border: 2px solid var(--qq-accent);
-  border-radius: 0;
-  box-shadow: 
-    0 0 8px var(--qq-accent),
-    inset 0 0 8px rgba(0, 255, 255, 0.15);
-}
-
-.qq-stats-section h3 {
-  font-size: 13px;
-  margin: 0 0 12px;
-  color: var(--qq-accent);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  text-shadow: 
-    0 0 6px var(--qq-accent),
-    0 0 12px var(--qq-accent);
-}
-
-.qq-stat-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.qq-stat {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--qq-accent);
-}
-
-.qq-stat:last-child {
+.qq-section:last-of-type {
   border-bottom: none;
-  padding-bottom: 0;
+}
+
+.qq-section-title {
+  margin: 0 0 12px;
+  font-size: 12px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--qq-accent);
+}
+
+.qq-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.qq-stat-card {
+  background: linear-gradient(145deg, rgba(10, 16, 22, 0.96), rgba(7, 12, 18, 0.9));
+  border: 1px solid rgba(159, 240, 255, 0.25);
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 0 16px rgba(0, 255, 255, 0.06);
+}
+
+.qq-stat-card.highlight {
+  border-color: var(--qq-accent);
+  box-shadow: 0 0 18px rgba(159, 240, 255, 0.18);
 }
 
 .qq-stat-label {
-  font-size: 12px;
-  color: var(--qq-muted);
+  font-size: 10px;
   letter-spacing: 0.2em;
+  color: var(--qq-muted);
   text-transform: uppercase;
 }
 
 .qq-stat-value {
-  font-size: 16px;
+  font-size: 18px;
+  font-family: var(--qq-hud-number-font);
+  letter-spacing: 0.08em;
   color: var(--qq-text);
-  font-weight: 600;
+}
+
+.qq-upgrade-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qq-upgrade-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid rgba(159, 240, 255, 0.25);
+  border-radius: 8px;
+  background: rgba(7, 12, 18, 0.9);
+}
+
+.qq-rarity-pill {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(159, 240, 255, 0.35);
+  color: var(--qq-text);
   letter-spacing: 0.12em;
-  text-align: right;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.qq-rarity-pill.common { border-color: rgba(159, 240, 255, 0.3); }
+.qq-rarity-pill.rare { border-color: var(--qq-rare); color: var(--qq-rare); }
+.qq-rarity-pill.legendary { border-color: var(--qq-legendary); color: var(--qq-legendary); box-shadow: 0 0 8px rgba(255, 215, 0, 0.2); }
+
+.qq-upgrade-count {
+  font-weight: 700;
+  color: var(--qq-accent);
+  letter-spacing: 0.1em;
+}
+
+.qq-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.qq-pill {
   padding: 4px 10px;
-  border-radius: 0;
-  background: rgba(0, 0, 0, 0.9);
-  border: 2px solid var(--qq-accent);
-  box-shadow:
-    0 0 8px var(--qq-accent),
-    inset 0 0 8px rgba(0, 255, 255, 0.15);
-  text-shadow: 
-    0 0 4px currentColor,
-    0 0 8px currentColor;
+  border-radius: 999px;
+  border: 1px solid #d9a441;
+  color: #e9c46a;
+  background: linear-gradient(120deg, rgba(217, 164, 65, 0.1), rgba(217, 164, 65, 0.05));
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .qq-achievement-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 10px;
-  margin-top: 10px;
+  gap: 12px;
+}
+
+.qq-achievement-grid-wide {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
 }
 
 .qq-achievement-card {
-  background: rgba(0, 0, 0, 0.9);
-  border: 2px solid var(--qq-accent);
-  border-radius: 0;
-  padding: 10px;
-  min-height: 85px;
-  box-shadow:
-    0 0 8px var(--qq-accent),
-    inset 0 0 8px rgba(0, 255, 255, 0.15);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  transition: all 0.15s ease-out;
-  cursor: pointer;
+  background: linear-gradient(145deg, rgba(12, 9, 4, 0.9), rgba(20, 14, 6, 0.85));
+  border: 1px solid rgba(217, 164, 65, 0.35);
+  border-radius: 8px;
+  padding: 12px;
+  color: #e9c46a;
+  box-shadow: 0 0 18px rgba(217, 164, 65, 0.16);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.qq-achievement-card:not(.locked):hover,
-.qq-achievement-card:not(.locked):focus {
-  transform: scale(1.05);
-  box-shadow:
-    0 0 16px var(--qq-accent),
-    0 0 32px rgba(0, 255, 255, 0.6),
-    inset 0 0 16px rgba(0, 255, 255, 0.3);
-  outline: none;
-}
-
-.qq-achievement-card:not(.locked):hover .qq-achievement-name,
-.qq-achievement-card:not(.locked):focus .qq-achievement-name {
-  text-shadow: 
-    0 0 8px currentColor,
-    0 0 16px currentColor;
+.qq-achievement-card.unlocked {
+  border-color: rgba(217, 164, 65, 0.55);
+  box-shadow: 0 0 22px rgba(217, 164, 65, 0.25);
 }
 
 .qq-achievement-card.locked {
-  opacity: 0.5;
-  border-color: rgba(0, 255, 255, 0.3);
-  cursor: default;
+  opacity: 0.45;
+  color: var(--qq-muted);
 }
 
-.qq-achievement-icon {
-  font-size: 14px;
-  margin-bottom: 4px;
-  color: var(--qq-accent);
-  text-shadow: 
-    0 0 4px var(--qq-accent),
-    0 0 8px var(--qq-accent);
+.qq-achievement-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 26px rgba(217, 164, 65, 0.3);
 }
 
 .qq-achievement-name {
-  font-size: 11px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: var(--qq-text);
-  line-height: 1.3;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffdd8a;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
 }
 
 .qq-achievement-desc {
-  font-size: 10px;
-  color: var(--qq-muted);
+  font-size: 12px;
+  color: #f6e6c7;
+  margin-bottom: 8px;
   line-height: 1.4;
-  margin-bottom: 4px;
-  text-transform: none;
-  letter-spacing: 0.05em;
 }
 
 .qq-achievement-meta {
-  font-size: 9px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: #e9c46a;
+}
+
+.qq-boss-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qq-boss-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border: 1px solid rgba(159, 240, 255, 0.2);
+  border-radius: 6px;
+  background: rgba(7, 12, 18, 0.8);
+}
+
+.qq-boss-meta {
   color: var(--qq-muted);
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
+}
+
+.qq-affix-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.qq-affix-card {
+  padding: 10px 12px;
+  border: 1px solid rgba(159, 240, 255, 0.25);
+  border-radius: 6px;
+  background: rgba(9, 13, 18, 0.9);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.08);
+}
+
+.qq-affix-name {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.qq-affix-meta {
+  color: var(--qq-muted);
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
+.qq-collection-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.qq-summary-pill {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(159, 240, 255, 0.25);
+  background: rgba(7, 12, 18, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.qq-summary-pill .label {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--qq-muted);
+  text-transform: uppercase;
+}
+
+.qq-summary-pill .value {
+  font-size: 18px;
+  letter-spacing: 0.1em;
+}
+
+.qq-summary-pill.accent {
+  border-color: rgba(217, 164, 65, 0.6);
+  box-shadow: 0 0 16px rgba(217, 164, 65, 0.2);
+  color: #e9c46a;
+}
+
+.qq-collection-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.qq-filter-chip {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(159, 240, 255, 0.25);
+  background: transparent;
+  color: var(--qq-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+}
+
+.qq-filter-chip.active,
+.qq-filter-chip:hover {
+  color: var(--qq-accent);
+  border-color: var(--qq-accent);
+  box-shadow: 0 0 12px rgba(159, 240, 255, 0.3);
+}
+
+.qq-collection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.collection-card {
+  border: 1px solid rgba(159, 240, 255, 0.18);
+  border-radius: 8px;
+  padding: 12px;
+  background: linear-gradient(160deg, rgba(7, 12, 18, 0.92), rgba(8, 16, 22, 0.88));
+  box-shadow: 0 0 16px rgba(0, 255, 255, 0.08);
+}
+
+.collection-card.unlocked.legendary {
+  box-shadow: 0 0 18px rgba(217, 164, 65, 0.15);
+}
+
+.collection-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--qq-muted);
+  margin-bottom: 6px;
+}
+
+.collection-card__name {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+
+.collection-card__desc {
+  font-size: 12px;
+  color: var(--qq-muted);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.collection-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.collection-card .rarity {
+  color: var(--qq-muted);
+}
+
+.collection-card .boost {
+  color: var(--qq-accent);
+}
+
+.collection-card .category {
+  padding: 4px 8px;
+  border: 1px solid rgba(159, 240, 255, 0.25);
+  border-radius: 6px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+.collection-card.locked {
+  opacity: 0.6;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  border-style: dashed;
+}
+
+.collection-card.locked .collection-card__name {
+  font-size: 20px;
+  color: var(--qq-muted);
+}
+
+.pip-bar {
+  display: flex;
+  gap: 4px;
+}
+
+.pip {
+  width: 12px;
+  height: 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(159, 240, 255, 0.3);
+}
+
+.pip.filled {
+  background: var(--qq-accent);
+  box-shadow: 0 0 8px rgba(159, 240, 255, 0.6);
+}
+
+.qq-collection-hint {
+  margin: 10px 0 0;
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+.qq-strong {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.qq-achievement-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 4, 6, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease-out;
+  z-index: 250;
+}
+
+.qq-achievement-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.qq-achievement-modal {
+  max-width: 400px;
+  width: 92%;
+  background: linear-gradient(145deg, rgba(27, 18, 6, 0.95), rgba(14, 9, 4, 0.9));
+  border: 1px solid rgba(217, 164, 65, 0.65);
+  border-radius: 10px;
+  padding: 20px 18px 16px;
+  box-shadow: 0 0 30px rgba(217, 164, 65, 0.3);
+  transform: translateY(10px) scale(0.96);
+  opacity: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.qq-achievement-modal.animate-in {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.qq-achievement-modal.animate-out {
+  transform: translateY(8px) scale(0.95);
+  opacity: 0;
+}
+
+.qq-achievement-badge {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 2px solid rgba(217, 164, 65, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffdd8a;
+  font-size: 20px;
+  margin: 0 auto 10px;
+  box-shadow: 0 0 18px rgba(217, 164, 65, 0.4);
+  animation: qq-pulse 1.4s infinite;
+}
+
+.qq-achievement-copy {
+  text-align: center;
+}
+
+.qq-achievement-copy h2 {
+  margin: 4px 0 6px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.qq-achievement-copy p {
+  margin: 0 0 8px;
+  color: #f6e6c7;
+  line-height: 1.4;
+}
+
+.qq-hint {
+  color: #e9c46a;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.qq-achievement-actions {
+  margin-top: 12px;
 }
 
 /* SUMMARY */
@@ -1854,7 +2063,6 @@ body.qq-no-scanlines .qq-game-frame canvas {
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .qq-howto-grid,
-  .qq-stats-grid,
   .qq-twin-controls {
     grid-template-columns: 1fr;
   }
@@ -1865,14 +2073,14 @@ body.qq-no-scanlines .qq-game-frame canvas {
 }
 
 @media (max-width: 900px) {
-  .qq-stats-grid {
-    grid-template-columns: 1fr;
+  .qq-stat-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   }
 }
 
 @media (max-width: 600px) {
-  .qq-stats-grid {
-    grid-template-columns: 1fr;
+  .qq-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

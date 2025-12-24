@@ -73,6 +73,10 @@ export const BossSystem = {
             x: boss.x,
             y: boss.y,
         });
+        if (state.runStats) {
+            state.runStats.bossId = boss.id;
+            state.runStats.bossName = boss.name;
+        }
         return boss;
     },
 

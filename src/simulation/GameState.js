@@ -8,6 +8,7 @@ import { PLAYER_BASE } from "../config/player.js";
 export function createInitialState(seed = 0, config = {}) {
     const playerCount = Math.max(1, Math.floor(config.playerCount ?? 1));
     const players = createPlayers(playerCount);
+    const affixId = config.affix?.id ?? null;
 
     return {
         tick: 0,
@@ -77,6 +78,10 @@ export function createInitialState(seed = 0, config = {}) {
             partnerRevives: 0,
             syncedUpgradePicks: 0,
             synergies: [],
+            upgradesPicked: 0,
+            bossId: null,
+            bossName: null,
+            affixId,
         },
         runSummary: null,
         events: [],

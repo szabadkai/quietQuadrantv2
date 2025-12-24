@@ -31,6 +31,10 @@ export const UpgradeSystem = {
             }
         }
 
+        if (state.runStats) {
+            state.runStats.upgradesPicked = (state.runStats.upgradesPicked ?? 0) + 1;
+        }
+
         return true;
     },
 };

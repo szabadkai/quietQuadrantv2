@@ -62,7 +62,13 @@ export const GameEndSystem = {
       teamDamageShare: stats.teamDamageShare,
       partnerRevives: stats.partnerRevives,
       syncedUpgradePicks: stats.syncedUpgradePicks,
-      synergies: stats.synergies ?? []
+      synergies: stats.synergies ?? [],
+      upgradesPicked: stats.upgradesPicked ?? 0,
+      affixId: stats.affixId ?? state.affix?.id ?? null,
+      affixName: state.affix?.name ?? null,
+      bossId: stats.bossId ?? state.boss?.id ?? null,
+      bossName: stats.bossName ?? state.boss?.name ?? null,
+      wavesCleared: stats.wave ?? 0
     };
   }
 };

@@ -1,114 +1,135 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useUIStore } from "../../state/useUIStore.js";
 import { useMetaStore } from "../../state/useMetaStore.js";
 import { UPGRADES } from "../../config/upgrades.js";
 import { Button } from "../components/Button.jsx";
 
-const RARITY_ORDER = { common: 0, rare: 1, legendary: 2 };
+const RARITY_ORDER = { legendary: 0, rare: 1, common: 2 };
 
 export function CollectionScreen() {
   const setScreen = useUIStore((s) => s.actions.setScreen);
   const cardCollection = useMetaStore((s) => s.cardCollection);
   const [filter, setFilter] = useState("all");
 
-  const upgrades = useMemo(() => {
-    let list = Object.values(UPGRADES);
-
-    if (filter !== "all") {
-      list = list.filter((u) => u.rarity === filter);
-    }
-
-    list.sort((a, b) => {
-      const rarityDiff = RARITY_ORDER[a.rarity] - RARITY_ORDER[b.rarity];
-      if (rarityDiff !== 0) return rarityDiff;
-      return a.name.localeCompare(b.name);
-    });
-
-    return list;
-  }, [filter]);
-
-  const unlockedSet = new Set(cardCollection.unlockedUpgrades);
+  const unlockedSet = useMemo(
+    () => new Set(cardCollection.unlockedUpgrades ?? []),
+    [cardCollection.unlockedUpgrades]
+  );
   const boosts = cardCollection.upgradeBoosts || {};
 
-  const stats = useMemo(() => {
-    const total = Object.keys(UPGRADES).length;
-    const unlocked = cardCollection.unlockedUpgrades.length;
-    const legendaries = cardCollection.unlockedUpgrades.filter(
-      (id) => UPGRADES[id]?.rarity === "legendary"
+  const unlockedUpgrades = useMemo(() => {
+    let list = UPGRADES.filter((upgrade) => unlockedSet.has(upgrade.id));
+    if (filter !== "all") {
+      list = list.filter((upgrade) => upgrade.rarity === filter);
+    }
+    return list
+      .slice()
+      .sort((a, b) => {
+        const rarityDiff = (RARITY_ORDER[a.rarity] ?? 0) - (RARITY_ORDER[b.rarity] ?? 0);
+        if (rarityDiff !== 0) return rarityDiff;
+        return a.name.localeCompare(b.name);
+      });
+  }, [filter, unlockedSet]);
+
+  const summary = useMemo(() => {
+    const unlocked = cardCollection.unlockedUpgrades?.length ?? 0;
+    const legendaries = (cardCollection.unlockedUpgrades ?? []).filter(
+      (id) => UPGRADES.find((u) => u.id === id)?.rarity === "legendary"
     ).length;
-    return { total, unlocked, legendaries };
+    const collected = cardCollection.totalCardsCollected ?? unlocked;
+    return { unlocked, legendaries, collected };
   }, [cardCollection]);
 
+  const showMystery = filter === "all" && unlockedUpgrades.length < 30;
+
   return (
-    <div className="qq-screen">
-      <div className="qq-panel qq-panel-wide">
-        <div className="qq-screen-header">
-          <span className="qq-label">COLLECTION</span>
-          <h1>Upgrade Cards</h1>
-          <p className="qq-muted">
-            {stats.unlocked}/{stats.total} unlocked · {stats.legendaries} legendaries
-          </p>
+    <div className="qq-screen qq-screen-overlay">
+      <div className="qq-panel-collection">
+        <div className="qq-section">
+          <div className="qq-collection-summary">
+            <SummaryPill label="Cards Unlocked" value={summary.unlocked} />
+            <SummaryPill label="Legendaries" value={summary.legendaries} accent />
+            <SummaryPill label="Cards Collected" value={summary.collected} />
+          </div>
         </div>
 
-        <div className="qq-filter-bar">
-          {["all", "common", "rare", "legendary"].map((f) => (
+        <div className="qq-section qq-collection-filters">
+          {["all", "common", "rare", "legendary"].map((value) => (
             <button
-              key={f}
+              key={value}
               type="button"
-              className={`qq-filter-btn ${filter === f ? "active" : ""}`}
-              onClick={() => setFilter(f)}
+              className={`qq-filter-chip ${filter === value ? "active" : ""}`}
+              onClick={() => setFilter(value)}
             >
-              {f.charAt(0).toUpperCase() + f.slice(1)}
+              {value.charAt(0).toUpperCase() + value.slice(1)}
             </button>
           ))}
         </div>
 
-        <div className="qq-collection-grid">
-          {upgrades.map((upgrade) => {
-            const unlocked = unlockedSet.has(upgrade.id);
-            const boostLevel = boosts[upgrade.id] || 0;
+        <div className="qq-section">
+          <div className="qq-collection-grid">
+            {unlockedUpgrades.map((upgrade) => {
+              const boost = boosts[upgrade.id] ?? 0;
+              const category = upgrade.category ?? "General";
+              return (
+                <div
+                  key={upgrade.id}
+                  className={`collection-card unlocked ${upgrade.rarity}`}
+                >
+                  <div className="collection-card__header">
+                    <span className="rarity">{upgrade.rarity}</span>
+                    {boost > 0 && <span className="boost">+{boost}</span>}
+                  </div>
+                  <div className="collection-card__name">{upgrade.name}</div>
+                  <div className="collection-card__desc">{upgrade.description}</div>
+                  <div className="collection-card__meta">
+                    <span className="category">{category}</span>
+                    <PipBar level={boost} />
+                  </div>
+                </div>
+              );
+            })}
 
-            return (
-              <div
-                key={upgrade.id}
-                className={`qq-collection-card ${unlocked ? "" : "locked"}`}
-                data-rarity={upgrade.rarity}
-              >
-                {unlocked ? (
-                  <>
-                    <div className="qq-card-rarity">{upgrade.rarity}</div>
-                    <div className="qq-card-name">{upgrade.name}</div>
-                    <div className="qq-card-desc">{upgrade.description}</div>
-                    <div className="qq-card-boosts">
-                      {[...Array(5)].map((_, i) => (
-                        <span
-                          key={i}
-                          className={`qq-boost-pip ${i < boostLevel ? "filled" : ""}`}
-                        >
-                          ●
-                        </span>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="qq-card-mystery">?</div>
-                    <div className="qq-card-hint">
-                      {upgrade.rarity} upgrade
-                    </div>
-                  </>
-                )}
+            {showMystery && (
+              <div className="collection-card locked">
+                <div className="collection-card__name">?</div>
+                <div className="collection-card__desc">
+                  More to discover... Defeat bosses to unlock new cards.
+                </div>
               </div>
-            );
-          })}
+            )}
+          </div>
         </div>
+
+        <p className="qq-muted qq-collection-hint">
+          Defeat bosses to unlock new cards and boost existing ones. Boosted cards appear more often!
+        </p>
 
         <div className="qq-screen-actions">
           <Button primary onClick={() => setScreen("title")}>
-            Back to Menu
+            Back
           </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function PipBar({ level }) {
+  return (
+    <div className="pip-bar">
+      {[...Array(5)].map((_, idx) => (
+        <span key={idx} className={`pip ${idx < level ? "filled" : ""}`} />
+      ))}
+    </div>
+  );
+}
+
+function SummaryPill({ label, value, accent = false }) {
+  return (
+    <div className={`qq-summary-pill ${accent ? "accent" : ""}`}>
+      <span className="label">{label}</span>
+      <span className="value">{value}</span>
     </div>
   );
 }
