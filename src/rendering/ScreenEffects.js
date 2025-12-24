@@ -89,28 +89,28 @@ export class ScreenEffects {
     processEvents(events) {
         for (const event of events) {
             switch (event.type) {
-                case "player-hit":
-                    this.onPlayerHit();
-                    break;
-                case "defeat":
-                    this.onPlayerDeath();
-                    break;
-                case "boss-phase":
-                    this.onBossPhaseChange();
-                    break;
-                case "boss-death":
-                    this.onBossDeath();
-                    break;
-                case "level-up":
-                    this.onLevelUp();
-                    break;
-                case "crit-hit":
-                    this.shake(0.006, 100);
-                    break;
-                case "victory":
-                    this.flash(0x00ff00, 200, 0.3);
-                    this.startSlowMo(0.3, 600);
-                    break;
+            case "player-hit":
+                this.onPlayerHit();
+                break;
+            case "defeat":
+                this.onPlayerDeath();
+                break;
+            case "boss-phase":
+                this.onBossPhaseChange();
+                break;
+            case "boss-death":
+                this.onBossDeath();
+                break;
+            case "level-up":
+                this.onLevelUp();
+                break;
+            case "crit-hit":
+                this.shake(0.006, 100);
+                break;
+            case "victory":
+                this.flash(0x00ff00, 200, 0.3);
+                this.startSlowMo(0.3, 600);
+                break;
             }
         }
     }

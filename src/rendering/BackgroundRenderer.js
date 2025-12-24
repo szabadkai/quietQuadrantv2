@@ -43,8 +43,8 @@ export class BackgroundRenderer {
             state?.phase === "intermission"
                 ? 0.65
                 : state?.phase === "boss"
-                ? 0.85
-                : 1;
+                    ? 0.85
+                    : 1;
 
         this.graphics.clear();
         this.graphics.fillStyle(PALETTE_HEX.background, 1);

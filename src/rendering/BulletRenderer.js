@@ -28,8 +28,8 @@ export class BulletRenderer {
                     poolKey === "player"
                         ? GLOW_PRESETS.bulletPlayer
                         : poolKey === "boss"
-                        ? GLOW_PRESETS.bulletBoss
-                        : GLOW_PRESETS.bulletEnemy;
+                            ? GLOW_PRESETS.bulletBoss
+                            : GLOW_PRESETS.bulletEnemy;
                 GlowManager.applyGlow(sprite, preset);
             }
         }
@@ -86,8 +86,8 @@ export class BulletRenderer {
             poolKey === "player"
                 ? GLOW_PRESETS.bulletPlayer
                 : poolKey === "boss"
-                ? GLOW_PRESETS.bulletBoss
-                : GLOW_PRESETS.bulletEnemy;
+                    ? GLOW_PRESETS.bulletBoss
+                    : GLOW_PRESETS.bulletEnemy;
         GlowManager.applyGlow(sprite, preset);
 
         return sprite;

@@ -5,64 +5,63 @@ import { rollUpgrades } from "../../src/simulation/UpgradeRoller.js";
 import { LevelSystem } from "../../src/simulation/LevelSystem.js";
 import { UpgradeSystem } from "../../src/simulation/UpgradeSystem.js";
 
-
 describe("UpgradeSystem", () => {
-  it("applies stat upgrades to player", () => {
-    const state = createInitialState(1);
-    const player = state.players[0];
-    const baseSpeed = player.speed;
+    it("applies stat upgrades to player", () => {
+        const state = createInitialState(1);
+        const player = state.players[0];
+        const baseSpeed = player.speed;
 
-    UpgradeSystem.applyUpgrade(state, player.id, "engine-tune");
+        UpgradeSystem.applyUpgrade(state, player.id, "engine-tune");
 
-    expect(player.speed).toBeGreaterThan(baseSpeed);
-  });
+        expect(player.speed).toBeGreaterThan(baseSpeed);
+    });
 
-  it("adds projectile count for sidecar shot", () => {
-    const state = createInitialState(1);
-    const player = state.players[0];
+    it("adds projectile count for sidecar shot", () => {
+        const state = createInitialState(1);
+        const player = state.players[0];
 
-    UpgradeSystem.applyUpgrade(state, player.id, "sidecar");
+        UpgradeSystem.applyUpgrade(state, player.id, "sidecar");
 
-    expect(player.projectileCount).toBe(2);
-  });
+        expect(player.projectileCount).toBe(2);
+    });
 });
 
 describe("UpgradeRoller", () => {
-  it("returns valid upgrade options", () => {
-    const state = createInitialState(1);
-    const rng = new SeededRandom(5);
-    const options = rollUpgrades(state.players[0], rng, 3);
+    it("returns valid upgrade options", () => {
+        const state = createInitialState(1);
+        const rng = new SeededRandom(5);
+        const options = rollUpgrades(state.players[0], rng, 3);
 
-    expect(options.length).toBeGreaterThan(0);
-    expect(new Set(options).size).toBe(options.length);
-  });
+        expect(options.length).toBeGreaterThan(0);
+        expect(new Set(options).size).toBe(options.length);
+    });
 
-  it("only offers unlocked upgrades when provided", () => {
-    const state = createInitialState(1);
-    const rng = new SeededRandom(5);
-    const unlocked = ["engine-tune"];
-    const options = rollUpgrades(
-      state.players[0],
-      rng,
-      3,
-      {},
-      unlocked
-    );
+    it("only offers unlocked upgrades when provided", () => {
+        const state = createInitialState(1);
+        const rng = new SeededRandom(5);
+        const unlocked = ["engine-tune"];
+        const options = rollUpgrades(
+            state.players[0],
+            rng,
+            3,
+            {},
+            unlocked
+        );
 
-    expect(options).toEqual(["engine-tune"]);
-  });
+        expect(options).toEqual(["engine-tune"]);
+    });
 });
 
 describe("LevelSystem", () => {
-  it("respects unlockedUpgrades when rolling options", () => {
-    const unlocked = ["rapid-fire"];
-    const state = createInitialState(1, { unlockedUpgrades: unlocked });
-    const rng = new SeededRandom(7);
-    state.xpQueue.push({ playerId: state.players[0].id, amount: 200 });
+    it("respects unlockedUpgrades when rolling options", () => {
+        const unlocked = ["rapid-fire"];
+        const state = createInitialState(1, { unlockedUpgrades: unlocked });
+        const rng = new SeededRandom(7);
+        state.xpQueue.push({ playerId: state.players[0].id, amount: 200 });
 
-    LevelSystem.update(state, rng);
+        LevelSystem.update(state, rng);
 
-    expect(state.pendingUpgrade).not.toBeNull();
-    expect(state.pendingUpgrade.options).toEqual(unlocked);
-  });
+        expect(state.pendingUpgrade).not.toBeNull();
+        expect(state.pendingUpgrade.options).toEqual(unlocked);
+    });
 });

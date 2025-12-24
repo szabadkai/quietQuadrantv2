@@ -26,6 +26,7 @@ export function createInitialState(seed = 0, config = {}) {
             intermission: 0,
         },
         boss: null,
+        bossDeathTimer: 0,
         nextBulletId: 1,
         nextEnemyId: 1,
         nextPickupId: 1,

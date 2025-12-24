@@ -8,6 +8,7 @@ import { spawnExplosion } from "./effects/ExplosionEffect.js";
 import { spawnExplosionRing } from "./effects/ExplosionRingEffect.js";
 import { spawnHeal } from "./effects/HealEffect.js";
 import { spawnHitSpark } from "./effects/HitSparkEffect.js";
+import { spawnBossDeath } from "./effects/BossDeathEffect.js";
 import { spawnLevelUp } from "./effects/LevelUpEffect.js";
 import { spawnPlayerDown } from "./effects/PlayerDownEffect.js";
 import { spawnPlayerDefeat } from "./effects/PlayerDefeatEffect.js";
@@ -326,7 +327,7 @@ export class EffectsRenderer {
         else if (t === "level-up") spawnLevelUp(this, x, y);
         else if (t === "dash") spawnDashTrail(this, x, y);
         else if (t === "boss-death")
-            spawnExplosion(this, x, y, PALETTE_HEX.boss, 24);
+            spawnBossDeath(this, x, y, radius ?? undefined);
         else if (t === "crit-hit") spawnExplosion(this, x, y);
         else if (t === "shrapnel") spawnShrapnelBurst(this, x, y);
         else if (t === "dash-sparks")

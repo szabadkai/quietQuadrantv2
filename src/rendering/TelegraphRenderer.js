@@ -69,21 +69,21 @@ export class TelegraphRenderer {
             this.graphics.lineStyle(2, telegraph.color, alpha * 1.5);
 
             switch (telegraph.type) {
-                case "circle":
-                    this.renderCircle(telegraph, progress);
-                    break;
-                case "line":
-                    this.renderLine(telegraph, progress);
-                    break;
-                case "cone":
-                    this.renderCone(telegraph, progress);
-                    break;
-                case "rect":
-                    this.renderRect(telegraph, progress);
-                    break;
-                case "ring":
-                    this.renderRing(telegraph, progress);
-                    break;
+            case "circle":
+                this.renderCircle(telegraph, progress);
+                break;
+            case "line":
+                this.renderLine(telegraph, progress);
+                break;
+            case "cone":
+                this.renderCone(telegraph, progress);
+                break;
+            case "rect":
+                this.renderRect(telegraph, progress);
+                break;
+            case "ring":
+                this.renderRing(telegraph, progress);
+                break;
             }
         }
     }
@@ -196,62 +196,62 @@ export class TelegraphRenderer {
 
     addPatternTelegraph(boss, pattern) {
         switch (pattern) {
-            case "slam":
+        case "slam":
+            this.addTelegraph({
+                type: "circle",
+                x: boss.x,
+                y: boss.y,
+                radius: 100,
+                duration: 800,
+                color: PALETTE_HEX.danger,
+            });
+            break;
+        case "beam-spin":
+            this.addTelegraph({
+                type: "line",
+                x: boss.x,
+                y: boss.y,
+                width: 30,
+                height: 400,
+                angle: 0,
+                duration: 600,
+                color: PALETTE_HEX.boss,
+            });
+            break;
+        case "lane-beams":
+            for (let i = 0; i < 3; i++) {
                 this.addTelegraph({
-                    type: "circle",
-                    x: boss.x,
-                    y: boss.y,
-                    radius: 100,
-                    duration: 800,
+                    type: "rect",
+                    x: ARENA_WIDTH * (0.25 + i * 0.25),
+                    y: ARENA_HEIGHT / 2,
+                    width: 60,
+                    height: ARENA_HEIGHT,
+                    duration: 700,
                     color: PALETTE_HEX.danger,
                 });
-                break;
-            case "beam-spin":
-                this.addTelegraph({
-                    type: "line",
-                    x: boss.x,
-                    y: boss.y,
-                    width: 30,
-                    height: 400,
-                    angle: 0,
-                    duration: 600,
-                    color: PALETTE_HEX.boss,
-                });
-                break;
-            case "lane-beams":
-                for (let i = 0; i < 3; i++) {
-                    this.addTelegraph({
-                        type: "rect",
-                        x: ARENA_WIDTH * (0.25 + i * 0.25),
-                        y: ARENA_HEIGHT / 2,
-                        width: 60,
-                        height: ARENA_HEIGHT,
-                        duration: 700,
-                        color: PALETTE_HEX.danger,
-                    });
-                }
-                break;
-            case "cone-volley":
-                this.addTelegraph({
-                    type: "cone",
-                    x: boss.x,
-                    y: boss.y,
-                    radius: 250,
-                    angle: Math.PI / 2,
-                    duration: 500,
-                    color: PALETTE_HEX.boss,
-                });
-                break;
-            case "pulse-ring":
-                this.addTelegraph({
-                    type: "ring",
-                    x: boss.x,
-                    y: boss.y,
-                    radius: 150,
-                    duration: 600,
-                    color: PALETTE_HEX.boss,
-                });
-                break;
+            }
+            break;
+        case "cone-volley":
+            this.addTelegraph({
+                type: "cone",
+                x: boss.x,
+                y: boss.y,
+                radius: 250,
+                angle: Math.PI / 2,
+                duration: 500,
+                color: PALETTE_HEX.boss,
+            });
+            break;
+        case "pulse-ring":
+            this.addTelegraph({
+                type: "ring",
+                x: boss.x,
+                y: boss.y,
+                radius: 150,
+                duration: 600,
+                color: PALETTE_HEX.boss,
+            });
+            break;
         }
     }
 

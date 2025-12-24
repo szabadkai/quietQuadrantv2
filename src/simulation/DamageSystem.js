@@ -11,6 +11,7 @@ import { spawnEnemy } from "./EnemySystem.js";
 
 const PLAYER_PROJECTILE_MIN_RANGE =
     Math.max(ARENA_WIDTH, ARENA_HEIGHT) * 1.5;
+const BOSS_DEATH_ANIMATION_TICKS = Math.round(TICK_RATE * 1.5);
 
 export const DamageSystem = {
     update(state, rng) {
@@ -219,11 +220,16 @@ export const DamageSystem = {
         if (state.runStats) {
             state.runStats.bossDefeated = true;
         }
+        state.bossDeathTimer = Math.max(
+            state.bossDeathTimer ?? 0,
+            BOSS_DEATH_ANIMATION_TICKS
+        );
         state.events.push({
             type: "boss-death",
             x: boss.x,
             y: boss.y,
             bossId: boss.id,
+            radius: boss.radius,
         });
         state.boss = null;
     },

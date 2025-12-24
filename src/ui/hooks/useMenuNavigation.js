@@ -42,76 +42,76 @@ export function useMenuNavigation(items, options = {}) {
             const current = items[focusedIndex];
 
             switch (e.key) {
-                case "ArrowUp":
-                    e.preventDefault();
-                    if (columns === 1) {
-                        setFocusedIndexWithSound((i) => findNextEnabled(i, -1));
-                    } else {
-                        const newIdx = focusedIndex - columns;
-                        if (newIdx >= 0 || loop) {
-                            setFocusedIndexWithSound(
-                                findNextEnabled(focusedIndex, -columns)
-                            );
-                        }
+            case "ArrowUp":
+                e.preventDefault();
+                if (columns === 1) {
+                    setFocusedIndexWithSound((i) => findNextEnabled(i, -1));
+                } else {
+                    const newIdx = focusedIndex - columns;
+                    if (newIdx >= 0 || loop) {
+                        setFocusedIndexWithSound(
+                            findNextEnabled(focusedIndex, -columns)
+                        );
                     }
-                    break;
+                }
+                break;
 
-                case "ArrowDown":
-                    e.preventDefault();
-                    if (columns === 1) {
-                        setFocusedIndexWithSound((i) => findNextEnabled(i, 1));
-                    } else {
-                        const newIdx = focusedIndex + columns;
-                        if (newIdx < items.length || loop) {
-                            setFocusedIndexWithSound(
-                                findNextEnabled(focusedIndex, columns)
-                            );
-                        }
+            case "ArrowDown":
+                e.preventDefault();
+                if (columns === 1) {
+                    setFocusedIndexWithSound((i) => findNextEnabled(i, 1));
+                } else {
+                    const newIdx = focusedIndex + columns;
+                    if (newIdx < items.length || loop) {
+                        setFocusedIndexWithSound(
+                            findNextEnabled(focusedIndex, columns)
+                        );
                     }
-                    break;
+                }
+                break;
 
-                case "ArrowLeft":
-                    e.preventDefault();
-                    if (current?.onAdjust) {
-                        current.onAdjust(-1);
-                    } else if (columns > 1) {
-                        setFocusedIndexWithSound((i) => findNextEnabled(i, -1));
-                    }
-                    break;
+            case "ArrowLeft":
+                e.preventDefault();
+                if (current?.onAdjust) {
+                    current.onAdjust(-1);
+                } else if (columns > 1) {
+                    setFocusedIndexWithSound((i) => findNextEnabled(i, -1));
+                }
+                break;
 
-                case "ArrowRight":
-                    e.preventDefault();
-                    if (current?.onAdjust) {
-                        current.onAdjust(1);
-                    } else if (columns > 1) {
-                        setFocusedIndexWithSound((i) => findNextEnabled(i, 1));
-                    }
-                    break;
+            case "ArrowRight":
+                e.preventDefault();
+                if (current?.onAdjust) {
+                    current.onAdjust(1);
+                } else if (columns > 1) {
+                    setFocusedIndexWithSound((i) => findNextEnabled(i, 1));
+                }
+                break;
 
-                case "Enter":
-                case " ":
-                    e.preventDefault();
-                    if (current?.onActivate && !current.disabled) {
-                        soundManager.play("menuSelect");
-                        current.onActivate();
-                    }
-                    break;
+            case "Enter":
+            case " ":
+                e.preventDefault();
+                if (current?.onActivate && !current.disabled) {
+                    soundManager.play("menuSelect");
+                    current.onActivate();
+                }
+                break;
 
-                case "Escape":
-                    e.preventDefault();
-                    if (onBack) onBack();
-                    break;
+            case "Escape":
+                e.preventDefault();
+                if (onBack) onBack();
+                break;
 
-                case "1":
-                case "2":
-                case "3":
-                    const quickIdx = parseInt(e.key, 10) - 1;
-                    if (quickIdx < items.length && !items[quickIdx]?.disabled) {
-                        setFocusedIndexWithSound(quickIdx);
-                        soundManager.play("menuSelect");
-                        items[quickIdx]?.onActivate?.();
-                    }
-                    break;
+            case "1":
+            case "2":
+            case "3":
+                const quickIdx = parseInt(e.key, 10) - 1;
+                if (quickIdx < items.length && !items[quickIdx]?.disabled) {
+                    setFocusedIndexWithSound(quickIdx);
+                    soundManager.play("menuSelect");
+                    items[quickIdx]?.onActivate?.();
+                }
+                break;
             }
         };
 

@@ -90,47 +90,47 @@ export function useGlobalNavigation() {
             };
 
             switch (e.key) {
-                case "ArrowUp":
-                case "KeyW":
+            case "ArrowUp":
+            case "KeyW":
+                e.preventDefault();
+                move(-1);
+                break;
+            case "ArrowDown":
+            case "KeyS":
+                e.preventDefault();
+                move(1);
+                break;
+            case "ArrowLeft":
+            case "KeyA":
+                if (!isFormField) {
                     e.preventDefault();
                     move(-1);
-                    break;
-                case "ArrowDown":
-                case "KeyS":
+                }
+                break;
+            case "ArrowRight":
+            case "KeyD":
+                if (!isFormField) {
                     e.preventDefault();
                     move(1);
-                    break;
-                case "ArrowLeft":
-                case "KeyA":
-                    if (!isFormField) {
-                        e.preventDefault();
-                        move(-1);
-                    }
-                    break;
-                case "ArrowRight":
-                case "KeyD":
-                    if (!isFormField) {
-                        e.preventDefault();
-                        move(1);
-                    }
-                    break;
-                case "Enter":
-                case " ":
-                    if (!isFormField) {
-                        e.preventDefault();
-                        activateElement(focusable[navRef.current.focusIndex]);
-                    }
-                    break;
-                case "Escape": {
-                    const backTarget = findBackTarget(scope);
-                    if (backTarget) {
-                        e.preventDefault();
-                        activateElement(backTarget);
-                    }
-                    break;
                 }
-                default:
-                    break;
+                break;
+            case "Enter":
+            case " ":
+                if (!isFormField) {
+                    e.preventDefault();
+                    activateElement(focusable[navRef.current.focusIndex]);
+                }
+                break;
+            case "Escape": {
+                const backTarget = findBackTarget(scope);
+                if (backTarget) {
+                    e.preventDefault();
+                    activateElement(backTarget);
+                }
+                break;
+            }
+            default:
+                break;
             }
         };
 
@@ -153,7 +153,7 @@ export function useGlobalNavigation() {
                     focusable.length - 1
                 );
                 if (document.activeElement !== focusable[currentIndex]) {
-                        focusAndReveal(focusable[currentIndex]);
+                    focusAndReveal(focusable[currentIndex]);
                 }
 
                 const pad = readGamepad(0);
@@ -162,14 +162,14 @@ export function useGlobalNavigation() {
                         pad.buttons.dpadRight || pad.left.x > NAV_AXIS_THRESHOLD
                             ? 1
                             : pad.buttons.dpadLeft || pad.left.x < -NAV_AXIS_THRESHOLD
-                              ? -1
-                              : 0;
+                                ? -1
+                                : 0;
                     const verticalDir =
                         pad.buttons.dpadDown || pad.left.y > NAV_AXIS_THRESHOLD
                             ? 1
                             : pad.buttons.dpadUp || pad.left.y < -NAV_AXIS_THRESHOLD
-                              ? -1
-                              : 0;
+                                ? -1
+                                : 0;
 
                     const activeEl = document.activeElement;
                     const isSlider =

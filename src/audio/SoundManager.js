@@ -213,38 +213,38 @@ export class SoundManager {
     processEvents(events) {
         for (const event of events) {
             switch (event.type) {
-                case "shoot":
-                    this.play("shoot");
-                    break;
-                case "enemy-hit":
-                    this.play("hit");
-                    break;
-                case "enemy-death":
-                    this.play("kill");
-                    break;
-                case "player-hit":
-                    this.play("playerHit");
-                    break;
-                case "dash":
-                    this.play("dash");
-                    break;
-                case "xp-pickup":
-                    this.play("xpPickup");
-                    break;
-                case "level-up":
-                    this.play("levelUp");
-                    break;
-                case "boss-phase":
-                    this.play("bossPhase");
-                    break;
-                case "victory":
-                    this.play("victory");
-                    break;
-                case "defeat":
-                    this.play("defeat");
-                    this.play("defeatBoom", { delay: 0.08 });
-                    this.play("defeatShatter", { delay: 0.18 });
-                    break;
+            case "shoot":
+                this.play("shoot");
+                break;
+            case "enemy-hit":
+                this.play("hit");
+                break;
+            case "enemy-death":
+                this.play("kill");
+                break;
+            case "player-hit":
+                this.play("playerHit");
+                break;
+            case "dash":
+                this.play("dash");
+                break;
+            case "xp-pickup":
+                this.play("xpPickup");
+                break;
+            case "level-up":
+                this.play("levelUp");
+                break;
+            case "boss-phase":
+                this.play("bossPhase");
+                break;
+            case "victory":
+                this.play("victory");
+                break;
+            case "defeat":
+                this.play("defeat");
+                this.play("defeatBoom", { delay: 0.08 });
+                this.play("defeatShatter", { delay: 0.18 });
+                break;
             }
         }
     }
