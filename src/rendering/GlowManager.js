@@ -3,6 +3,8 @@
  */
 
 // Preset configurations for different sprite types
+// PERFORMANCE: Reduced quality for numerous objects (bullets, enemies, pickups)
+// while maintaining high quality for player and boss sprites
 const GLOW_PRESETS_BASE = {
     vectrex: {
         player: {
@@ -13,48 +15,48 @@ const GLOW_PRESETS_BASE = {
         },
         enemy: {
             color: 0x00ffff,
-            outerRadius: 1.5,
-            innerStrength: 0.15,
-            quality: 4,
+            outerRadius: 1,
+            innerStrength: 0.1,
+            quality: 2, // Reduced from 4
         },
         enemyElite: {
             color: 0xffff00,
             outerRadius: 1.5,
             innerStrength: 0.2,
-            quality: 4,
+            quality: 3, // Reduced from 4
         },
         bulletPlayer: {
             color: 0x00ffff,
             tint: 0x6dd6ff,
-            outerRadius: 3,
-            innerStrength: 0.5,
-            quality: 8,
+            outerRadius: 2,
+            innerStrength: 0.3,
+            quality: 2, // Reduced from 8
         },
         bulletEnemy: {
             color: 0xff0000,
             tint: 0xff6666,
-            outerRadius: 2,
-            innerStrength: 0.4,
-            quality: 6,
+            outerRadius: 1.5,
+            innerStrength: 0.3,
+            quality: 2, // Reduced from 6
         },
         bulletBoss: {
             color: 0xff00ff,
             tint: 0xff00ff,
-            outerRadius: 3,
-            innerStrength: 0.5,
-            quality: 8,
+            outerRadius: 2,
+            innerStrength: 0.4,
+            quality: 3, // Reduced from 8
         },
         pickup: {
             color: 0x00ff00,
-            outerRadius: 2,
-            innerStrength: 0.3,
-            quality: 6,
+            outerRadius: 1.5,
+            innerStrength: 0.2,
+            quality: 2, // Reduced from 6
         },
         boss: {
             color: 0xff00ff,
             outerRadius: 0,
             innerStrength: 0.1,
-            quality: 10,
+            quality: 8,
         },
     },
     christmas: {

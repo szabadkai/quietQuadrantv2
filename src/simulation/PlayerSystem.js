@@ -198,7 +198,8 @@ export const PlayerSystem = {
     },
 
     spawnProjectiles(state, player, rng, damageMultiplier, options = {}) {
-        const count = player.projectileCount ?? 1;
+        const baseCount = player.projectileCount ?? 1;
+        const count = Math.min(baseCount, 25); // Performance cap: max 25 projectiles per burst
         const spreadRad = ((player.spreadDeg ?? 0) * Math.PI) / 180;
         const baseAngle = Math.atan2(player.aimY, player.aimX);
         const startAngle = count > 1 ? baseAngle - spreadRad / 2 : baseAngle;
@@ -290,7 +291,8 @@ export const PlayerSystem = {
             bonus += (1 - healthRatio) * player.berserkMaxBonus;
         }
         const multiplier = Math.max(0.1, 1 + bonus);
-        return Math.max(1, Math.round(player.fireCooldownTicks / multiplier));
+        const cooldown = Math.round(player.fireCooldownTicks / multiplier);
+        return Math.max(3, cooldown); // Performance cap: max ~20 shots/sec
     },
 
     applyBloodFuelCost(player) {

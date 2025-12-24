@@ -40,7 +40,7 @@ export function HUD({ state }) {
                         <div className="qq-hud-row">
                             <div className="qq-hud-label">XP</div>
                             <div className="qq-hud-value">
-                LV {player.level} {xpCurrent} / {xpTotal}
+                                LV {player.level} {xpCurrent} / {xpTotal}
                             </div>
                         </div>
                         <XPBar current={player.xp} toNext={player.xpToNext} />
@@ -57,6 +57,16 @@ export function HUD({ state }) {
                         <div className="qq-hud-row">
                             <div className="qq-hud-label">CLOCK</div>
                             <div className="qq-hud-value qq-hud-value-large">{clock}</div>
+                        </div>
+                        <div className="qq-hud-row">
+                            <div className="qq-hud-label">FPS</div>
+                            <div className={`qq-hud-value ${state.fps < 50 ? "qq-hud-tag" : ""}`}>
+                                {state.fps ?? "--"}
+                            </div>
+                        </div>
+                        <div className="qq-hud-row" style={{ fontSize: "8px", marginTop: "2px" }}>
+                            <div style={{ color: state.debug?.glow ? "var(--qq-accent)" : "#555" }}>GLW</div>
+                            <div style={{ color: state.debug?.crt ? "var(--qq-accent)" : "#555" }}>CRT</div>
                         </div>
                     </div>
                     <div className="qq-panel qq-hud-panel glow">

@@ -20,8 +20,8 @@ import { spawnSynergyUnlock } from "./effects/SynergyUnlockEffect.js";
 import { spawnVolatileBurst } from "./effects/VolatileBurstEffect.js";
 import { spawnXPPickup } from "./effects/XPPickupEffect.js";
 
-const MAX_PARTICLES = 300,
-    PARTICLE_POOL_SIZE = 350;
+const MAX_PARTICLES = 250;
+const PARTICLE_POOL_SIZE = 300;
 
 export class EffectsRenderer {
     constructor(scene) {
@@ -183,8 +183,8 @@ export class EffectsRenderer {
 
     updateParticles(dt) {
         for (let i = this.particles.length - 1; i >= 0; i--) {
-            const p = this.particles[i],
-                d = p.particleData;
+            const p = this.particles[i];
+            const d = p.particleData;
             d.life -= dt;
             if (d.life <= 0) {
                 p.setVisible(false);
@@ -192,9 +192,9 @@ export class EffectsRenderer {
                 this.activeCount--;
                 continue;
             }
-            d.vy += d.gravity * dt;
             p.x += d.vx * dt;
             p.y += d.vy * dt;
+            d.vy += (d.gravity ?? 0) * dt;
             if (d.fade) p.setAlpha(d.life / d.maxLife);
             if (d.shrink) p.setRadius(d.initialSize * (d.life / d.maxLife));
         }
@@ -377,23 +377,22 @@ export class EffectsRenderer {
     }
 
     destroy() {
-        this.pool.forEach((p) => p.destroy());
-        this.linePool.forEach((l) => l.destroy());
-        this.ringPool.forEach((r) => r.destroy());
-        this.rectPool.forEach((r) => r.destroy());
-        this.textPool.forEach((t) => t.destroy());
-        this.pool =
-            this.linePool =
+        this.linePool?.forEach((l) => l.destroy());
+        this.ringPool?.forEach((r) => r.destroy());
+        this.rectPool?.forEach((r) => r.destroy());
+        this.textPool?.forEach((t) => t.destroy());
+        this.pool?.forEach((p) => p.destroy());
+        this.linePool =
             this.ringPool =
             this.rectPool =
-            this.particles =
             this.activeLines =
             this.activeRings =
             this.activeRects =
             this.textPool =
             this.activeTexts =
             this.activeSequences =
+            this.particles = 
+            this.pool = 
                 [];
-        this.activeCount = 0;
     }
 }

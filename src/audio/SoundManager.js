@@ -221,16 +221,26 @@ export class SoundManager {
     }
 
     processEvents(events) {
+        // PERFORMANCE: Limit high-frequency sounds to prevent audio overload
+        let hitCount = 0;
+        let killCount = 0;
+        const HIT_LIMIT = 5;
+        const KILL_LIMIT = 5;
+        
         for (const event of events) {
             switch (event.type) {
             case "shoot":
                 this.play("shoot");
                 break;
             case "enemy-hit":
-                this.play("hit");
+                if (++hitCount <= HIT_LIMIT) {
+                    this.play("hit");
+                }
                 break;
             case "enemy-death":
-                this.play("kill");
+                if (++killCount <= KILL_LIMIT) {
+                    this.play("kill");
+                }
                 break;
             case "player-hit":
                 this.play("playerHit");

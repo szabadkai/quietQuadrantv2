@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CollisionSystem } from "../../src/simulation/CollisionSystem.js";
+import { SpatialGrid } from "../../src/utils/SpatialGrid.js";
 
 function createState() {
     return {
@@ -10,6 +11,7 @@ function createState() {
         xpQueue: [],
         players: [],
         events: [],
+        spatialGrid: new SpatialGrid(800, 600, 100),
     };
 }
 

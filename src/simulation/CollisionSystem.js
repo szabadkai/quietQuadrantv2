@@ -6,6 +6,15 @@ const PLAYER_BULLET_COLLISION_SCALE = 3;
 
 export const CollisionSystem = {
     update(state) {
+        if (!state.spatialGrid) return;
+        
+        // 1. Rebuild Grid with all alive enemies
+        state.spatialGrid.clear();
+        for (const enemy of state.enemies) {
+            if (enemy.alive) state.spatialGrid.insert(enemy);
+        }
+        
+        // 2. Perform Collision Checks
         this.playerBulletsVsEnemies(state);
         this.playerBulletsVsBoss(state);
         this.playerBulletsVsEnemyBullets(state);
@@ -19,7 +28,9 @@ export const CollisionSystem = {
         for (const bullet of state.bullets) {
             if (!bullet.alive || !this.isPlayerBullet(bullet)) continue;
 
-            for (const enemy of state.enemies) {
+            // Use spatial grid to find nearby enemies (100px radius covers most cases)
+            const nearby = state.spatialGrid.query(bullet.x, bullet.y, 100);
+            for (const enemy of nearby) {
                 if (!enemy.alive) continue;
 
                 if (!this.hitTest(bullet, enemy)) continue;
@@ -219,13 +230,16 @@ export const CollisionSystem = {
     },
 
     enemiesVsEnemies(state) {
-        const enemies = state.enemies;
-        for (let i = 0; i < enemies.length; i += 1) {
-            const enemyA = enemies[i];
+        for (const enemyA of state.enemies) {
             if (!enemyA.alive) continue;
-            for (let j = i + 1; j < enemies.length; j += 1) {
-                const enemyB = enemies[j];
-                if (!enemyB.alive) continue;
+            
+            // Query nearby enemies using spatial grid
+            const nearby = state.spatialGrid.query(enemyA.x, enemyA.y, enemyA.radius * 2);
+            for (const enemyB of nearby) {
+                if (!enemyB.alive || enemyA === enemyB) continue;
+                // Use ID ordering to prevent double-checking pairs
+                if (enemyA.id >= enemyB.id) continue;
+                
                 if (!this.hitTest(enemyA, enemyB)) continue;
                 this.resolveOverlap(enemyA, enemyB, 0.5, 0.5);
             }

@@ -115,6 +115,9 @@ export const DamageSystem = {
         const player = state.players.find((p) => p.id === damage.id);
         if (!player || !player.alive) return;
         if (player.invulnFrames > 0) return;
+        
+        // Debug mode: skip all damage when invincible
+        if (player.debugInvincible) return;
 
         if (player.shieldActive) {
             player.shieldActive = false;

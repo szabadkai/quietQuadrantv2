@@ -26,6 +26,7 @@ const DEFAULT_SETTINGS = {
     crtScanlines: true,
     crtIntensity: 0.5,
     colorTheme: "vectrex",
+    lowFX: false, // Performance mode: disables glow effects
 };
 
 function loadSettings() {
@@ -133,6 +134,7 @@ export class GameRenderer {
         this.telegraphRenderer = new TelegraphRenderer(scene);
         this.phaserScene = scene;
         this.audioResumed = false;
+        this.setupDebugHotkeys();
 
         soundManager.init();
         musicManager.init();
@@ -164,9 +166,15 @@ export class GameRenderer {
         GlowManager.setTheme(theme);
 
         // Apply CRT intensity to sprite glows
-        const intensity = settings.crtScanlines
+        // PERFORMANCE: lowFX mode disables all glow effects
+        let intensity = settings.crtScanlines
             ? settings.crtIntensity ?? 0.5
             : 0;
+        if (settings.lowFX) {
+            intensity = 0;
+        }
+        
+        GlowManager.setIntensity(intensity);
         if (this.playerRenderer)
             this.playerRenderer.setGlowIntensity(intensity);
         if (this.enemyRenderer) this.enemyRenderer.setGlowIntensity(intensity);
@@ -201,6 +209,10 @@ export class GameRenderer {
     render(interpolation) {
         const state = this.getState();
         if (!state) return;
+
+        // Add FPS and debug info to state for HUD display
+        state.fps = Math.round(this.game.loop.actualFps);
+        state.debug = this.debugSettings || { glow: true, crt: true };
 
         const events = state.events ?? [];
 
@@ -240,6 +252,35 @@ export class GameRenderer {
 
         musicManager.updateFromGameState(state);
         musicManager.update(16);
+    }
+
+    setupDebugHotkeys() {
+        this.debugSettings = { glow: true, crt: true };
+        
+        window.addEventListener("keydown", (e) => {
+            if (e.shiftKey) {
+                if (e.key.toLowerCase() === "g") {
+                    this.debugSettings.glow = !this.debugSettings.glow;
+                    const intensity = this.debugSettings.glow ? (loadSettings().crtIntensity || 0.5) : 0;
+                    this.updateGlowIntensityAcrossRenderers(intensity);
+                    console.log(`[DEBUG] Glow: ${this.debugSettings.glow ? "ON" : "OFF"}`);
+                }
+                if (e.key.toLowerCase() === "c") {
+                    this.debugSettings.crt = !this.debugSettings.crt;
+                    document.body.classList.toggle("qq-no-scanlines", !this.debugSettings.crt);
+                    console.log(`[DEBUG] CRT: ${this.debugSettings.crt ? "ON" : "OFF"}`);
+                }
+            }
+        });
+    }
+
+    updateGlowIntensityAcrossRenderers(intensity) {
+        GlowManager.setIntensity(intensity);
+        if (this.playerRenderer) this.playerRenderer.setGlowIntensity(intensity);
+        if (this.enemyRenderer) this.enemyRenderer.setGlowIntensity(intensity);
+        if (this.bulletRenderer) this.bulletRenderer.setGlowIntensity(intensity);
+        if (this.pickupRenderer) this.pickupRenderer.setGlowIntensity(intensity);
+        if (this.bossRenderer) this.bossRenderer.setGlowIntensity(intensity);
     }
 
     destroy() {

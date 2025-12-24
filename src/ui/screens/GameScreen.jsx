@@ -15,6 +15,7 @@ import { TouchTwinSticks } from "../components/TouchTwinSticks.jsx";
 import { isMobileDevice } from "../../utils/isMobileDevice.js";
 import { useGameTransmissions } from "../hooks/useGameTransmissions.js";
 import { useGameInitialization } from "../hooks/useGameInitialization.js";
+import { DevConsole } from "../components/DevConsole.jsx";
 
 export function GameScreen() {
     const containerRef = useRef(null);
@@ -159,6 +160,7 @@ export function GameScreen() {
                     />
                 )}
                 {paused && <PauseModal onResume={() => setPaused(false)} />}
+                <DevConsole />
             </div>
         </div>
     );

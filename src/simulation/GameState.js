@@ -4,6 +4,7 @@ import {
     PLAYER_RADIUS,
 } from "../utils/constants.js";
 import { PLAYER_BASE } from "../config/player.js";
+import { SpatialGrid } from "../utils/SpatialGrid.js";
 
 export function createInitialState(seed = 0, config = {}) {
     const playerCount = Math.max(1, Math.floor(config.playerCount ?? 1));
@@ -33,6 +34,7 @@ export function createInitialState(seed = 0, config = {}) {
         damageQueue: [],
         xpQueue: [],
         pendingUpgrade: null,
+        spatialGrid: new SpatialGrid(ARENA_WIDTH, ARENA_HEIGHT, 100),
         affix: null,
         cardBoosts: config.cardBoosts ?? {},
         unlockedUpgrades: Array.isArray(config.unlockedUpgrades)

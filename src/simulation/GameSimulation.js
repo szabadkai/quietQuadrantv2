@@ -66,6 +66,11 @@ export class GameSimulation {
         LevelSystem.update(this.state, this.rng);
         GameEndSystem.update(this.state);
 
+        // PERFORMANCE: Cap event queue to prevent UI/Audio lag in extreme waves
+        if (this.state.events.length > 100) {
+            this.state.events.length = 100;
+        }
+
         this.cleanupDeadEntities();
     }
 
@@ -100,5 +105,30 @@ export class GameSimulation {
             this.state.pendingUpgrade = null;
         }
         return applied;
+    }
+
+    // Debug methods for DevConsole
+    setWave(waveIndex) {
+        const index = Math.max(0, Math.min(waveIndex, this.state.wave?.maxWave ?? 19));
+        this.state.wave.current = index;
+        this.state.enemies = []; // Clear existing enemies
+        this.state.bullets = []; // Clear bullets
+        this.state.phase = "intermission";
+        this.state.wave.intermission = 1; // Start almost immediately
+        console.log(`[DEBUG] Wave set to ${index + 1}`);
+    }
+
+    forceUpgrade(playerId, upgradeId) {
+        // Apply upgrade directly regardless of state
+        UpgradeSystem.applyUpgrade(this.state, playerId, upgradeId);
+        console.log(`[DEBUG] Forced upgrade ${upgradeId} for player ${playerId}`);
+    }
+
+    toggleInvincibility(playerId) {
+        const player = this.state.players.find(p => p.id === playerId);
+        if (player) {
+            player.debugInvincible = !player.debugInvincible;
+            console.log(`[DEBUG] Invincibility for ${playerId}: ${player.debugInvincible ? "ON" : "OFF"}`);
+        }
     }
 }

@@ -130,10 +130,17 @@ BulletSystem.applyRicochet = function applyRicochet(state, bullet) {
 };
 
 function getNearestEnemy(state, bullet, range) {
+    // PERFORMANCE: Use spatial grid for faster nearest enemy lookup
+    if (!state.spatialGrid) return null;
+    
     const rangeSq = range > 0 ? range * range : Infinity;
     let best = null;
     let bestDist = Infinity;
-    for (const enemy of state.enemies) {
+    
+    const queryRadius = range > 0 ? range : 500;
+    const nearby = state.spatialGrid.query(bullet.x, bullet.y, queryRadius);
+    
+    for (const enemy of nearby) {
         if (!enemy.alive) continue;
         const dx = enemy.x - bullet.x;
         const dy = enemy.y - bullet.y;
