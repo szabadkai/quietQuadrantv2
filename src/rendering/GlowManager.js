@@ -117,7 +117,8 @@ export class GlowManager {
     static theme = "vectrex";
 
     static setIntensity(value) {
-        GlowManager.intensity = value;
+        const numeric = Number.isFinite(value) ? value : 0;
+        GlowManager.intensity = Math.max(0, Math.min(1, numeric));
     }
 
     static setTheme(theme) {
@@ -159,7 +160,8 @@ export class GlowManager {
         const config = GLOW_PRESETS_BASE[GlowManager.theme][presetKey];
         if (!config) return;
 
-        if (GlowManager.intensity > 0) {
+        const intensity = GlowManager.intensity;
+        if (intensity > 0) {
             const {
                 color = 0x00ffff,
                 outerRadius = 2,
@@ -172,14 +174,19 @@ export class GlowManager {
                 sprite.setTint(tint);
             }
 
-            sprite.preFX.addGlow(
-                color,
-                outerRadius,
-                0,
-                false,
-                innerStrength * GlowManager.intensity,
-                quality
-            );
+            const effectiveOuter = outerRadius * intensity;
+            const effectiveInner = innerStrength * intensity;
+
+            if (effectiveOuter > 0 || effectiveInner > 0) {
+                sprite.preFX.addGlow(
+                    color,
+                    effectiveOuter,
+                    0,
+                    false,
+                    effectiveInner,
+                    quality
+                );
+            }
         } else {
             // Clear tint only if it was set by glow system
             if (config.tint) {

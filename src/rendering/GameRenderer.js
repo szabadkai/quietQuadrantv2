@@ -52,7 +52,9 @@ function applyBodyClasses(settings) {
     );
 
     // Apply CRT intensity as CSS variable
-    const intensity = settings.crtIntensity ?? 0.5;
+    const intensity = settings.crtScanlines
+        ? settings.crtIntensity ?? 0.5
+        : 0;
     document.documentElement.style.setProperty("--crt-intensity", intensity);
     document.documentElement.style.setProperty("--glow-intensity", intensity);
 
@@ -160,7 +162,9 @@ export class GameRenderer {
         GlowManager.setTheme(theme);
 
         // Apply CRT intensity to sprite glows
-        const intensity = settings.crtIntensity ?? 0.5;
+        const intensity = settings.crtScanlines
+            ? settings.crtIntensity ?? 0.5
+            : 0;
         if (this.playerRenderer)
             this.playerRenderer.setGlowIntensity(intensity);
         if (this.enemyRenderer) this.enemyRenderer.setGlowIntensity(intensity);

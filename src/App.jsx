@@ -39,9 +39,9 @@ function applyInitialSettings() {
   document.body.classList.toggle("qq-no-scanlines", !(settings.crtScanlines ?? true));
   
   // Apply CRT intensity as CSS variable
-  const intensity = settings.crtIntensity ?? 0.5;
-  document.documentElement.style.setProperty('--crt-intensity', intensity);
-  document.documentElement.style.setProperty('--glow-intensity', intensity);
+  const intensity = settings.crtScanlines ? (settings.crtIntensity ?? 0.5) : 0;
+  document.documentElement.style.setProperty("--crt-intensity", intensity);
+  document.documentElement.style.setProperty("--glow-intensity", intensity);
 }
 
 export function App() {
