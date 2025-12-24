@@ -9,20 +9,20 @@ function resolveAssetPath(path) {
     return `./${cleaned}`;
 }
 
-const LEVEL1_TRACK = resolveAssetPath(
-    "music/Juhani Junkala [Retro Game Music Pack] Level 1.mp3"
+const ENDING_TRACK = resolveAssetPath(
+    "music/Juhani Junkala [Retro Game Music Pack] Ending.mp3"
 );
 
 const TRACKS = {
-    title: LEVEL1_TRACK,
-    level1: LEVEL1_TRACK,
+    title: ENDING_TRACK,
+    level1: ENDING_TRACK,
     level2: resolveAssetPath(
         "music/Juhani Junkala [Retro Game Music Pack] Level 2.mp3"
     ),
     level3: resolveAssetPath(
         "music/Juhani Junkala [Retro Game Music Pack] Level 3.mp3"
     ),
-    ending: LEVEL1_TRACK,
+    ending: ENDING_TRACK,
 };
 
 // Music is intentionally scaled down so a UI setting of 20% maps to full legacy loudness.
@@ -31,8 +31,8 @@ const MUSIC_VOLUME_SCALE = 0.2;
 const LEVEL_SEQUENCE = ["level1", "level2", "level3"];
 
 function trackForWaveNumber(waveNumber) {
-    // Keep a single, longer loop across all phases to avoid jarring restarts.
-    return "level1";
+    if (waveNumber <= 1) return "level1";
+    return "level2";
 }
 
 export class MusicManager {
@@ -47,6 +47,14 @@ export class MusicManager {
         this.intensity = 0;
         this.targetIntensity = 0;
         this.lastIntensityLevel = 0;
+        this.autoplayUnlockHandler = null;
+    }
+
+    clearAutoplayHandler() {
+        if (!this.autoplayUnlockHandler || typeof window === "undefined") return;
+        window.removeEventListener("pointerdown", this.autoplayUnlockHandler);
+        window.removeEventListener("keydown", this.autoplayUnlockHandler);
+        this.autoplayUnlockHandler = null;
     }
 
     init() {
@@ -80,20 +88,40 @@ export class MusicManager {
         }
 
         this.stop();
+        this.clearAutoplayHandler();
 
         const audio = new Audio(url);
         audio.loop = true;
         audio.volume = this.getScaledVolume();
 
-        audio.play().catch((err) => {
-            console.warn("Music autoplay blocked:", err.message);
-        });
+        const handleAutoplayBlock = () => {
+            this.clearAutoplayHandler();
+            if (this.currentAudio !== audio) return;
+            audio.play().catch(() => {});
+        };
+
+        const playPromise = audio.play();
+        if (playPromise?.catch) {
+            playPromise.catch((err) => {
+                console.warn("Music autoplay blocked:", err.message);
+                this.autoplayUnlockHandler = handleAutoplayBlock;
+                if (typeof window !== "undefined") {
+                    window.addEventListener("pointerdown", handleAutoplayBlock, {
+                        once: true,
+                    });
+                    window.addEventListener("keydown", handleAutoplayBlock, {
+                        once: true,
+                    });
+                }
+            });
+        }
 
         this.currentAudio = audio;
         this.currentTrack = trackName;
     }
 
     stop() {
+        this.clearAutoplayHandler();
         if (this.currentAudio) {
             this.currentAudio.pause();
             this.currentAudio.currentTime = 0;
@@ -120,7 +148,7 @@ export class MusicManager {
         let targetTrack = trackForWaveNumber(waveNumber);
 
         if (state.phase === "ended") {
-            targetTrack = "level1";
+            targetTrack = "ending";
         }
 
         if (this.currentTrack !== targetTrack) {
@@ -165,6 +193,7 @@ export class MusicManager {
 
     destroy() {
         this.stop();
+        this.clearAutoplayHandler();
         this.initialized = false;
     }
 }

@@ -84,7 +84,16 @@ export function useGlobalNavigation() {
             const targetTag = e.target?.tagName;
             const isFormField =
                 targetTag === "INPUT" || targetTag === "TEXTAREA" || targetTag === "SELECT";
-            if (isFormField && e.key !== "Escape") {
+            const isSliderInput =
+                targetTag === "INPUT" && e.target?.getAttribute("type") === "range";
+            const allowNavFromSlider =
+                isSliderInput &&
+                (e.key === "ArrowUp" ||
+                    e.key === "ArrowDown" ||
+                    e.key === "KeyW" ||
+                    e.key === "KeyS");
+
+            if (isFormField && e.key !== "Escape" && !allowNavFromSlider) {
                 return;
             }
 
