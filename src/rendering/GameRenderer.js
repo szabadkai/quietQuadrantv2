@@ -194,11 +194,18 @@ export class GameRenderer {
     }
 
     preload(scene) {
+        const useImageForSvg =
+            scene.sys.game.device.os.iOS || scene.sys.game.device.os.android;
         for (const asset of SPRITE_ASSETS) {
-            scene.load.svg(asset.key, asset.file, {
-                width: asset.size,
-                height: asset.size,
-            });
+            if (useImageForSvg) {
+                // Mobile WebKit can fail Phaser's SVG rasterizer; load as image instead.
+                scene.load.image(asset.key, asset.file);
+            } else {
+                scene.load.svg(asset.key, asset.file, {
+                    width: asset.size,
+                    height: asset.size,
+                });
+            }
         }
     }
 
