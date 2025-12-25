@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { UPGRADE_BY_ID } from "../../config/upgrades.js";
+import { getUpgradeIconPath } from "../../utils/assetPaths.js";
 
 const CATEGORY_ICONS = {
     offense: "🎯",
@@ -8,10 +9,11 @@ const CATEGORY_ICONS = {
 };
 
 export function UpgradeCard({ upgradeId, onSelect }) {
+    const [iconMissing, setIconMissing] = useState(false);
     const upgrade = UPGRADE_BY_ID[upgradeId];
     if (!upgrade) return null;
-
     const categoryIcon = CATEGORY_ICONS[upgrade.category] || "✨";
+    const iconPath = getUpgradeIconPath(upgrade.id);
 
     return (
         <button
@@ -26,15 +28,18 @@ export function UpgradeCard({ upgradeId, onSelect }) {
             </div>
 
             <div className="qq-upgrade-card__illustration">
-                <img
-                    src={`/assets/upgrades/${upgrade.id}.png`}
-                    alt={upgrade.name}
-                    className="qq-upgrade-card__image"
-                    onError={(e) => {
-                        e.target.style.display = 'none';
-                        // Keep previous placeholder logic if needed or just hide
-                    }}
-                />
+                {!iconMissing ? (
+                    <img
+                        src={iconPath}
+                        alt={upgrade.name}
+                        className="qq-upgrade-card__image"
+                        onError={() => setIconMissing(true)}
+                    />
+                ) : (
+                    <div className="qq-upgrade-card__placeholder" aria-hidden="true">
+                        <span>{categoryIcon}</span>
+                    </div>
+                )}
             </div>
 
 
@@ -51,4 +56,3 @@ export function UpgradeCard({ upgradeId, onSelect }) {
         </button>
     );
 }
-
