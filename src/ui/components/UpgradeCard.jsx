@@ -2,17 +2,10 @@ import React, { useState } from "react";
 import { UPGRADE_BY_ID } from "../../config/upgrades.js";
 import { getUpgradeIconPath } from "../../utils/assetPaths.js";
 
-const CATEGORY_ICONS = {
-    offense: "🎯",
-    defense: "🛡️",
-    utility: "⚡"
-};
-
 export function UpgradeCard({ upgradeId, onSelect }) {
     const [iconMissing, setIconMissing] = useState(false);
     const upgrade = UPGRADE_BY_ID[upgradeId];
     if (!upgrade) return null;
-    const categoryIcon = CATEGORY_ICONS[upgrade.category] || "✨";
     const iconPath = getUpgradeIconPath(upgrade.id);
 
     return (
@@ -36,7 +29,7 @@ export function UpgradeCard({ upgradeId, onSelect }) {
                 />
             ) : (
                 <div className="qq-upgrade-card__placeholder" aria-hidden="true">
-                    <span>{categoryIcon}</span>
+                    <span>✨</span>
                 </div>
             )}
 
@@ -48,7 +41,7 @@ export function UpgradeCard({ upgradeId, onSelect }) {
             ) : null}
 
             <div className="qq-upgrade-card__footer">
-                <span className="qq-upgrade-card__type-icon">{categoryIcon}</span>
+                <span className="qq-upgrade-card__type-icon">+</span>
                 <span className="qq-label" style={{ fontSize: "10px", letterSpacing: "0.1em" }}>Select</span>
             </div>
         </button>

@@ -2,12 +2,6 @@ import React from "react";
 import { UPGRADE_BY_ID } from "../../config/upgrades.js";
 import { getUpgradeIconPath } from "../../utils/assetPaths.js";
 
-const CATEGORY_ICONS = {
-    offense: "🎯",
-    defense: "🛡️",
-    utility: "⚡"
-};
-
 export function ActiveUpgrades({ upgrades }) {
     if (!upgrades || upgrades.length === 0) return null;
 
@@ -26,7 +20,6 @@ export function ActiveUpgrades({ upgrades }) {
                 if (!upgrade) return null;
                 const stackCount = counts[id];
                 const iconPath = getUpgradeIconPath(id);
-                const categoryIcon = CATEGORY_ICONS[upgrade.category] || "✨";
                 // Calculate basic position
                 // Logic: Start in center, if index is low (left side) anchor left-center, if high anchor right-center
                 // But simplified: Just center it and clamp with CSS or logic?
@@ -43,7 +36,7 @@ export function ActiveUpgrades({ upgrades }) {
                             onError={(e) => {
                                 e.target.style.display = "none";
                                 e.target.parentElement.classList.add("fallback");
-                                e.target.parentElement.dataset.icon = categoryIcon;
+                                e.target.parentElement.dataset.icon = "✨";
                             }}
                         />
                         {stackCount > 1 && (

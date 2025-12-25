@@ -3,6 +3,7 @@ import { useUIStore } from "../../state/useUIStore.js";
 import { useMetaStore } from "../../state/useMetaStore.js";
 import { UPGRADES } from "../../config/upgrades.js";
 import { Button } from "../components/Button.jsx";
+import { getUpgradeIconPath } from "../../utils/assetPaths.js";
 
 const RARITY_ORDER = { legendary: 0, rare: 1, common: 2 };
 
@@ -71,11 +72,21 @@ export function CollectionScreen() {
                         {unlockedUpgrades.map((upgrade) => {
                             const boost = boosts[upgrade.id] ?? 0;
                             const category = upgrade.category ?? "General";
+                            const iconPath = getUpgradeIconPath(upgrade.id);
                             return (
                                 <div
                                     key={upgrade.id}
                                     className={`collection-card unlocked ${upgrade.rarity}`}
                                 >
+                                    <img
+                                        src={iconPath}
+                                        alt={`${upgrade.name} icon`}
+                                        className="collection-card__icon"
+                                        onError={(e) => {
+                                            e.target.style.display = "none";
+                                            e.target.replaceWith(createFallback());
+                                        }}
+                                    />
                                     <div className="collection-card__header">
                                         <span className="rarity">{upgrade.rarity}</span>
                                         {boost > 0 && <span className="boost">+{boost}</span>}
@@ -132,4 +143,11 @@ function SummaryPill({ label, value, accent = false }) {
             <span className="value">{value}</span>
         </div>
     );
+}
+
+function createFallback() {
+    const span = document.createElement("span");
+    span.className = "collection-card__icon fallback";
+    span.textContent = "✨";
+    return span;
 }
