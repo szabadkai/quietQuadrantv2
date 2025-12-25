@@ -50,7 +50,7 @@
     "build": {
         "appId": "com.quietquadrant.v2",
         "productName": "Quiet Quadrant V2",
-        "icon": "public/logo.jpg",
+        "icon": "public/logo.png",
         "forceCodeSigning": false,
         "files": [
             "dist/**/*",
