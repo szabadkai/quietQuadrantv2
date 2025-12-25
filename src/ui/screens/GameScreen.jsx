@@ -21,8 +21,6 @@ export function GameScreen() {
     const containerRef = useRef(null);
     const pendingUpgrade = useGameStore((s) => s.state?.pendingUpgrade);
     const applyUpgrade = useGameStore((s) => s.actions.applyUpgrade);
-    // Subscribe to stateVersion to force re-renders when simulation state mutates
-    const stateVersion = useGameStore((s) => s.stateVersion);
     const state = useGameStore((s) => s.state);
     const uiPaused = useUIStore((s) => s.paused);
     const runSummary = useGameStore((s) => s.state?.runSummary);
