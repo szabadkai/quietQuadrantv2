@@ -16,7 +16,7 @@ import { AffixSystem } from "./AffixSystem.js";
 export class GameSimulation {
     constructor(config = {}) {
         const resolvedConfig =
-      typeof config === "number" ? { seed: config } : config;
+            typeof config === "number" ? { seed: config } : config;
         const seed = resolvedConfig.seed ?? 0;
         this.rng = new SeededRandom(seed);
         this.state = createInitialState(seed, resolvedConfig);
@@ -48,7 +48,10 @@ export class GameSimulation {
         }
 
         if (this.state.bossDeathTimer > 0) {
-            this.state.bossDeathTimer = Math.max(0, this.state.bossDeathTimer - 1);
+            this.state.bossDeathTimer = Math.max(
+                0,
+                this.state.bossDeathTimer - 1
+            );
         }
 
         if (this.state.pendingUpgrade) {
@@ -75,9 +78,10 @@ export class GameSimulation {
     }
 
     cleanupDeadEntities() {
-        this.state.bullets = this.state.bullets.filter((b) => b.alive);
-        this.state.enemies = this.state.enemies.filter((e) => e.alive);
-        this.state.pickups = this.state.pickups.filter((p) => p.alive);
+        // In-place compaction to avoid allocating new arrays every tick
+        compactAlive(this.state.bullets);
+        compactAlive(this.state.enemies);
+        compactAlive(this.state.pickups);
     }
 
     getState() {
@@ -91,16 +95,20 @@ export class GameSimulation {
                 id: p.id,
                 x: p.x,
                 y: p.y,
-                health: p.health
+                health: p.health,
             })),
-            enemyCount: this.state.enemies.length
+            enemyCount: this.state.enemies.length,
         };
     }
 
     applyUpgrade(playerId, upgradeId) {
         if (!this.state.pendingUpgrade) return false;
         if (this.state.pendingUpgrade.playerId !== playerId) return false;
-        const applied = UpgradeSystem.applyUpgrade(this.state, playerId, upgradeId);
+        const applied = UpgradeSystem.applyUpgrade(
+            this.state,
+            playerId,
+            upgradeId
+        );
         if (applied) {
             this.state.pendingUpgrade = null;
         }
@@ -109,7 +117,10 @@ export class GameSimulation {
 
     // Debug methods for DevConsole
     setWave(waveIndex) {
-        const index = Math.max(0, Math.min(waveIndex, this.state.wave?.maxWave ?? 19));
+        const index = Math.max(
+            0,
+            Math.min(waveIndex, this.state.wave?.maxWave ?? 19)
+        );
         this.state.wave.current = index;
         this.state.enemies = []; // Clear existing enemies
         this.state.bullets = []; // Clear bullets
@@ -121,14 +132,35 @@ export class GameSimulation {
     forceUpgrade(playerId, upgradeId) {
         // Apply upgrade directly regardless of state
         UpgradeSystem.applyUpgrade(this.state, playerId, upgradeId);
-        console.log(`[DEBUG] Forced upgrade ${upgradeId} for player ${playerId}`);
+        console.log(
+            `[DEBUG] Forced upgrade ${upgradeId} for player ${playerId}`
+        );
     }
 
     toggleInvincibility(playerId) {
-        const player = this.state.players.find(p => p.id === playerId);
+        const player = this.state.players.find((p) => p.id === playerId);
         if (player) {
             player.debugInvincible = !player.debugInvincible;
-            console.log(`[DEBUG] Invincibility for ${playerId}: ${player.debugInvincible ? "ON" : "OFF"}`);
+            console.log(
+                `[DEBUG] Invincibility for ${playerId}: ${
+                    player.debugInvincible ? "ON" : "OFF"
+                }`
+            );
         }
+    }
+}
+
+/**
+ * In-place array compaction - removes dead entities without allocating a new array.
+ */
+function compactAlive(arr) {
+    let writeIndex = 0;
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i].alive) {
+            arr[writeIndex++] = arr[i];
+        }
+    }
+    if (writeIndex < arr.length) {
+        arr.length = writeIndex;
     }
 }

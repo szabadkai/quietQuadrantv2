@@ -10,6 +10,8 @@ export class SpatialGrid {
         this.cols = Math.ceil(width / cellSize);
         this.rows = Math.ceil(height / cellSize);
         this.grid = new Array(this.cols * this.rows).fill(0).map(() => []);
+        // Scratch array reused across query() calls to avoid per-frame allocations
+        this._queryResults = [];
     }
 
     clear() {
@@ -34,13 +36,22 @@ export class SpatialGrid {
 
     /**
      * Get all entities in cells overlapping the given radius.
+     * Reuses internal scratch array to avoid allocations.
      */
     query(x, y, radius) {
-        const results = [];
+        const results = this._queryResults;
+        results.length = 0; // Clear without reallocating
+
         const left = Math.max(0, Math.floor((x - radius) / this.cellSize));
-        const right = Math.min(this.cols - 1, Math.floor((x + radius) / this.cellSize));
+        const right = Math.min(
+            this.cols - 1,
+            Math.floor((x + radius) / this.cellSize)
+        );
         const top = Math.max(0, Math.floor((y - radius) / this.cellSize));
-        const bottom = Math.min(this.rows - 1, Math.floor((y + radius) / this.cellSize));
+        const bottom = Math.min(
+            this.rows - 1,
+            Math.floor((y + radius) / this.cellSize)
+        );
 
         for (let r = top; r <= bottom; r++) {
             for (let c = left; c <= right; c++) {
