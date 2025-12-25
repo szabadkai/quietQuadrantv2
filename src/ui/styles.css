@@ -45,22 +45,35 @@ body[data-theme="christmas"] {
 
 /* CRT SCANLINE EFFECT */
 @keyframes crt-flicker {
-  0% { opacity: 0.97; }
-  50% { opacity: 1; }
-  100% { opacity: 0.97; }
+  0% {
+    opacity: 0.97;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.97;
+  }
 }
 
 @keyframes crt-distort {
-  0%, 100% { 
+
+  0%,
+  100% {
     transform: translateX(0) scaleY(1);
   }
-  25% { 
+
+  25% {
     transform: translateX(0.3px) scaleY(1.0005);
   }
-  50% { 
+
+  50% {
     transform: translateX(-0.3px) scaleY(0.9995);
   }
-  75% { 
+
+  75% {
     transform: translateX(0.2px) scaleY(1.0003);
   }
 }
@@ -73,13 +86,11 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.35) 0px,
-    rgba(0, 0, 0, 0.35) 1px,
-    transparent 1px,
-    transparent 2px
-  );
+  background: repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, 0.35) 0px,
+      rgba(0, 0, 0, 0.35) 1px,
+      transparent 1px,
+      transparent 2px);
   pointer-events: none;
   z-index: 9999;
   animation: crt-flicker 3s infinite;
@@ -94,12 +105,10 @@ body::after {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(
-    ellipse at center,
-    transparent 0%,
-    transparent 70%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
+  background: radial-gradient(ellipse at center,
+      transparent 0%,
+      transparent 70%,
+      rgba(0, 0, 0, 0.4) 100%);
   pointer-events: none;
   z-index: 9998;
   box-shadow: inset 0 0 100px rgba(0, 255, 255, 0.08);
@@ -153,15 +162,18 @@ body.qq-no-scanlines::after {
 
 /* VECTREX GLOW ANIMATIONS */
 @keyframes vectrex-glow {
-  0%, 100% {
-    text-shadow: 
+
+  0%,
+  100% {
+    text-shadow:
       0 0 calc(4px * var(--glow-intensity)) currentColor,
       0 0 calc(8px * var(--glow-intensity)) currentColor,
       0 0 calc(12px * var(--glow-intensity)) currentColor;
     filter: brightness(1);
   }
+
   50% {
-    text-shadow: 
+    text-shadow:
       0 0 calc(6px * var(--glow-intensity)) currentColor,
       0 0 calc(12px * var(--glow-intensity)) currentColor,
       0 0 calc(18px * var(--glow-intensity)) currentColor;
@@ -170,19 +182,29 @@ body.qq-no-scanlines::after {
 }
 
 @keyframes qq-health-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 
 @keyframes qq-panel-glow {
-  0%, 100% {
-    box-shadow: 
+
+  0%,
+  100% {
+    box-shadow:
       0 0 4px var(--qq-accent),
       0 0 8px var(--qq-accent),
       inset 0 0 4px var(--qq-accent);
   }
+
   50% {
-    box-shadow: 
+    box-shadow:
       0 0 8px var(--qq-accent),
       0 0 16px var(--qq-accent),
       inset 0 0 8px var(--qq-accent);
@@ -194,6 +216,7 @@ body.qq-no-scanlines::after {
     opacity: 0;
     transform: translateX(18px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -209,7 +232,7 @@ body.qq-no-scanlines::after {
   border: 2px solid var(--qq-panel-border);
   border-radius: 0;
   padding: 10px 12px;
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-panel-border),
     inset 0 0 8px rgba(0, 255, 255, 0.1);
 }
@@ -271,7 +294,7 @@ body.qq-no-scanlines::after {
   color: var(--qq-accent);
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  text-shadow: 
+  text-shadow:
     0 0 4px var(--qq-accent),
     0 0 8px var(--qq-accent);
   animation: vectrex-glow 3s ease-in-out infinite;
@@ -281,7 +304,7 @@ body.qq-no-scanlines::after {
   font-family: var(--qq-hud-number-font);
   font-size: clamp(9px, 2.2vw, 12px);
   color: var(--qq-text);
-  text-shadow: 
+  text-shadow:
     0 0 4px var(--qq-text),
     0 0 8px var(--qq-text);
   font-variant-numeric: tabular-nums;
@@ -300,7 +323,7 @@ body.qq-no-scanlines::after {
   font-family: var(--qq-hud-number-font);
   font-size: clamp(7px, 1.4vw, 8px);
   color: var(--qq-accent-soft);
-  text-shadow: 
+  text-shadow:
     0 0 4px var(--qq-accent-soft),
     0 0 6px var(--qq-accent-soft);
 }
@@ -309,7 +332,7 @@ body.qq-no-scanlines::after {
   font-family: var(--qq-hud-number-font);
   font-size: clamp(7px, 1.4vw, 8px);
   color: var(--qq-accent-soft);
-  text-shadow: 
+  text-shadow:
     0 0 4px var(--qq-accent-soft),
     0 0 6px var(--qq-accent-soft);
   font-variant-numeric: tabular-nums;
@@ -317,7 +340,7 @@ body.qq-no-scanlines::after {
 
 .qq-hud-tag {
   color: var(--qq-health);
-  text-shadow: 
+  text-shadow:
     0 0 4px var(--qq-health),
     0 0 8px var(--qq-health);
 }
@@ -329,7 +352,7 @@ body.qq-no-scanlines::after {
   background: #000000;
   border: 1px solid var(--qq-accent);
   overflow: hidden;
-  box-shadow: 
+  box-shadow:
     0 0 4px var(--qq-accent),
     inset 0 0 4px rgba(0, 255, 255, 0.2);
 }
@@ -337,7 +360,7 @@ body.qq-no-scanlines::after {
 .qq-hud-barfill {
   height: 100%;
   background: var(--qq-accent);
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     0 0 12px var(--qq-accent);
 }
@@ -360,7 +383,7 @@ body.qq-no-scanlines::after {
   box-shadow:
     0 0 8px var(--qq-accent),
     inset 0 0 8px rgba(0, 255, 255, 0.15);
-  text-shadow: 
+  text-shadow:
     0 0 4px var(--qq-accent),
     0 0 8px var(--qq-accent);
 }
@@ -375,7 +398,7 @@ body.qq-no-scanlines::after {
     0 0 32px rgba(0, 255, 255, 0.6),
     inset 0 0 16px rgba(0, 255, 255, 0.3);
   filter: brightness(1.4);
-  text-shadow: 
+  text-shadow:
     0 0 8px var(--qq-accent),
     0 0 16px var(--qq-accent),
     0 0 24px var(--qq-accent);
@@ -445,7 +468,7 @@ body.qq-no-scanlines::after {
 
 .qq-upgrade-card:hover .qq-upgrade-name,
 .qq-upgrade-card:focus .qq-upgrade-name {
-  text-shadow: 
+  text-shadow:
     0 0 8px currentColor,
     0 0 16px currentColor,
     0 0 24px currentColor;
@@ -464,7 +487,7 @@ body.qq-no-scanlines::after {
 .qq-upgrade-card:hover::after,
 .qq-upgrade-card:focus::after {
   opacity: 1;
-  box-shadow: 
+  box-shadow:
     0 0 12px var(--qq-accent),
     inset 0 0 12px rgba(0, 255, 255, 0.3);
 }
@@ -512,7 +535,7 @@ body.qq-no-scanlines::after {
   color: var(--qq-accent);
   letter-spacing: 0.4em;
   margin-bottom: 12px;
-  text-shadow: 
+  text-shadow:
     0 0 4px currentColor,
     0 0 8px currentColor;
 }
@@ -522,7 +545,7 @@ body.qq-no-scanlines::after {
   font-weight: 600;
   letter-spacing: 0.2em;
   margin-bottom: 8px;
-  text-shadow: 
+  text-shadow:
     0 0 4px currentColor,
     0 0 8px currentColor;
 }
@@ -531,7 +554,7 @@ body.qq-no-scanlines::after {
   font-size: 12px;
   color: var(--qq-muted);
   line-height: 1.45;
-  text-shadow: 
+  text-shadow:
     0 0 4px currentColor,
     0 0 6px currentColor;
 }
@@ -553,7 +576,7 @@ body.qq-no-scanlines::after {
   border-radius: 0;
   border: 3px solid var(--qq-accent);
   background: rgba(0, 0, 0, 0.95);
-  box-shadow: 
+  box-shadow:
     0 0 16px var(--qq-accent),
     0 0 32px rgba(0, 255, 255, 0.4);
 }
@@ -563,7 +586,7 @@ body.qq-no-scanlines::after {
   letter-spacing: 0.4em;
   color: var(--qq-text);
   margin-bottom: 16px;
-  text-shadow: 
+  text-shadow:
     0 0 4px var(--qq-text),
     0 0 8px var(--qq-text);
 }
@@ -578,6 +601,7 @@ body.qq-no-scanlines::after {
   .qq-upgrade-panel {
     width: min(760px, 96vw);
   }
+
   .qq-upgrade-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -597,7 +621,7 @@ body.qq-no-scanlines::after {
   position: relative;
   width: min(100vw, calc(100vh * 16 / 10));
   height: min(100vh, calc(100vw * 10 / 16));
-  box-shadow: 
+  box-shadow:
     0 0 20px rgba(0, 255, 255, 0.3),
     inset 0 0 40px rgba(0, 255, 255, 0.1);
   overflow: hidden;
@@ -607,10 +631,8 @@ body.qq-no-scanlines::after {
   display: block;
   width: 100%;
   height: 100%;
-  filter: 
-    contrast(1.15) 
-    brightness(calc(1.05 + 0.05 * var(--glow-intensity)))
-    saturate(calc(1 + 0.2 * var(--glow-intensity)));
+  filter:
+    contrast(1.15) brightness(calc(1.05 + 0.05 * var(--glow-intensity))) saturate(calc(1 + 0.2 * var(--glow-intensity)));
 }
 
 .qq-touch-layer {
@@ -741,13 +763,11 @@ body.qq-no-scanlines::after {
   left: 0;
   width: 100%;
   height: 100%;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.3) 0px,
-    rgba(0, 0, 0, 0.3) 1px,
-    transparent 1px,
-    transparent 2px
-  );
+  background: repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, 0.3) 0px,
+      rgba(0, 0, 0, 0.3) 1px,
+      transparent 1px,
+      transparent 2px);
   pointer-events: none;
   z-index: 1;
   opacity: var(--crt-intensity);
@@ -761,13 +781,11 @@ body.qq-no-scanlines::after {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(
-    ellipse at center,
-    transparent 0%,
-    transparent 60%,
-    rgba(0, 255, 255, 0.02) 80%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
+  background: radial-gradient(ellipse at center,
+      transparent 0%,
+      transparent 60%,
+      rgba(0, 255, 255, 0.02) 80%,
+      rgba(0, 0, 0, 0.4) 100%);
   pointer-events: none;
   z-index: 2;
   mix-blend-mode: overlay;
@@ -801,7 +819,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   border-radius: 0;
   padding: 32px 48px;
   text-align: center;
-  box-shadow: 
+  box-shadow:
     0 0 16px var(--qq-danger),
     0 0 32px rgba(255, 0, 255, 0.4);
 }
@@ -809,7 +827,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
 .qq-disconnect-icon {
   font-size: 48px;
   margin-bottom: 16px;
-  text-shadow: 
+  text-shadow:
     0 0 8px currentColor,
     0 0 16px currentColor;
 }
@@ -820,7 +838,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   text-transform: uppercase;
   color: var(--qq-danger);
   margin: 0 0 12px;
-  text-shadow: 
+  text-shadow:
     0 0 8px var(--qq-danger),
     0 0 16px var(--qq-danger);
 }
@@ -846,7 +864,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   border: 2px solid var(--qq-danger);
   border-radius: 0;
   overflow: hidden;
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-danger),
     inset 0 0 8px rgba(255, 0, 255, 0.2);
 }
@@ -855,7 +873,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   height: 100%;
   background: var(--qq-danger);
   transition: width 0.5s linear;
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-danger),
     0 0 16px var(--qq-danger);
 }
@@ -864,7 +882,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   font-size: 24px;
   color: var(--qq-text);
   font-weight: bold;
-  text-shadow: 
+  text-shadow:
     0 0 8px currentColor,
     0 0 16px currentColor;
 }
@@ -882,7 +900,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   border-radius: 0;
   padding: 24px;
   min-width: 300px;
-  box-shadow: 
+  box-shadow:
     0 0 16px var(--qq-accent),
     0 0 32px rgba(0, 255, 255, 0.3);
 }
@@ -893,7 +911,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   text-transform: uppercase;
   color: var(--qq-text);
   margin-bottom: 20px;
-  text-shadow: 
+  text-shadow:
     0 0 8px var(--qq-text),
     0 0 16px var(--qq-text);
 }
@@ -918,7 +936,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   border-radius: 0;
   appearance: none;
   cursor: pointer;
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     inset 0 0 8px rgba(0, 255, 255, 0.2);
 }
@@ -930,7 +948,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   background: var(--qq-accent);
   border-radius: 0;
   cursor: pointer;
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     0 0 16px var(--qq-accent);
 }
@@ -951,7 +969,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   cursor: pointer;
   position: relative;
   transition: background 0.2s;
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     inset 0 0 8px rgba(0, 255, 255, 0.2);
 }
@@ -959,7 +977,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
 .qq-toggle-switch.active {
   background: var(--qq-accent);
   border-color: var(--qq-accent);
-  box-shadow: 
+  box-shadow:
     0 0 12px var(--qq-accent),
     0 0 24px rgba(0, 255, 255, 0.4);
 }
@@ -974,7 +992,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   background: var(--qq-text);
   border-radius: 0;
   transition: transform 0.2s;
-  box-shadow: 
+  box-shadow:
     0 0 4px var(--qq-text),
     0 0 8px var(--qq-text);
 }
@@ -1003,7 +1021,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   max-height: calc(100vh - 48px);
   padding: 32px;
   border-color: var(--qq-accent);
-  box-shadow: 
+  box-shadow:
     0 0 16px var(--qq-accent),
     0 0 32px rgba(0, 255, 255, 0.3);
   overflow-y: auto;
@@ -1015,7 +1033,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   max-height: calc(100vh - 48px);
   padding: 32px;
   border-color: var(--qq-accent);
-  box-shadow: 
+  box-shadow:
     0 0 16px var(--qq-accent),
     0 0 32px rgba(0, 255, 255, 0.3);
   overflow-y: auto;
@@ -1031,7 +1049,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   font-weight: 600;
   margin: 8px 0;
   letter-spacing: 0.2em;
-  text-shadow: 
+  text-shadow:
     0 0 8px currentColor,
     0 0 16px currentColor;
 }
@@ -1049,7 +1067,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   letter-spacing: 0.5em;
   color: var(--qq-muted);
   text-transform: uppercase;
-  text-shadow: 
+  text-shadow:
     0 0 4px currentColor,
     0 0 8px currentColor;
 }
@@ -1057,7 +1075,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
 .qq-muted {
   color: var(--qq-muted);
   font-size: 13px;
-  text-shadow: 
+  text-shadow:
     0 0 4px currentColor,
     0 0 6px currentColor;
 }
@@ -1073,7 +1091,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   font-weight: 400;
   margin: 12px 0 0;
   color: var(--qq-muted);
-  text-shadow: 
+  text-shadow:
     0 0 6px currentColor,
     0 0 12px currentColor;
 }
@@ -1084,7 +1102,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   background: rgba(0, 0, 0, 0.9);
   border: 2px solid var(--qq-panel-border);
   border-radius: 0;
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     inset 0 0 8px rgba(0, 255, 255, 0.15);
 }
@@ -1105,7 +1123,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
 }
 
 .qq-season-row span:last-child {
-  text-shadow: 
+  text-shadow:
     0 0 4px currentColor,
     0 0 8px currentColor;
 }
@@ -1116,7 +1134,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid var(--qq-panel-border);
-  text-shadow: 
+  text-shadow:
     0 0 4px currentColor,
     0 0 6px currentColor;
 }
@@ -1139,6 +1157,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   outline-offset: 4px;
   border-radius: 0;
 }
+
 .qq-slider-group:focus-within {
   outline: 2px solid var(--qq-accent);
   outline-offset: 4px;
@@ -1161,7 +1180,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
 .qq-slider-value {
   font-size: 12px;
   color: var(--qq-accent);
-  text-shadow: 
+  text-shadow:
     0 0 4px var(--qq-accent),
     0 0 8px var(--qq-accent);
 }
@@ -1172,7 +1191,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   background: #000000;
   border: 2px solid var(--qq-accent);
   border-radius: 0;
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     inset 0 0 8px rgba(0, 255, 255, 0.2);
 }
@@ -1185,7 +1204,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   background: var(--qq-accent);
   border-radius: 0;
   pointer-events: none;
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     0 0 16px var(--qq-accent);
 }
@@ -1222,7 +1241,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   font-family: inherit;
   cursor: pointer;
   transition: all 0.15s;
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     inset 0 0 8px rgba(0, 255, 255, 0.15);
 }
@@ -1230,7 +1249,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
 .qq-toggle:hover,
 .qq-toggle:focus {
   transform: scale(1.05);
-  box-shadow: 
+  box-shadow:
     0 0 12px var(--qq-accent),
     0 0 24px rgba(0, 255, 255, 0.5),
     inset 0 0 12px rgba(0, 255, 255, 0.25);
@@ -1241,14 +1260,14 @@ body.qq-no-scanlines .qq-game-frame canvas {
   background: var(--qq-accent);
   border-color: var(--qq-accent);
   color: #000000;
-  box-shadow: 
+  box-shadow:
     0 0 12px var(--qq-accent),
     0 0 24px rgba(0, 255, 255, 0.4);
 }
 
 .qq-toggle.active:hover,
 .qq-toggle.active:focus {
-  box-shadow: 
+  box-shadow:
     0 0 16px var(--qq-accent),
     0 0 32px rgba(0, 255, 255, 0.7);
 }
@@ -1266,8 +1285,13 @@ body.qq-no-scanlines .qq-game-frame canvas {
 }
 
 @keyframes qq-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .qq-modal {
@@ -1278,14 +1302,21 @@ body.qq-no-scanlines .qq-game-frame canvas {
   max-width: 400px;
   width: 90%;
   animation: qq-scale-in 0.15s ease-out;
-  box-shadow: 
+  box-shadow:
     0 0 16px var(--qq-accent),
     0 0 32px rgba(0, 255, 255, 0.3);
 }
 
 @keyframes qq-scale-in {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .qq-modal-header {
@@ -1311,7 +1342,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   color: var(--qq-accent);
   margin: 0 0 12px;
   text-transform: uppercase;
-  text-shadow: 
+  text-shadow:
     0 0 6px var(--qq-accent),
     0 0 12px var(--qq-accent);
 }
@@ -1333,7 +1364,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   color: var(--qq-accent);
   margin: 12px 0;
   font-family: monospace;
-  text-shadow: 
+  text-shadow:
     0 0 8px var(--qq-accent),
     0 0 16px var(--qq-accent),
     0 0 24px var(--qq-accent);
@@ -1350,7 +1381,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   border-radius: 0;
   margin: 16px 0;
   border: 2px solid var(--qq-accent);
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     inset 0 0 8px rgba(0, 255, 255, 0.15);
 }
@@ -1360,14 +1391,14 @@ body.qq-no-scanlines .qq-game-frame canvas {
   height: 10px;
   border-radius: 0;
   background: var(--qq-muted);
-  box-shadow: 
+  box-shadow:
     0 0 4px currentColor,
     0 0 8px currentColor;
 }
 
 .qq-status-dot.connected {
   background: var(--qq-xp);
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-xp),
     0 0 16px var(--qq-xp);
 }
@@ -1378,15 +1409,18 @@ body.qq-no-scanlines .qq-game-frame canvas {
 }
 
 @keyframes qq-pulse {
-  0%, 100% { 
+
+  0%,
+  100% {
     opacity: 1;
-    box-shadow: 
+    box-shadow:
       0 0 8px currentColor,
       0 0 16px currentColor;
   }
-  50% { 
+
+  50% {
     opacity: 0.4;
-    box-shadow: 
+    box-shadow:
       0 0 4px currentColor,
       0 0 8px currentColor;
   }
@@ -1408,10 +1442,10 @@ body.qq-no-scanlines .qq-game-frame canvas {
   border-radius: 0;
   color: var(--qq-text);
   text-transform: uppercase;
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     inset 0 0 8px rgba(0, 255, 255, 0.15);
-  text-shadow: 
+  text-shadow:
     0 0 4px var(--qq-text),
     0 0 8px var(--qq-text);
 }
@@ -1419,7 +1453,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
 .qq-code-input:focus {
   outline: none;
   border-color: var(--qq-accent);
-  box-shadow: 
+  box-shadow:
     0 0 12px var(--qq-accent),
     0 0 24px rgba(0, 255, 255, 0.4),
     inset 0 0 12px rgba(0, 255, 255, 0.25);
@@ -1430,7 +1464,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   font-size: 12px;
   margin-top: 8px;
   text-align: center;
-  text-shadow: 
+  text-shadow:
     0 0 6px var(--qq-danger),
     0 0 12px var(--qq-danger);
 }
@@ -1448,7 +1482,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   background: rgba(0, 0, 0, 0.9);
   border-radius: 0;
   border: 2px solid var(--qq-accent);
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     inset 0 0 8px rgba(0, 255, 255, 0.15);
 }
@@ -1457,7 +1491,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   font-size: 14px;
   margin: 0 0 12px;
   color: var(--qq-accent);
-  text-shadow: 
+  text-shadow:
     0 0 6px var(--qq-accent),
     0 0 12px var(--qq-accent);
 }
@@ -1481,7 +1515,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   font-family: monospace;
   color: var(--qq-accent);
   border: 1px solid var(--qq-accent);
-  box-shadow: 
+  box-shadow:
     0 0 4px var(--qq-accent),
     0 0 8px var(--qq-accent);
 }
@@ -1498,7 +1532,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   background: rgba(0, 0, 0, 0.9);
   border-radius: 0;
   border: 2px solid var(--qq-accent);
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     inset 0 0 8px rgba(0, 255, 255, 0.15);
 }
@@ -1508,7 +1542,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   margin: 0 0 12px;
   color: var(--qq-accent);
   letter-spacing: 0.2em;
-  text-shadow: 
+  text-shadow:
     0 0 6px var(--qq-accent),
     0 0 12px var(--qq-accent);
 }
@@ -1538,7 +1572,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
 .qq-enemy-icon {
   color: var(--qq-enemy);
   font-size: 14px;
-  text-shadow: 
+  text-shadow:
     0 0 4px currentColor,
     0 0 8px currentColor;
 }
@@ -1578,7 +1612,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
     0 0 16px var(--qq-accent),
     0 0 32px rgba(0, 255, 255, 0.6),
     inset 0 0 16px rgba(0, 255, 255, 0.3);
-  text-shadow: 
+  text-shadow:
     0 0 8px var(--qq-accent),
     0 0 16px var(--qq-accent);
   outline: none;
@@ -1695,9 +1729,20 @@ body.qq-no-scanlines .qq-game-frame canvas {
   font-size: 11px;
 }
 
-.qq-rarity-pill.common { border-color: rgba(159, 240, 255, 0.3); }
-.qq-rarity-pill.rare { border-color: var(--qq-rare); color: var(--qq-rare); }
-.qq-rarity-pill.legendary { border-color: var(--qq-legendary); color: var(--qq-legendary); box-shadow: 0 0 8px rgba(255, 215, 0, 0.2); }
+.qq-rarity-pill.common {
+  border-color: rgba(159, 240, 255, 0.3);
+}
+
+.qq-rarity-pill.rare {
+  border-color: var(--qq-rare);
+  color: var(--qq-rare);
+}
+
+.qq-rarity-pill.legendary {
+  border-color: var(--qq-legendary);
+  color: var(--qq-legendary);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+}
 
 .qq-upgrade-count {
   font-weight: 700;
@@ -2078,6 +2123,118 @@ body.qq-no-scanlines .qq-game-frame canvas {
   margin-top: 12px;
 }
 
+/* STREAK POPUP */
+.qq-streak-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 4, 6, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease-out;
+  z-index: 260;
+}
+
+.qq-streak-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.qq-streak-modal {
+  max-width: 400px;
+  width: 92%;
+  background: linear-gradient(145deg, rgba(30, 10, 5, 0.95), rgba(15, 5, 2, 0.9));
+  border: 1px solid rgba(255, 120, 0, 0.65);
+  border-radius: 10px;
+  padding: 24px 20px 20px;
+  box-shadow: 0 0 35px rgba(255, 80, 0, 0.3);
+  transform: translateY(10px) scale(0.96);
+  opacity: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.qq-streak-modal::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ff7800, transparent);
+}
+
+.qq-streak-modal.animate-in {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.qq-streak-modal.animate-out {
+  transform: translateY(8px) scale(0.95);
+  opacity: 0;
+}
+
+.qq-streak-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.qq-streak-fire {
+  font-size: 40px;
+  filter: drop-shadow(0 0 10px rgba(255, 100, 0, 0.6));
+  animation: qq-fire-float 2s ease-in-out infinite;
+}
+
+.qq-streak-number {
+  font-size: 32px;
+  font-weight: 900;
+  color: #fff;
+  font-family: var(--qq-hud-number-font);
+  text-shadow: 0 0 15px rgba(255, 100, 0, 0.8);
+  margin-top: -8px;
+}
+
+@keyframes qq-fire-float {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-5px) scale(1.1);
+  }
+}
+
+.qq-streak-copy {
+  text-align: center;
+}
+
+.qq-streak-copy h2 {
+  margin: 6px 0 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 120, 0, 0.4);
+}
+
+.qq-streak-copy p {
+  margin: 0 0 12px;
+  color: #f6e6c7;
+  line-height: 1.4;
+  font-size: 13px;
+}
+
+.qq-streak-actions {
+  margin-top: 20px;
+}
+
 /* SUMMARY */
 .qq-summary-header {
   text-align: center;
@@ -2088,7 +2245,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   font-size: 28px;
   font-weight: bold;
   letter-spacing: 0.3em;
-  text-shadow: 
+  text-shadow:
     0 0 8px currentColor,
     0 0 16px currentColor,
     0 0 24px currentColor;
@@ -2109,7 +2266,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   padding: 16px;
   margin-bottom: 20px;
   border: 2px solid var(--qq-accent);
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-accent),
     inset 0 0 8px rgba(0, 255, 255, 0.15);
 }
@@ -2131,7 +2288,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
 }
 
 .qq-summary-row span:last-child {
-  text-shadow: 
+  text-shadow:
     0 0 4px currentColor,
     0 0 8px currentColor;
 }
@@ -2141,7 +2298,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   font-size: 10px;
   margin-left: 8px;
   animation: qq-pulse 1s infinite;
-  text-shadow: 
+  text-shadow:
     0 0 6px var(--qq-rare),
     0 0 12px var(--qq-rare);
 }
@@ -2166,10 +2323,10 @@ body.qq-no-scanlines .qq-game-frame canvas {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  box-shadow: 
+  box-shadow:
     0 0 8px var(--qq-synergy),
     inset 0 0 8px rgba(0, 255, 255, 0.15);
-  text-shadow: 
+  text-shadow:
     0 0 4px var(--qq-synergy),
     0 0 8px var(--qq-synergy);
 }
@@ -2182,11 +2339,12 @@ body.qq-no-scanlines .qq-game-frame canvas {
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
+
   .qq-howto-grid,
   .qq-twin-controls {
     grid-template-columns: 1fr;
   }
-  
+
   .qq-panel-wide {
     padding: 20px;
   }
@@ -2221,7 +2379,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
 
 .qq-unlock-indicator {
   color: var(--qq-xp);
-  text-shadow: 
+  text-shadow:
     0 0 6px var(--qq-xp),
     0 0 12px var(--qq-xp);
   animation: qq-pulse 1.5s infinite;
@@ -2229,7 +2387,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
 
 .qq-boost-indicator {
   color: var(--qq-rare);
-  text-shadow: 
+  text-shadow:
     0 0 6px var(--qq-rare),
     0 0 12px var(--qq-rare);
   display: flex;
@@ -2249,7 +2407,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
 
 .qq-boost-indicator .qq-boost-pip.filled {
   color: var(--qq-rare);
-  text-shadow: 
+  text-shadow:
     0 0 4px var(--qq-rare),
     0 0 8px var(--qq-rare);
 }
@@ -2271,7 +2429,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   background: rgba(0, 0, 0, 0.9);
   border: 2px solid var(--qq-accent);
   padding: 24px 48px;
-  box-shadow: 
+  box-shadow:
     0 0 16px var(--qq-accent),
     0 0 32px rgba(0, 255, 255, 0.3),
     inset 0 0 20px rgba(0, 255, 255, 0.1);
@@ -2282,16 +2440,20 @@ body.qq-no-scanlines .qq-game-frame canvas {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.8);
   }
+
   10% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.05);
   }
+
   15% {
     transform: translate(-50%, -50%) scale(1);
   }
+
   85% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(1);
@@ -2307,7 +2469,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   border: 1px solid var(--qq-accent);
   display: inline-block;
   margin-bottom: 12px;
-  text-shadow: 
+  text-shadow:
     0 0 4px var(--qq-accent),
     0 0 8px var(--qq-accent);
 }
@@ -2317,7 +2479,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   font-weight: bold;
   letter-spacing: 0.1em;
   color: var(--qq-accent);
-  text-shadow: 
+  text-shadow:
     0 0 12px var(--qq-accent),
     0 0 24px var(--qq-accent),
     0 0 48px var(--qq-accent);
@@ -2330,7 +2492,7 @@ body.qq-no-scanlines .qq-game-frame canvas {
   letter-spacing: 0.3em;
   color: var(--qq-text);
   text-transform: uppercase;
-  text-shadow: 
+  text-shadow:
     0 0 6px var(--qq-text),
     0 0 12px var(--qq-text);
   margin-top: 8px;
@@ -2342,7 +2504,9 @@ body.qq-no-scanlines .qq-game-frame canvas {
    =========================================== */
 
 /* Mobile detection - target touch devices and small screens */
-@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+@media (max-width: 768px),
+(hover: none) and (pointer: coarse) {
+
   /* TITLE SCREEN - prevent scrolling, compact layout */
   .qq-screen {
     padding: 12px;

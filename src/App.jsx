@@ -13,6 +13,7 @@ import { JoinGameScreen } from "./ui/screens/JoinGameScreen.jsx";
 import { TwinSetupScreen } from "./ui/screens/TwinSetupScreen.jsx";
 import { NotificationToast } from "./ui/components/NotificationToast.jsx";
 import { AchievementPopup } from "./ui/modals/AchievementPopup.jsx";
+import { StreakPopup } from "./ui/modals/StreakPopup.jsx";
 import { useGlobalNavigation } from "./ui/hooks/useGlobalNavigation.js";
 
 const SETTINGS_KEY = "quiet-quadrant-settings";
@@ -69,6 +70,7 @@ export function App() {
             {screen === "twin" && <TwinSetupScreen />}
             <NotificationToast />
             <AchievementPopup />
+            <StreakPopup />
         </div>
     );
 }

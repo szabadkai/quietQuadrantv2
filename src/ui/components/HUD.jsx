@@ -64,10 +64,12 @@ export function HUD({ state }) {
                                 {state.fps ?? "--"}
                             </div>
                         </div>
-                        <div className="qq-hud-row" style={{ fontSize: "8px", marginTop: "2px" }}>
-                            <div style={{ color: state.debug?.glow ? "var(--qq-accent)" : "#555" }}>GLW</div>
-                            <div style={{ color: state.debug?.crt ? "var(--qq-accent)" : "#555" }}>CRT</div>
-                        </div>
+                        {import.meta.env.DEV && (
+                            <div className="qq-hud-row" style={{ fontSize: "8px", marginTop: "2px" }}>
+                                <div style={{ color: state.debug?.glow ? "var(--qq-accent)" : "#555" }}>GLW</div>
+                                <div style={{ color: state.debug?.crt ? "var(--qq-accent)" : "#555" }}>CRT</div>
+                            </div>
+                        )}
                     </div>
                     <div className="qq-panel qq-hud-panel glow">
                         <div className="qq-hud-row">

@@ -160,7 +160,7 @@ export function GameScreen() {
                     />
                 )}
                 {paused && <PauseModal onResume={() => setPaused(false)} />}
-                <DevConsole />
+                {import.meta.env.DEV && <DevConsole />}
             </div>
         </div>
     );

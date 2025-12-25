@@ -1,54 +1,13 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import {
+    INITIAL_UNLOCKED_UPGRADES,
+    INITIAL_LIFETIME_STATS,
+    INITIAL_ACHIEVEMENT_POPUP,
+    INITIAL_STREAK_POPUP,
+    calculateRank
+} from "./metaStoreUtils.js";
 
-const INITIAL_UNLOCKED_UPGRADES = [
-    "power-shot",
-    "rapid-fire",
-    "swift-projectiles",
-    "engine-tune",
-    "plating",
-    "sidecar",
-    "pierce",
-    "shield-pickup",
-    "kinetic-siphon",
-    "dash-sparks"
-];
-
-const INITIAL_LIFETIME_STATS = {
-    totalRuns: 0,
-    totalPlaytime: 0,
-    totalKills: 0,
-    totalVictories: 0,
-    wavesCleared: 0,
-    bossesDefeated: 0,
-    highestWave: 0,
-    bestWave: 0,
-    fastestVictory: null,
-    fastestBossKill: null,
-    mostKillsRun: 0,
-    mostUpgradesRun: 0,
-    highestDamage: 0,
-    currentWinStreak: 0,
-    bestWinStreak: 0,
-    currentDailyStreak: 0,
-    bestDailyStreak: 0,
-    lastPlayedDate: "",
-    upgradePickCounts: {},
-    synergyUnlockCounts: {},
-    bossRecords: {},
-    bossKillCounts: {},
-    affixPlayCounts: {},
-    affixWinCounts: {},
-    modePlayCounts: {},
-    modeWinCounts: {}
-};
-
-const INITIAL_ACHIEVEMENT_POPUP = {
-    show: false,
-    synergyId: null,
-    synergyName: "",
-    synergyDescription: ""
-};
 
 export const useMetaStore = create(
     devtools(
@@ -65,6 +24,7 @@ export const useMetaStore = create(
                 },
                 achievements: {},
                 achievementPopup: { ...INITIAL_ACHIEVEMENT_POPUP },
+                streakPopup: { ...INITIAL_STREAK_POPUP },
                 selectedShipColor: "default",
                 selectedTitle: null,
                 unlockedCosmetics: ["default"],
@@ -195,6 +155,7 @@ export const useMetaStore = create(
                             : 0;
 
                         const newStreak = diffDays === 1 ? stats.currentDailyStreak + 1 : 1;
+                        const isNewBest = newStreak > (stats.bestDailyStreak ?? 0);
                         const nextStats = {
                             ...stats,
                             currentDailyStreak: newStreak,
@@ -202,7 +163,13 @@ export const useMetaStore = create(
                             lastPlayedDate: today
                         };
                         get().actions.setStats(nextStats);
-                        return { streakIncreased: diffDays === 1, newStreak };
+
+                        const streakIncreased = diffDays === 1;
+                        if (newStreak >= 2 && streakIncreased) {
+                            get().actions.showStreakPopup(newStreak, isNewBest);
+                        }
+
+                        return { streakIncreased, newStreak };
                     },
                     setCardReward: (options, runId) => {
                         set({
@@ -275,6 +242,20 @@ export const useMetaStore = create(
 
                     hideAchievement: () => {
                         set({ achievementPopup: { ...INITIAL_ACHIEVEMENT_POPUP } });
+                    },
+
+                    showStreakPopup: (count, isNewBest = false) => {
+                        set({
+                            streakPopup: {
+                                show: true,
+                                count,
+                                isNewBest
+                            }
+                        });
+                    },
+
+                    hideStreakPopup: () => {
+                        set({ streakPopup: { ...INITIAL_STREAK_POPUP } });
                     }
                 }
             }),
@@ -282,7 +263,7 @@ export const useMetaStore = create(
                 name: "quiet-quadrant-meta",
                 version: 3,
                 partialize: (state) => {
-                    const { actions: _actions, achievementPopup: _achievementPopup, ...rest } = state;
+                    const { actions: _actions, achievementPopup: _achievementPopup, streakPopup: _streakPopup, ...rest } = state;
                     return rest;
                 },
                 merge: (persistedState, currentState) => {
@@ -304,14 +285,3 @@ export const useMetaStore = create(
     )
 );
 
-function calculateRank(xp) {
-    // Steeper curve to slow down late-level progression.
-    const thresholds = [
-        0, 150, 400, 800, 1300, 1900, 2600, 3400, 4300, 5300,
-        6400, 7600, 8900, 10300, 11800, 13400, 15100, 16900, 18800, 20800
-    ];
-    for (let i = thresholds.length - 1; i >= 0; i -= 1) {
-        if (xp >= thresholds[i]) return i + 1;
-    }
-    return 1;
-}

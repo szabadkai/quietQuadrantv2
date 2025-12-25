@@ -256,7 +256,10 @@ export class GameRenderer {
 
     setupDebugHotkeys() {
         this.debugSettings = { glow: true, crt: true };
-        
+
+        // Only allow debug hotkeys in development mode
+        if (!import.meta.env.DEV) return;
+
         window.addEventListener("keydown", (e) => {
             if (e.shiftKey) {
                 if (e.key.toLowerCase() === "g") {

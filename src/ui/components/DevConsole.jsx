@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useGameStore } from "../../state/useGameStore.js";
+import { useMetaStore } from "../../state/useMetaStore.js";
 import { WAVES } from "../../config/waves.js";
 import upgrades from "../../config/upgrades.json";
 
@@ -13,8 +14,13 @@ export function DevConsole() {
     const [selectedUpgrade, setSelectedUpgrade] = useState("");
     const simulation = useGameStore((s) => s.simulation);
     const state = useGameStore((s) => s.state);
+    const metaStats = useMetaStore((s) => s.lifetimeStats);
+    const metaActions = useMetaStore((s) => s.actions);
 
     useEffect(() => {
+        // Only allow DevConsole in development mode
+        if (!import.meta.env.DEV) return;
+
         const handleKeyDown = (e) => {
             if (e.shiftKey && e.key.toLowerCase() === "f") {
                 setVisible((v) => !v);
@@ -24,6 +30,7 @@ export function DevConsole() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, []);
 
+    if (!import.meta.env.DEV) return null;
     if (!visible) return null;
 
     const handleWaveJump = () => {
@@ -42,6 +49,15 @@ export function DevConsole() {
         if (simulation?.toggleInvincibility) {
             simulation.toggleInvincibility("p1");
         }
+    };
+
+    const handleTestStreak = () => {
+        metaActions.showStreakPopup(metaStats.currentDailyStreak + 1, false);
+    };
+
+    const handleResetStreak = () => {
+        const nextStats = { ...metaStats, currentDailyStreak: 0, lastPlayedDate: "" };
+        metaActions.setStats(nextStats);
     };
 
     const player = state?.players?.[0];
@@ -160,6 +176,44 @@ export function DevConsole() {
                 >
                     {isInvincible ? "🛡️ INVINCIBLE (ON)" : "🛡️ INVINCIBILITY (OFF)"}
                 </button>
+            </div>
+
+            {/* Streak Tools */}
+            <div style={{ marginBottom: 8, borderTop: "1px solid #333", paddingTop: 8 }}>
+                <label style={{ display: "block", marginBottom: 4, color: "#f80" }}>Streak Testing:</label>
+                <div style={{ display: "flex", gap: 4 }}>
+                    <button
+                        onClick={handleTestStreak}
+                        style={{
+                            flex: 1,
+                            background: "#f80",
+                            color: "#000",
+                            border: "none",
+                            padding: "6px 8px",
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            fontSize: 10
+                        }}
+                    >
+                        TEST POPUP (+1)
+                    </button>
+                    <button
+                        onClick={handleResetStreak}
+                        style={{
+                            background: "#333",
+                            color: "#888",
+                            border: "1px solid #444",
+                            padding: "6px 8px",
+                            cursor: "pointer",
+                            fontSize: 10
+                        }}
+                    >
+                        RESET
+                    </button>
+                </div>
+                <div style={{ fontSize: 9, marginTop: 4, color: "#888" }}>
+                    Current: {metaStats.currentDailyStreak} | Best: {metaStats.bestDailyStreak}
+                </div>
             </div>
 
             {/* Stats Display */}
