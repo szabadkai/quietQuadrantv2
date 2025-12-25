@@ -160,6 +160,26 @@ Radio transmissions from Terran Command to fighter pilot callsign "Viper-1". Sho
 -   "Area secure. Enjoy the quiet. It’s the only part of this job that's free."
 -   "Nice work. The board of directors is slightly less disappointed in your performance today."
 -   "Wave down. You're still breathing. Command owes the betting pool fifty credits."
+-   "Sector clear. I'd clap, but my hands are full of paperwork you just generated."
+-   "HQ here. All targets neutralized. The silence is almost suspicious. Stay sharp."
+-   "Wave complete. You've earned a participation trophy. It's imaginary, but so is your hazard pay."
+-   "Command to Viper-1. Hostiles down. Your ship's warranty is now void. Worth it."
+-   "Nice shooting. The scrap dealers are already fighting over salvage rights."
+-   "Wave clear. That was almost graceful. Almost."
+-   "HQ here. Threat eliminated. The next wave is already jealous of how fast you killed this one."
+-   "All hostiles down. Your kill count just made someone in accounting cry."
+-   "Sector secure. For the next twelve seconds. Maybe fifteen if you're lucky."
+-   "Wave down. You're making this look easy. It's not. But you're making it look that way."
+-   "Command here. Clean sweep. The void thanks you for the new asteroid field."
+-   "Hostiles eliminated. Somewhere, a Drifter's family is very disappointed."
+-   "Wave clear. Your efficiency rating just went from 'acceptable' to 'mildly impressive.'"
+-   "HQ to Viper-1. All targets down. The coffee machine just broke in celebration. Unrelated, probably."
+-   "Sector clear. You've got a few seconds to contemplate your life choices before the next wave."
+-   "Nice work out there. The insurance adjusters are weeping, but that's their problem."
+-   "Wave complete. Command is updating your file from 'expendable' to 'slightly less expendable.'"
+-   "All hostiles neutralized. The void is 0.003% safer. You're welcome, universe."
+-   "HQ here. Wave down. Your heart rate suggests you're either excited or terrified. Both are valid."
+-   "Command to Viper-1. Threat eliminated. The next batch is already lining up. They never learn."
 
 ---
 
@@ -171,7 +191,7 @@ Radio transmissions from Terran Command to fighter pilot callsign "Viper-1". Sho
 -   "Rank up. You've been upgraded from 'Disposable' to 'Valuable Asset.' Barely."
 -   "Congrats on the rank. Your pension is now worth two extra ration bars. If you survive to claim it."
 -   "Promotion! We’ve updated your flight suit. It now has a slightly larger 'Return to Sender' tag."
--   "Rank up! You’re officially the best pilot we have left. Mostly because you're the *only* pilot we have left."
+-   "Rank up! You’re officially the best pilot we have left. Mostly because you're the _only_ pilot we have left."
 
 ### Synergy Unlocked
 
@@ -222,6 +242,7 @@ Radio transmissions from Terran Command to fighter pilot callsign "Viper-1". Sho
 ### Health Warnings
 
 #### Warning (Minor Damage)
+
 -   "Viper-1, hull integrity at 45%. Maybe try not getting hit? Just a thought."
 -   "HQ here. You're leaking atmosphere. And probably blood. Prioritize survival."
 -   "Command to Viper-1. Your ship is held together by hope and duct tape. Be careful."
@@ -236,6 +257,7 @@ Radio transmissions from Terran Command to fighter pilot callsign "Viper-1". Sho
 -   "Viper-1, you're scratching the paint. That custom metallic finish cost more than your last three clones."
 
 #### Critical (Near Death)
+
 -   "Viper-1, you're one hit from becoming a memorial plaque. Dodge better."
 -   "Critical damage detected. On the bright side, your life insurance premiums are about to become irrelevant."
 -   "Viper-1, the engine is making a sound I’ve only heard in horror movies. Ejecting is not an option."
@@ -244,7 +266,7 @@ Radio transmissions from Terran Command to fighter pilot callsign "Viper-1". Sho
 -   "Thermal signatures indicate you're melting. Don't melt. It’s bad for the upholstery."
 -   "Viper-1, the signal is flickering. If you're going to explode, do it away from the expensive debris, please."
 -   "Emergency power only. I’d tell you to pray, but the comms are blocked by static anyway."
--   "Viper-1, the 'Self-Destruct' light is blinking. It's not supposed to do that until *after* you eject. Good luck."
+-   "Viper-1, the 'Self-Destruct' light is blinking. It's not supposed to do that until _after_ you eject. Good luck."
 -   "HQ here. We've stopped the live feed to the junior cadets. We don't want to traumatize them."
 -   "Command to Viper-1. Your reactor is leaking. If it explodes, it'll be a beautiful way to go. For us, watching from here."
 -   "Viper-1, your cockpit glass is spider-webbing. It's a very pretty pattern. Shame it's about to fail."
