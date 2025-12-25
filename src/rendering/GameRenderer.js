@@ -55,9 +55,7 @@ function applyBodyClasses(settings) {
     );
 
     // Apply CRT intensity as CSS variable
-    const intensity = settings.crtScanlines
-        ? settings.crtIntensity ?? 0.5
-        : 0;
+    const intensity = settings.crtScanlines ? settings.crtIntensity ?? 0.5 : 0;
     document.documentElement.style.setProperty("--crt-intensity", intensity);
     document.documentElement.style.setProperty("--glow-intensity", intensity);
 
@@ -173,7 +171,7 @@ export class GameRenderer {
         if (settings.lowFX) {
             intensity = 0;
         }
-        
+
         GlowManager.setIntensity(intensity);
         if (this.playerRenderer)
             this.playerRenderer.setGlowIntensity(intensity);
@@ -194,18 +192,15 @@ export class GameRenderer {
     }
 
     preload(scene) {
-        const useImageForSvg =
+        const isMobile =
             scene.sys.game.device.os.iOS || scene.sys.game.device.os.android;
+        // Use larger rasterization size on mobile for better quality at various display sizes
+        const sizeMultiplier = isMobile ? 2 : 1;
         for (const asset of SPRITE_ASSETS) {
-            if (useImageForSvg) {
-                // Mobile WebKit can fail Phaser's SVG rasterizer; load as image instead.
-                scene.load.image(asset.key, asset.file);
-            } else {
-                scene.load.svg(asset.key, asset.file, {
-                    width: asset.size,
-                    height: asset.size,
-                });
-            }
+            scene.load.svg(asset.key, asset.file, {
+                width: asset.size * sizeMultiplier,
+                height: asset.size * sizeMultiplier,
+            });
         }
     }
 
@@ -271,14 +266,25 @@ export class GameRenderer {
             if (e.shiftKey) {
                 if (e.key.toLowerCase() === "g") {
                     this.debugSettings.glow = !this.debugSettings.glow;
-                    const intensity = this.debugSettings.glow ? (loadSettings().crtIntensity || 0.5) : 0;
+                    const intensity = this.debugSettings.glow
+                        ? loadSettings().crtIntensity || 0.5
+                        : 0;
                     this.updateGlowIntensityAcrossRenderers(intensity);
-                    console.log(`[DEBUG] Glow: ${this.debugSettings.glow ? "ON" : "OFF"}`);
+                    console.log(
+                        `[DEBUG] Glow: ${
+                            this.debugSettings.glow ? "ON" : "OFF"
+                        }`
+                    );
                 }
                 if (e.key.toLowerCase() === "c") {
                     this.debugSettings.crt = !this.debugSettings.crt;
-                    document.body.classList.toggle("qq-no-scanlines", !this.debugSettings.crt);
-                    console.log(`[DEBUG] CRT: ${this.debugSettings.crt ? "ON" : "OFF"}`);
+                    document.body.classList.toggle(
+                        "qq-no-scanlines",
+                        !this.debugSettings.crt
+                    );
+                    console.log(
+                        `[DEBUG] CRT: ${this.debugSettings.crt ? "ON" : "OFF"}`
+                    );
                 }
             }
         });
@@ -286,10 +292,13 @@ export class GameRenderer {
 
     updateGlowIntensityAcrossRenderers(intensity) {
         GlowManager.setIntensity(intensity);
-        if (this.playerRenderer) this.playerRenderer.setGlowIntensity(intensity);
+        if (this.playerRenderer)
+            this.playerRenderer.setGlowIntensity(intensity);
         if (this.enemyRenderer) this.enemyRenderer.setGlowIntensity(intensity);
-        if (this.bulletRenderer) this.bulletRenderer.setGlowIntensity(intensity);
-        if (this.pickupRenderer) this.pickupRenderer.setGlowIntensity(intensity);
+        if (this.bulletRenderer)
+            this.bulletRenderer.setGlowIntensity(intensity);
+        if (this.pickupRenderer)
+            this.pickupRenderer.setGlowIntensity(intensity);
         if (this.bossRenderer) this.bossRenderer.setGlowIntensity(intensity);
     }
 
