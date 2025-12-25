@@ -27,20 +27,18 @@ export function UpgradeCard({ upgradeId, onSelect }) {
                 <span className="qq-upgrade-card__category">{upgrade.category}</span>
             </div>
 
-            <div className="qq-upgrade-card__illustration">
-                {!iconMissing ? (
-                    <img
-                        src={iconPath}
-                        alt={upgrade.name}
-                        className="qq-upgrade-card__image"
-                        onError={() => setIconMissing(true)}
-                    />
-                ) : (
-                    <div className="qq-upgrade-card__placeholder" aria-hidden="true">
-                        <span>{categoryIcon}</span>
-                    </div>
-                )}
-            </div>
+            {!iconMissing ? (
+                <img
+                    src={iconPath}
+                    alt={upgrade.name}
+                    className="qq-upgrade-card__image"
+                    onError={() => setIconMissing(true)}
+                />
+            ) : (
+                <div className="qq-upgrade-card__placeholder" aria-hidden="true">
+                    <span>{categoryIcon}</span>
+                </div>
+            )}
 
 
             <div className="qq-upgrade-card__name">{upgrade.name}</div>

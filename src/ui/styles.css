@@ -625,6 +625,7 @@ body.qq-no-scanlines::after {
   max-height: 92%;
   object-fit: contain;
   padding: 8px;
+  margin-bottom: 10px;
   filter: drop-shadow(0 0 4px var(--qq-accent));
 }
 
@@ -641,7 +642,7 @@ body.qq-no-scanlines::after {
   background: radial-gradient(circle, rgba(0, 255, 255, 0.06), transparent 60%);
 }
 
-.qq-upgrade-card:hover .qq-upgrade-card__image {
+.qq-upgrade-card:hover {
   transform: scale(1.1);
   filter: drop-shadow(0 0 8px var(--qq-accent)) brightness(1.2);
 }
@@ -656,6 +657,17 @@ body.qq-no-scanlines::after {
     inset 0 0 15px rgba(255, 255, 255, 0.18);
   filter: brightness(1.08);
   transform: translateY(-2px) scale(1.01);
+}
+
+.qq-upgrade-card:focus-visible {
+  border-color: var(--qq-accent);
+  box-shadow:
+    0 0 16px var(--qq-accent),
+    inset 0 0 15px rgba(255, 255, 255, 0.18);
+  filter: brightness(1.08);
+  transform: translateY(-2px) scale(1.01);
+  outline: 2px solid var(--qq-accent);
+  outline-offset: 2px;
 }
 
 
