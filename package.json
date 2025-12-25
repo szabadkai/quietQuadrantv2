@@ -1,6 +1,6 @@
 {
     "name": "quiet-quadrant-v2",
-    "version": "0.9.6",
+    "version": "0.10.0",
     "private": true,
     "type": "module",
     "main": "electron/main.cjs",
