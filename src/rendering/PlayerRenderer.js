@@ -9,6 +9,7 @@ export class PlayerRenderer {
         this.sprites = new Map();
         this.neutronRings = new Map();
         this.shieldRings = new Map();
+        this.shieldInnerRings = new Map();
     }
 
     setGlowIntensity(intensity) {
@@ -53,25 +54,26 @@ export class PlayerRenderer {
             if (ring) {
                 const pulse =
                     0.45 + Math.sin(this.scene.time.now * 0.006) * 0.2;
-                ring.clear();
-                ring.lineStyle(2, 0x6dd6ff, pulse);
-                ring.strokeCircle(
-                    sprite.x,
-                    sprite.y,
-                    Math.max(18, player.neutronBlockRadius ?? 0)
-                );
+                const radius = Math.max(18, player.neutronBlockRadius ?? 0);
+                ring.setPosition(sprite.x, sprite.y);
+                ring.setRadius(radius);
+                ring.setStrokeStyle(2, 0x6dd6ff, pulse);
             }
 
-            const shieldRing = this.ensureShieldRing(player);
-            if (shieldRing) {
+            const { outer: shieldOuter, inner: shieldInner } =
+                this.ensureShieldRing(player);
+            if (shieldOuter) {
                 const pulse =
                     0.35 + Math.sin(this.scene.time.now * 0.008) * 0.2;
                 const radius = player.radius * 3.2;
-                shieldRing.clear();
-                shieldRing.lineStyle(2, 0x6dd6ff, pulse);
-                shieldRing.strokeCircle(sprite.x, sprite.y, radius);
-                shieldRing.lineStyle(1, 0x9ff0ff, pulse * 0.9);
-                shieldRing.strokeCircle(sprite.x, sprite.y, radius * 0.86);
+                shieldOuter.setPosition(sprite.x, sprite.y);
+                shieldOuter.setRadius(radius);
+                shieldOuter.setStrokeStyle(2, 0x6dd6ff, pulse);
+                if (shieldInner) {
+                    shieldInner.setPosition(sprite.x, sprite.y);
+                    shieldInner.setRadius(radius * 0.86);
+                    shieldInner.setStrokeStyle(1, 0x9ff0ff, pulse * 0.9);
+                }
             }
 
             const nextSize = safeSize(player.radius * 4.26);
@@ -96,6 +98,11 @@ export class PlayerRenderer {
                 if (shield) {
                     shield.destroy();
                     this.shieldRings.delete(id);
+                }
+                const shieldInner = this.shieldInnerRings.get(id);
+                if (shieldInner) {
+                    shieldInner.destroy();
+                    this.shieldInnerRings.delete(id);
                 }
             }
         }
@@ -124,7 +131,9 @@ export class PlayerRenderer {
         let ring = this.neutronRings.get(player.id);
         if (hasCore) {
             if (!ring) {
-                ring = this.scene.add.graphics();
+                // Use Arc instead of Graphics - no triangulation needed
+                ring = this.scene.add.arc(0, 0, 18, 0, 360, false, 0x000000, 0);
+                ring.setStrokeStyle(2, 0x6dd6ff, 0.45);
                 ring.setDepth(4);
                 this.neutronRings.set(player.id, ring);
             }
@@ -139,20 +148,51 @@ export class PlayerRenderer {
 
     ensureShieldRing(player) {
         const hasShield = player.shieldActive;
-        let ring = this.shieldRings.get(player.id);
+        let outer = this.shieldRings.get(player.id);
+        let inner = this.shieldInnerRings.get(player.id);
         if (hasShield) {
-            if (!ring) {
-                ring = this.scene.add.graphics();
-                ring.setDepth(5);
-                this.shieldRings.set(player.id, ring);
+            if (!outer) {
+                // Use Arc instead of Graphics - no triangulation needed
+                outer = this.scene.add.arc(
+                    0,
+                    0,
+                    30,
+                    0,
+                    360,
+                    false,
+                    0x000000,
+                    0
+                );
+                outer.setStrokeStyle(2, 0x6dd6ff, 0.35);
+                outer.setDepth(5);
+                this.shieldRings.set(player.id, outer);
             }
-            ring.setVisible(true);
-            return ring;
+            if (!inner) {
+                inner = this.scene.add.arc(
+                    0,
+                    0,
+                    26,
+                    0,
+                    360,
+                    false,
+                    0x000000,
+                    0
+                );
+                inner.setStrokeStyle(1, 0x9ff0ff, 0.3);
+                inner.setDepth(5);
+                this.shieldInnerRings.set(player.id, inner);
+            }
+            outer.setVisible(true);
+            inner.setVisible(true);
+            return { outer, inner };
         }
-        if (ring) {
-            ring.setVisible(false);
+        if (outer) {
+            outer.setVisible(false);
         }
-        return null;
+        if (inner) {
+            inner.setVisible(false);
+        }
+        return { outer: null, inner: null };
     }
 }
 

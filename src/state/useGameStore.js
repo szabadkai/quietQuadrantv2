@@ -6,6 +6,7 @@ import { useMetaStore } from "./useMetaStore.js";
 export const useGameStore = create((set, get) => ({
     simulation: null,
     state: null,
+    stateVersion: 0, // Incremented to trigger React updates without cloning state
     session: {
         mode: "solo",
         localPlayerId: "p1",
@@ -64,11 +65,15 @@ export const useGameStore = create((set, get) => ({
                 };
             }
 
-            const snapshot = simulation.getState();
-            set({ simulation, state: snapshot, session });
+            set({
+                simulation,
+                state: simulation.getState(),
+                stateVersion: 0,
+                session,
+            });
         },
         tick: (inputs = {}) => {
-            const { simulation, session } = get();
+            const { simulation, session, stateVersion } = get();
             if (!simulation) return;
             if (session.mode === "online") {
                 const localInput =
@@ -80,14 +85,20 @@ export const useGameStore = create((set, get) => ({
             } else {
                 simulation.tick(inputs);
             }
-            // Direct reference - no spread clone needed, simulation owns the state
-            set({ state: simulation.getState() });
+            // Bump version to trigger re-renders; state is same ref but version changes
+            set({
+                state: simulation.getState(),
+                stateVersion: stateVersion + 1,
+            });
         },
         applyUpgrade: (playerId, upgradeId) => {
-            const { simulation } = get();
+            const { simulation, stateVersion } = get();
             if (!simulation) return false;
             const applied = simulation.applyUpgrade(playerId, upgradeId);
-            set({ state: simulation.getState() });
+            set({
+                state: simulation.getState(),
+                stateVersion: stateVersion + 1,
+            });
             return applied;
         },
         stopGame: () => {
@@ -95,7 +106,7 @@ export const useGameStore = create((set, get) => ({
             if (simulation?.destroy) {
                 simulation.destroy();
             }
-            set({ simulation: null, state: null });
+            set({ simulation: null, state: null, stateVersion: 0 });
         },
     },
 }));
