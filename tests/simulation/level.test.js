@@ -11,21 +11,33 @@ describe("LevelSystem", () => {
         const state = createInitialState(1);
         const rng = new SeededRandom(5);
 
-        state.wave.enemiesRemaining = 1;
-        const enemy = spawnEnemy(state, "mass", rng, {
-            position: { x: 120, y: 120 }
-        });
-        enemy.health = 1;
+        const enemyCount = 5;
+        state.wave.enemiesRemaining = enemyCount;
 
-        state.damageQueue.push({ target: "enemy", id: enemy.id, amount: 2 });
+        for (let i = 0; i < enemyCount; i += 1) {
+            const enemy = spawnEnemy(state, "mass", rng, {
+                position: { x: 120 + i * 5, y: 120 }
+            });
+            enemy.health = 1;
+            state.damageQueue.push({
+                target: "enemy",
+                id: enemy.id,
+                amount: 2
+            });
+        }
+
         DamageSystem.update(state, rng);
 
-        expect(state.pickups.length).toBe(1);
+        expect(state.pickups.length).toBe(enemyCount);
 
-        const pickup = state.pickups[0];
         const player = state.players[0];
-        player.x = pickup.x;
-        player.y = pickup.y;
+        player.x = state.pickups[0].x;
+        player.y = state.pickups[0].y;
+
+        for (const pickup of state.pickups) {
+            pickup.x = player.x;
+            pickup.y = player.y;
+        }
 
         CollisionSystem.update(state);
         LevelSystem.update(state, rng);
