@@ -28,8 +28,8 @@ export function CardRewardModal({ options, onSelect }) {
                                 <div className="qq-reward-status">
                                     {isUnlocked ? (
                                         <span className="qq-boost-indicator">
-                                            BOOST {currentBoost + 1}/5
-                                            <span className="qq-boost-pips">
+                                            BOOST {currentBoost + 1} / 5
+                                            <div className="qq-boost-pips">
                                                 {[...Array(5)].map((_, i) => (
                                                     <span
                                                         key={i}
@@ -38,7 +38,7 @@ export function CardRewardModal({ options, onSelect }) {
                                                         ●
                                                     </span>
                                                 ))}
-                                            </span>
+                                            </div>
                                         </span>
                                     ) : (
                                         <span className="qq-unlock-indicator">NEW UNLOCK</span>
@@ -52,3 +52,4 @@ export function CardRewardModal({ options, onSelect }) {
         </div>
     );
 }
+

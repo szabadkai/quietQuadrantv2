@@ -4,6 +4,8 @@ import { XPBar } from "./XPBar.jsx";
 import { WaveIndicator } from "./WaveIndicator.jsx";
 import { TICK_RATE } from "../../utils/constants.js";
 import { WAVES } from "../../config/waves.js";
+import { ActiveUpgrades } from "./ActiveUpgrades.jsx";
+
 
 export function HUD({ state }) {
     if (!state) return null;
@@ -29,7 +31,8 @@ export function HUD({ state }) {
         >
             <div className="qq-hud-wrap">
                 <div className="qq-hud-bar">
-                    <div className="qq-panel qq-hud-panel">
+                    <div className="qq-panel qq-hud-panel" style={{ pointerEvents: "auto" }}>
+
                         <div className="qq-hud-row">
                             <div className="qq-hud-label">HULL</div>
                             <div className="qq-hud-value">{hullValue}</div>
@@ -45,14 +48,17 @@ export function HUD({ state }) {
                         </div>
                         <XPBar current={player.xp} toNext={player.xpToNext} />
                     </div>
-                    <div className="qq-panel qq-hud-panel">
+                    <div className="qq-panel qq-hud-panel" style={{ pointerEvents: "auto" }}>
                         <div className="qq-hud-row">
                             <div className="qq-hud-label">WAVE</div>
+
                             <div className="qq-hud-value qq-hud-value-large">
                                 <WaveIndicator wave={state.wave.current} phase={state.phase} total={WAVES.length} />
                             </div>
                         </div>
+                        <ActiveUpgrades upgrades={player.upgrades} />
                     </div>
+
                     <div className="qq-panel qq-hud-panel">
                         <div className="qq-hud-row">
                             <div className="qq-hud-label">CLOCK</div>
@@ -91,6 +97,8 @@ export function HUD({ state }) {
         </div>
     );
 }
+
+
 
 function formatClock(totalSeconds) {
     const minutes = Math.floor(totalSeconds / 60);

@@ -1,29 +1,17 @@
 import React from "react";
 import { UPGRADE_BY_ID } from "../../config/upgrades.js";
 
-const RARITY_STYLES = {
-    common: {
-        border: "rgba(159, 240, 255, 0.25)",
-        background: "rgba(4, 8, 12, 0.92)",
-        glow: "0 0 12px rgba(159, 240, 255, 0.08)"
-    },
-    rare: {
-        border: "rgba(159, 240, 255, 0.4)",
-        background: "rgba(4, 8, 12, 0.92)",
-        glow: "0 0 16px rgba(159, 240, 255, 0.12)"
-    },
-    legendary: {
-        border: "rgba(159, 240, 255, 0.6)",
-        background: "rgba(4, 8, 12, 0.92)",
-        glow: "0 0 18px rgba(159, 240, 255, 0.16)"
-    }
+const CATEGORY_ICONS = {
+    offense: "🎯",
+    defense: "🛡️",
+    utility: "⚡"
 };
 
 export function UpgradeCard({ upgradeId, onSelect }) {
     const upgrade = UPGRADE_BY_ID[upgradeId];
     if (!upgrade) return null;
 
-    const style = RARITY_STYLES[upgrade.rarity] ?? RARITY_STYLES.common;
+    const categoryIcon = CATEGORY_ICONS[upgrade.category] || "✨";
 
     return (
         <button
@@ -31,17 +19,36 @@ export function UpgradeCard({ upgradeId, onSelect }) {
             onClick={() => onSelect(upgradeId)}
             className="qq-upgrade-card"
             data-rarity={upgrade.rarity}
-            style={{
-                background: style.background,
-                borderColor: style.border,
-                boxShadow: style.glow
-            }}
         >
-            <div className="qq-upgrade-rarity">{upgrade.rarity.toUpperCase()}</div>
-            <div className="qq-upgrade-name">{upgrade.name}</div>
+            <div className="qq-upgrade-card__header">
+                <span className="qq-upgrade-card__rarity">{upgrade.rarity}</span>
+                <span className="qq-upgrade-card__category">{upgrade.category}</span>
+            </div>
+
+            <div className="qq-upgrade-card__illustration">
+                <img
+                    src={`/assets/upgrades/${upgrade.id}.png`}
+                    alt={upgrade.name}
+                    className="qq-upgrade-card__image"
+                    onError={(e) => {
+                        e.target.style.display = 'none';
+                        // Keep previous placeholder logic if needed or just hide
+                    }}
+                />
+            </div>
+
+
+            <div className="qq-upgrade-card__name">{upgrade.name}</div>
+
             {upgrade.description ? (
-                <div className="qq-upgrade-description">{upgrade.description}</div>
+                <div className="qq-upgrade-card__desc">{upgrade.description}</div>
             ) : null}
+
+            <div className="qq-upgrade-card__footer">
+                <span className="qq-upgrade-card__type-icon">{categoryIcon}</span>
+                <span className="qq-label" style={{ fontSize: "10px", letterSpacing: "0.1em" }}>Select</span>
+            </div>
         </button>
     );
 }
+
