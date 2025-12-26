@@ -7,6 +7,7 @@ export const useGameStore = create((set, get) => ({
     simulation: null,
     state: null,
     stateVersion: 0, // Incremented to trigger React updates without cloning state
+    lastRun: null,
     session: {
         mode: "solo",
         localPlayerId: "p1",
@@ -108,5 +109,6 @@ export const useGameStore = create((set, get) => ({
             }
             set({ simulation: null, state: null, stateVersion: 0 });
         },
+        setLastRun: (run) => set({ lastRun: run }),
     },
 }));

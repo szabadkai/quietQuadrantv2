@@ -12,6 +12,8 @@ import { HostGameScreen } from "./ui/screens/HostGameScreen.jsx";
 import { JoinGameScreen } from "./ui/screens/JoinGameScreen.jsx";
 import { TwinSetupScreen } from "./ui/screens/TwinSetupScreen.jsx";
 import { PreTitleScreen } from "./ui/screens/PreTitleScreen.jsx";
+import { VictoryDefeatScreen } from "./ui/screens/VictoryDefeatScreen.jsx";
+
 import { NotificationToast } from "./ui/components/NotificationToast.jsx";
 import { AchievementPopup } from "./ui/modals/AchievementPopup.jsx";
 import { StreakPopup } from "./ui/modals/StreakPopup.jsx";
@@ -92,6 +94,8 @@ export function App() {
             {screen === "host" && <HostGameScreen />}
             {screen === "join" && <JoinGameScreen />}
             {screen === "twin" && <TwinSetupScreen />}
+            {screen === "victory_defeat" && <VictoryDefeatScreen />}
+
             <NotificationToast />
             <AchievementPopup />
             <StreakPopup />

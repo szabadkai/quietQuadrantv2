@@ -121,12 +121,9 @@ export function GameScreen() {
             notifyAchievement(achievement);
         }
 
-        const navigate = () => useUIStore.getState().actions.setScreen("summary");
-        if (runSummary.victory === false) {
-            summaryTimeoutRef.current = setTimeout(navigate, 600);
-        } else {
-            navigate();
-        }
+        useGameStore.getState().actions.setLastRun(runSummary);
+        const navigate = () => useUIStore.getState().actions.setScreen("victory_defeat");
+        navigate();
     }, [runSummary, phase, summaryTimeoutRef]);
 
     return (
