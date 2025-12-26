@@ -11,6 +11,7 @@ import { MultiplayerSetupScreen } from "./ui/screens/MultiplayerSetupScreen.jsx"
 import { HostGameScreen } from "./ui/screens/HostGameScreen.jsx";
 import { JoinGameScreen } from "./ui/screens/JoinGameScreen.jsx";
 import { TwinSetupScreen } from "./ui/screens/TwinSetupScreen.jsx";
+import { PreTitleScreen } from "./ui/screens/PreTitleScreen.jsx";
 import { NotificationToast } from "./ui/components/NotificationToast.jsx";
 import { AchievementPopup } from "./ui/modals/AchievementPopup.jsx";
 import { StreakPopup } from "./ui/modals/StreakPopup.jsx";
@@ -50,11 +51,34 @@ function applyInitialSettings() {
 
 export function App() {
     const screen = useUIStore((s) => s.screen);
+    const [showIntro, setShowIntro] = React.useState(() => {
+        try {
+            return !sessionStorage.getItem("introShown");
+        } catch {
+            return true;
+        }
+    });
+
     useGlobalNavigation();
 
     useEffect(() => {
         applyInitialSettings();
     }, []);
+
+    if (showIntro) {
+        return (
+            <PreTitleScreen
+                onComplete={() => {
+                    try {
+                        sessionStorage.setItem("introShown", "true");
+                    } catch {
+                        // ignore
+                    }
+                    setShowIntro(false);
+                }}
+            />
+        );
+    }
 
     return (
         <div style={{ position: "relative" }}>
