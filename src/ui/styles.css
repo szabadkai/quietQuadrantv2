@@ -1042,6 +1042,170 @@ body.qq-no-scanlines::after {
 @media (max-width: 640px) {
   .qq-upgrade-grid {
     grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .qq-upgrade-panel {
+    width: 96vw;
+    padding: 12px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .qq-upgrade-title {
+    margin-bottom: 8px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+  }
+
+  /* Make cards more compact on mobile */
+  .qq-upgrade-card {
+    min-height: auto;
+    padding: 8px 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+  }
+
+  .qq-upgrade-card__illustration {
+    display: none;
+  }
+
+  .qq-upgrade-card__header {
+    margin-bottom: 4px;
+  }
+
+  .qq-upgrade-card__name {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .qq-upgrade-card__desc {
+    font-size: 11px;
+  }
+
+  .qq-upgrade-card__footer {
+    margin-top: 4px;
+    padding-top: 4px;
+    font-size: 10px;
+  }
+
+  .qq-upgrade-card__type-icon {
+    font-size: 12px;
+  }
+}
+
+
+@media (max-width: 920px),
+(max-height: 500px) {
+  .qq-upgrade-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 4px;
+    /* Tighter gap */
+    align-items: stretch;
+    /* Ensure equal height */
+  }
+
+  .qq-upgrade-panel {
+    width: 98vw;
+    padding: 4px 6px;
+    max-height: 98vh;
+    /* Allow mostly full height but try to fit content */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .qq-upgrade-title {
+    margin-bottom: 4px;
+    font-size: 13px;
+    /* Header slightly larger */
+    letter-spacing: 0.1em;
+  }
+
+  /* Compact cards */
+  .qq-upgrade-card {
+    min-height: 0;
+    /* Allow shrinking */
+    padding: 4px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    display: flex;
+  }
+
+  .qq-upgrade-card__illustration {
+    display: flex !important;
+    min-height: 0;
+    height: 18px;
+    /* Reduced from 25px to 18px */
+    margin: 1px 0;
+    aspect-ratio: auto;
+    justify-content: center;
+  }
+
+  .qq-upgrade-card__image {
+    padding: 0;
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .qq-upgrade-card__placeholder {
+    font-size: 14px;
+  }
+
+  .qq-upgrade-card__header {
+    margin-bottom: 1px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .qq-upgrade-card__rarity {
+    font-size: 11px;
+    padding: 0 2px;
+  }
+
+  .qq-upgrade-card__name {
+    font-size: 12px;
+    font-weight: 800;
+    /* Much smaller */
+    margin-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .qq-upgrade-card__desc {
+    font-size: 12px;
+    /* Strict requirement */
+    /* Tiny but readable on high DPI */
+    line-height: 1.1;
+    display: -webkit-box;
+    display: box;
+    /* Standard property for line-clamp */
+    line-clamp: 2;
+    /* Reduce lines to fit larger text */
+    -webkit-line-clamp: 2;
+    /* Limit lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-grow: 1;
+    /* allow it to take available space */
+  }
+
+  .qq-upgrade-card__footer {
+    margin-top: 1px;
+    padding-top: 1px;
+    font-size: 12px;
+    /* Strict requirement */
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .qq-upgrade-card__type-icon {
+    font-size: 12px;
   }
 }
 
