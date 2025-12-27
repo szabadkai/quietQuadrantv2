@@ -122,7 +122,13 @@ export function GameScreen() {
 
         useGameStore.getState().actions.setLastRun(runSummary);
         const navigate = () => useUIStore.getState().actions.setScreen("victory_defeat");
-        navigate();
+
+        // Delay navigation on defeat to let the death animation play (800ms)
+        if (!runSummary.victory) {
+            setTimeout(navigate, 800);
+        } else {
+            navigate();
+        }
     }, [runSummary, phase, summaryTimeoutRef]);
 
     return (

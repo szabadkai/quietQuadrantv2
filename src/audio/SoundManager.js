@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /**
  * Sound effects manager with pooling and priority system.
  * Handles playback, volume control, and simultaneous sound limits.
@@ -24,6 +25,8 @@ const SOUND_DEFS = {
     defeatShatter: { priority: 1, volume: 0.6, cooldown: 2000 },
     menuHover: { priority: 5, volume: 0.25, cooldown: 30 },
     menuSelect: { priority: 4, volume: 0.4, cooldown: 50 },
+    enemyDown: { priority: 4, volume: 0.4, cooldown: 40 },
+    playerDeath: { priority: 1, volume: 0.6, cooldown: 500 },
 };
 
 export class SoundManager {
@@ -172,6 +175,136 @@ export class SoundManager {
         };
     }
 
+    /**
+     * Play a lowpass-filtered noise burst for impact sounds.
+     */
+    playNoise(duration, volume, cutoffHz) {
+        if (!this.context || !this.masterGain) return;
+        const ctx = this.context;
+        const bufferSize = Math.max(128, Math.floor(ctx.sampleRate * duration));
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * 0.4;
+        }
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.value = cutoffHz;
+        const gain = ctx.createGain();
+        gain.gain.value = volume * SYNTH_GAIN_SCALE * SFX_GAIN_BOOST;
+        source.connect(filter).connect(gain).connect(this.masterGain);
+        source.start();
+        source.stop(ctx.currentTime + duration + 0.02);
+        source.onended = () => {
+            source.disconnect();
+            filter.disconnect();
+            gain.disconnect();
+        };
+    }
+
+    /**
+     * Play a shaped oscillator tone with attack/decay/release envelope and optional pitch glide.
+     */
+    playTone(opts, delaySeconds = 0) {
+        if (!this.context || !this.masterGain) return;
+        const ctx = this.context;
+        const start = ctx.currentTime + delaySeconds;
+        const end = start + opts.duration + opts.release;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = opts.type ?? "sine";
+        osc.frequency.setValueAtTime(opts.frequency, start);
+        if (opts.glide && opts.glide !== 0) {
+            osc.frequency.linearRampToValueAtTime(
+                Math.max(40, opts.frequency + opts.glide),
+                start + opts.duration
+            );
+        }
+        const vol = opts.volume * SYNTH_GAIN_SCALE * SFX_GAIN_BOOST;
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.linearRampToValueAtTime(vol, start + opts.attack);
+        gain.gain.linearRampToValueAtTime(vol * 0.4, start + opts.attack + opts.decay);
+        gain.gain.linearRampToValueAtTime(0.0001, end);
+        osc.connect(gain).connect(this.masterGain);
+        osc.start(start);
+        osc.stop(end + 0.02);
+        osc.onended = () => {
+            osc.disconnect();
+            gain.disconnect();
+        };
+    }
+
+    /**
+     * Play layered SFX for rich death sounds (enemyDown, playerDeath).
+     */
+    playLayeredSfx(name) {
+        if (!this.context || !this.masterGain) return;
+        
+        if (name === "enemyDown") {
+            this.playNoise(0.14, 0.16, 800);
+            this.playTone({
+                frequency: 220 + Math.random() * 40,
+                type: "square",
+                duration: 0.22,
+                attack: 0.004,
+                decay: 0.14,
+                release: 0.14,
+                volume: 0.12,
+                glide: -120,
+            });
+        } else if (name === "playerDeath") {
+            this.playNoise(0.4, 0.4, 2000);
+            this.playTone({
+                frequency: 300 + Math.random() * 50,
+                type: "sawtooth",
+                duration: 0.35,
+                attack: 0.01,
+                decay: 0.2,
+                release: 0.2,
+                volume: 0.4,
+                glide: -200,
+            });
+            this.playTone({
+                frequency: 120,
+                type: "sine",
+                duration: 0.5,
+                attack: 0.02,
+                decay: 0.3,
+                release: 0.25,
+                volume: 0.35,
+                glide: -80,
+            }, 0.1);
+        } else if (name === "shoot") {
+            // Punchy laser shot: short noise burst + high square chirp
+            this.playNoise(0.04, 0.12, 3000);
+            this.playTone({
+                frequency: 800 + Math.random() * 100,
+                type: "square",
+                duration: 0.06,
+                attack: 0.002,
+                decay: 0.03,
+                release: 0.03,
+                volume: 0.15,
+                glide: -300,
+            });
+        } else if (name === "dash") {
+            // Swoosh: filtered noise + descending sine
+            this.playNoise(0.15, 0.2, 1800);
+            this.playTone({
+                frequency: 600,
+                type: "sine",
+                duration: 0.12,
+                attack: 0.01,
+                decay: 0.06,
+                release: 0.06,
+                volume: 0.2,
+                glide: -350,
+            });
+        }
+    }
+
     stopSound(soundRef) {
         try {
             soundRef.source.stop();
@@ -230,7 +363,7 @@ export class SoundManager {
         for (const event of events) {
             switch (event.type) {
             case "shoot":
-                this.play("shoot");
+                this.playLayeredSfx("shoot");
                 break;
             case "enemy-hit":
                 if (++hitCount <= HIT_LIMIT) {
@@ -239,14 +372,14 @@ export class SoundManager {
                 break;
             case "enemy-death":
                 if (++killCount <= KILL_LIMIT) {
-                    this.play("kill");
+                    this.playLayeredSfx("enemyDown");
                 }
                 break;
             case "player-hit":
                 this.play("playerHit");
                 break;
             case "dash":
-                this.play("dash");
+                this.playLayeredSfx("dash");
                 break;
             case "xp-pickup":
                 this.play("xpPickup");
@@ -261,9 +394,7 @@ export class SoundManager {
                 this.play("victory");
                 break;
             case "defeat":
-                this.play("defeat");
-                this.play("defeatBoom", { delay: 0.08 });
-                this.play("defeatShatter", { delay: 0.18 });
+                this.playLayeredSfx("playerDeath");
                 break;
             }
         }

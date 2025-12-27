@@ -5,6 +5,7 @@ import { spawnBossEntrance } from "./effects/BossEntranceEffect.js";
 import { spawnChainArc } from "./effects/ChainArcEffect.js";
 import { spawnDashTrail } from "./effects/DashTrailEffect.js";
 import { spawnExplosion } from "./effects/ExplosionEffect.js";
+import { spawnEnemyDeath } from "./effects/EnemyDeathEffect.js";
 import { spawnExplosionRing } from "./effects/ExplosionRingEffect.js";
 import { spawnHeal } from "./effects/HealEffect.js";
 import { spawnHitSpark } from "./effects/HitSparkEffect.js";
@@ -318,7 +319,7 @@ export class EffectsRenderer {
     handleEvent(e) {
         const { x, y, x1, y1, x2, y2, radius } = e,
             t = e.type;
-        if (t === "enemy-death") spawnExplosion(this, x, y, PALETTE_HEX.enemy);
+        if (t === "enemy-death") spawnEnemyDeath(this, x, y);
         else if (t === "player-hit")
             spawnHitSpark(this, x, y, PALETTE_HEX.danger);
         else if (t === "enemy-hit")
