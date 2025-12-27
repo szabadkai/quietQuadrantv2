@@ -108,7 +108,6 @@ export function GameScreen() {
 
         const metaActions = useMetaStore.getState().actions;
         metaActions.recordRun(runSummary);
-        metaActions.updateDailyStreak();
         const xpEarned = 50 + (runSummary.wave ?? 0) * 10 + (runSummary.kills ?? 0) + (runSummary.bossDefeated ? 100 : 0) + (runSummary.multiplayer ? 25 : 0);
         const xpResult = metaActions.addXP(Math.round(xpEarned));
         if (xpResult.rankUp) {

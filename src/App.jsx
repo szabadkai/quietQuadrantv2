@@ -67,6 +67,40 @@ export function App() {
         applyInitialSettings();
     }, []);
 
+    // Lock screen orientation to landscape
+    useEffect(() => {
+        const lockOrientation = async () => {
+            try {
+                // Try to lock orientation using the Screen Orientation API
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock("landscape");
+                    console.log("[App] Screen orientation locked to landscape");
+                }
+            } catch (error) {
+                // Orientation lock may fail if not in fullscreen or not supported
+                console.log("[App] Could not lock orientation:", error.message);
+            }
+        };
+
+        // Attempt to lock orientation on mount
+        lockOrientation();
+
+        // Also try to lock when entering fullscreen (required on some browsers)
+        const handleFullscreenChange = () => {
+            if (document.fullscreenElement) {
+                lockOrientation();
+            }
+        };
+
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
+        document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+
+        return () => {
+            document.removeEventListener("fullscreenchange", handleFullscreenChange);
+            document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+        };
+    }, []);
+
     if (showIntro) {
         return (
             <PreTitleScreen

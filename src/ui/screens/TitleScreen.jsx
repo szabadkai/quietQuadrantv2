@@ -24,6 +24,8 @@ export function TitleScreen() {
     useEffect(() => {
         musicManager.init();
         musicManager.play("title");
+        // Update daily streak when visiting the main menu (rewards visiting the game)
+        useMetaStore.getState().actions.updateDailyStreak();
     }, []);
 
     const handleWeekly = () => {
@@ -41,22 +43,22 @@ export function TitleScreen() {
 
                 <div className="qq-menu-list">
                     <Button primary onClick={handleWeekly}>
-            Weekly Run
+                        Weekly Run
                     </Button>
                     <Button onClick={() => setScreen("multiplayer")}>
-            Multiplayer
+                        Multiplayer
                     </Button>
                     <Button onClick={() => setScreen("collection")}>
-            Collection
+                        Collection
                     </Button>
                     <Button onClick={() => setScreen("stats")}>
-            Stats
+                        Stats
                     </Button>
                     <Button onClick={() => setScreen("howtoplay")}>
-            How to Play
+                        How to Play
                     </Button>
                     <Button onClick={() => setSettingsOpen(true)}>
-            Settings
+                        Settings
                     </Button>
                 </div>
 
