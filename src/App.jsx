@@ -99,6 +99,7 @@ export function App() {
             document.removeEventListener("fullscreenchange", handleFullscreenChange);
             document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (showIntro) {

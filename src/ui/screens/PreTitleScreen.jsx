@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import paperwhaleVideo from "../../../assets/paperwhale.mp4";
 import introVideo from "../../../assets/intro.mp4";
-import { isSlowConnection, preloadVideo, isVideoCached } from "../../utils/networkUtils.js";
+import { isSlowConnection, preloadVideo } from "../../utils/networkUtils.js";
 import { isMobileDevice } from "../../utils/isMobileDevice.js";
 
 const sequence = [
