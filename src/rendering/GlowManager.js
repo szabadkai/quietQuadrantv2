@@ -114,9 +114,18 @@ const GLOW_PRESETS_BASE = {
     },
 };
 
+// Detect Android devices - preFX glow causes black sprites on Android GPUs
+// iOS works fine with preFX glow, so we only disable it on Android
+function detectAndroid() {
+    if (typeof navigator === 'undefined') return false;
+    const ua = navigator.userAgent || '';
+    return /Android/i.test(ua);
+}
+
 export class GlowManager {
     static intensity = 0.5;
     static theme = "vectrex";
+    static isAndroid = detectAndroid();
 
     static setIntensity(value) {
         const numeric = Number.isFinite(value) ? value : 0;
@@ -130,6 +139,9 @@ export class GlowManager {
     }
 
     static applyGlow(sprite, presetKey) {
+        // Skip preFX glow on Android - it causes black sprites on Android GPUs
+        if (GlowManager.isAndroid) return;
+        
         if (!sprite || !sprite.preFX) return;
 
         // Ensure sprite has a valid texture frame before applying FX
