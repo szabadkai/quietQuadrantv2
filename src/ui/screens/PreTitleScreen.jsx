@@ -3,6 +3,7 @@ import paperwhaleVideo from "../../../assets/paperwhale.mp4";
 import introVideo from "../../../assets/intro.mp4";
 import { isSlowConnection, preloadVideo } from "../../utils/networkUtils.js";
 import { isMobileDevice } from "../../utils/isMobileDevice.js";
+import { AssetPreloader } from "../../utils/AssetPreloader.js";
 
 const sequence = [
     {
@@ -36,6 +37,9 @@ export function PreTitleScreen({ onComplete }) {
             onComplete();
             return;
         }
+
+        // Start preloading game assets (sprites, music) in background
+        AssetPreloader.preloadAll();
 
         // Preload all videos in sequence for caching
         const preloadAllVideos = async () => {

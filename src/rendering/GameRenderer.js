@@ -15,6 +15,7 @@ import { soundManager } from "../audio/SoundManager.js";
 import { musicManager } from "../audio/MusicManager.js";
 import { setTheme } from "../utils/palette.js";
 import { GlowManager } from "./GlowManager.js";
+import { AssetPreloader } from "../utils/AssetPreloader.js";
 
 const SETTINGS_KEY = "quiet-quadrant-settings";
 const DEFAULT_SETTINGS = {
@@ -192,15 +193,31 @@ export class GameRenderer {
     }
 
     preload(scene) {
+        // First, inject any pre-rasterized sprites from AssetPreloader
+        // These were loaded during PreTitleScreen/TitleScreen
+        const injectedCount = AssetPreloader.injectIntoPhaser(scene);
+        
         const isMobile =
             scene.sys.game.device.os.iOS || scene.sys.game.device.os.android;
         // Use larger rasterization size on mobile for better quality at various display sizes
         const sizeMultiplier = isMobile ? 2 : 1;
+        
+        // Only load sprites that weren't pre-rasterized
+        let loadedCount = 0;
         for (const asset of SPRITE_ASSETS) {
-            scene.load.svg(asset.key, asset.file, {
-                width: asset.size * sizeMultiplier,
-                height: asset.size * sizeMultiplier,
-            });
+            if (!scene.textures.exists(asset.key)) {
+                scene.load.svg(asset.key, asset.file, {
+                    width: asset.size * sizeMultiplier,
+                    height: asset.size * sizeMultiplier,
+                });
+                loadedCount++;
+            }
+        }
+        
+        if (loadedCount > 0) {
+            console.log(`[GameRenderer] Loading ${loadedCount} sprites via Phaser (not pre-cached)`);
+        } else if (injectedCount > 0) {
+            console.log(`[GameRenderer] All sprites pre-cached, no loading needed`);
         }
     }
 

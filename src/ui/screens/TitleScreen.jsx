@@ -7,6 +7,7 @@ import { BOSSES } from "../../config/bosses.js";
 import { musicManager } from "../../audio/MusicManager.js";
 import { Button } from "../components/Button.jsx";
 import { SettingsModal } from "../modals/SettingsModal.jsx";
+import { AssetPreloader } from "../../utils/AssetPreloader.js";
 
 export function TitleScreen() {
     const setScreen = useUIStore((s) => s.actions.setScreen);
@@ -26,6 +27,8 @@ export function TitleScreen() {
         musicManager.play("title");
         // Update daily streak when visiting the main menu (rewards visiting the game)
         useMetaStore.getState().actions.updateDailyStreak();
+        // Fallback: ensure assets are preloading (may have been skipped if slow connection)
+        AssetPreloader.preloadAll();
     }, []);
 
     const handleWeekly = () => {
