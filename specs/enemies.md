@@ -6,7 +6,7 @@ This document describes all enemy types in Quiet Quadrant, including their appea
 
 ## Drifter
 
-![Drifter](file:///Users/lszabadkai/quietQuadrantv2/docs/sprites/drifter.svg)
+![Drifter](../public/sprites/drifter.svg)
 
 ### Appearance
 A circular drone-like enemy with a cyan glowing core. Features concentric rings (outer gray, inner cyan) surrounding a dark hull center. Has rectangular appendages protruding from the bottom and sides.
@@ -30,7 +30,7 @@ A circular drone-like enemy with a cyan glowing core. Features concentric rings 
 
 ## Watcher
 
-![Watcher](file:///Users/lszabadkai/quietQuadrantv2/docs/sprites/watcher.svg)
+![Watcher](../public/sprites/watcher.svg)
 
 ### Appearance
 A squared enemy with rounded corners and a prominent central eye. Dark body outlined in blue-gray with cyan crosshairs overlaid. Features a glowing cyan eye with a dark pupil and a white glint highlight.
@@ -57,7 +57,7 @@ A squared enemy with rounded corners and a prominent central eye. Dark body outl
 
 ## Mass
 
-![Mass](file:///Users/lszabadkai/quietQuadrantv2/docs/sprites/mass.svg)
+![Mass](../public/sprites/mass.svg)
 
 ### Appearance
 A diamond-shaped heavy enemy with a dark brown hull outlined in amber/orange. Features a rectangular viewport near the top and horizontal detail lines across the body.
@@ -84,7 +84,7 @@ A diamond-shaped heavy enemy with a dark brown hull outlined in amber/orange. Fe
 
 ## Phantom
 
-![Phantom](file:///Users/lszabadkai/quietQuadrantv2/docs/sprites/phantom.svg)
+![Phantom](../public/sprites/phantom.svg)
 
 ### Appearance
 A hexagonal enemy with a dark hull and gray outline. Features an inner hexagon pattern in cyan and a glowing cyan core with a dark center.
@@ -109,7 +109,7 @@ A hexagonal enemy with a dark hull and gray outline. Features an inner hexagon p
 
 ## Orbiter
 
-![Orbiter](file:///Users/lszabadkai/quietQuadrantv2/docs/sprites/orbiter.svg)
+![Orbiter](../public/sprites/orbiter.svg)
 
 ### Appearance
 A triangular fighter-style enemy with a dark body and gray outline. Features small rectangular wings protruding from both sides and a glowing cyan core with a dark center.
@@ -136,7 +136,7 @@ A triangular fighter-style enemy with a dark body and gray outline. Features sma
 
 ## Splitter
 
-![Splitter](file:///Users/lszabadkai/quietQuadrantv2/docs/sprites/splitter.svg)
+![Splitter](../public/sprites/splitter.svg)
 
 ### Appearance
 A cross/plus-shaped enemy with a dark body and gray outline. Features cyan seam lines running through the center vertically and horizontally, with a glowing cyan core.
@@ -144,7 +144,7 @@ A cross/plus-shaped enemy with a dark body and gray outline. Features cyan seam 
 ### Behavior
 - **Movement**: Directly chases the nearest player
 - **Attack**: Contact damage only — no ranged attacks
-- **Special**: Splits into smaller enemies on death (implied by name and death-explosion elite behavior)
+- **Special**: Splits into smaller enemies on death
 
 ### Stats
 | Stat           | Value |
