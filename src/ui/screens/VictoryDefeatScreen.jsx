@@ -54,8 +54,7 @@ export function VictoryDefeatScreen() {
         };
     }, []);
 
-    // SKIP DISABLED FOR NOW
-    /*
+
     useEffect(() => {
         const handleInput = (e) => {
             if (!allowSkip) return;
@@ -74,7 +73,7 @@ export function VictoryDefeatScreen() {
             window.removeEventListener("touchstart", handleInput);
         };
     }, [handleComplete, allowSkip]);
-    */
+
 
     if (!runSummary) return null;
 
