@@ -1,9 +1,77 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useUIStore } from "../../state/useUIStore.js";
+import { useMetaStore } from "../../state/useMetaStore.js";
 import { Button } from "../components/Button.jsx";
+import { isMobileDevice } from "../../utils/isMobileDevice.js";
+
+function DesktopControls() {
+    return (
+        <section className="qq-howto-section">
+            <h2>Controls</h2>
+            <div className="qq-control-list">
+                <div className="qq-control-row">
+                    <span className="qq-key">WASD</span>
+                    <span>Move ship</span>
+                </div>
+                <div className="qq-control-row">
+                    <span className="qq-key">Mouse</span>
+                    <span>Aim</span>
+                </div>
+                <div className="qq-control-row">
+                    <span className="qq-key">Click</span>
+                    <span>Fire</span>
+                </div>
+                <div className="qq-control-row">
+                    <span className="qq-key">Shift</span>
+                    <span>Dash (invulnerable)</span>
+                </div>
+                <div className="qq-control-row">
+                    <span className="qq-key">Esc</span>
+                    <span>Pause</span>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function MobileControls() {
+    return (
+        <section className="qq-howto-section">
+            <h2>Controls</h2>
+            <div className="qq-control-list">
+                <div className="qq-control-row">
+                    <span className="qq-key">◐</span>
+                    <span>Left stick — Move ship</span>
+                </div>
+                <div className="qq-control-row">
+                    <span className="qq-key">◑</span>
+                    <span>Right stick — Aim & Fire</span>
+                </div>
+                <div className="qq-control-row">
+                    <span className="qq-key">⟲</span>
+                    <span>Swipe up — Dash</span>
+                </div>
+            </div>
+            <p className="qq-howto-note">
+                Twin-stick controls appear during gameplay. Touch and drag to control.
+            </p>
+        </section>
+    );
+}
 
 export function HowToPlayScreen() {
     const setScreen = useUIStore((s) => s.actions.setScreen);
+    const markHowToPlaySeen = useMetaStore((s) => s.actions.markHowToPlaySeen);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        setIsMobile(isMobileDevice());
+    }, []);
+
+    const handleBack = () => {
+        markHowToPlaySeen();
+        setScreen("title");
+    };
 
     return (
         <div className="qq-screen">
@@ -14,31 +82,7 @@ export function HowToPlayScreen() {
                 </div>
 
                 <div className="qq-howto-grid">
-                    <section className="qq-howto-section">
-                        <h2>Controls</h2>
-                        <div className="qq-control-list">
-                            <div className="qq-control-row">
-                                <span className="qq-key">WASD</span>
-                                <span>Move ship</span>
-                            </div>
-                            <div className="qq-control-row">
-                                <span className="qq-key">Mouse</span>
-                                <span>Aim</span>
-                            </div>
-                            <div className="qq-control-row">
-                                <span className="qq-key">Click</span>
-                                <span>Fire</span>
-                            </div>
-                            <div className="qq-control-row">
-                                <span className="qq-key">Shift</span>
-                                <span>Dash (invulnerable)</span>
-                            </div>
-                            <div className="qq-control-row">
-                                <span className="qq-key">Esc</span>
-                                <span>Pause</span>
-                            </div>
-                        </div>
-                    </section>
+                    {isMobile ? <MobileControls /> : <DesktopControls />}
 
                     <section className="qq-howto-section">
                         <h2>Gameplay</h2>
@@ -94,8 +138,8 @@ export function HowToPlayScreen() {
                 </div>
 
                 <div className="qq-screen-actions">
-                    <Button primary onClick={() => setScreen("title")}>
-            Back to Menu
+                    <Button primary onClick={handleBack}>
+                        Back to Menu
                     </Button>
                 </div>
             </div>

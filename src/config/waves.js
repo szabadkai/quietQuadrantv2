@@ -1,19 +1,19 @@
 export const WAVES = [
     {
         id: "wave-1",
-        enemies: [{ kind: "drifter", count: 5 }],
+        enemies: [{ kind: "drifter", count: 15 }],
     },
     {
         id: "wave-2",
         enemies: [
-            { kind: "drifter", count: 5 },
+            { kind: "drifter", count: 15 },
             { kind: "watcher", count: 2 },
         ],
     },
     {
         id: "wave-3",
         enemies: [
-            { kind: "drifter", count: 6 },
+            { kind: "drifter", count: 18 },
             { kind: "watcher", count: 2 },
             { kind: "phantom", count: 2 },
         ],
@@ -21,7 +21,7 @@ export const WAVES = [
     {
         id: "wave-4",
         enemies: [
-            { kind: "drifter", count: 6 },
+            { kind: "drifter", count: 18 },
             { kind: "watcher", count: 3 },
             { kind: "orbiter", count: 2 },
             { kind: "phantom", count: 1 },
@@ -30,7 +30,7 @@ export const WAVES = [
     {
         id: "wave-5",
         enemies: [
-            { kind: "drifter", count: 7 },
+            { kind: "drifter", count: 20 },
             { kind: "watcher", count: 3 },
             { kind: "phantom", count: 2 },
             { kind: "mass", count: 2 },

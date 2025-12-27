@@ -29,7 +29,13 @@ export function TitleScreen() {
         useMetaStore.getState().actions.updateDailyStreak();
         // Fallback: ensure assets are preloading (may have been skipped if slow connection)
         AssetPreloader.preloadAll();
-    }, []);
+
+        // Auto-show How to Play for new users who haven't seen it
+        const hasSeenHowToPlay = useMetaStore.getState().hasSeenHowToPlay;
+        if (!hasSeenHowToPlay) {
+            setScreen("howtoplay");
+        }
+    }, [setScreen]);
 
     const handleWeekly = () => {
         startGame({ seed: weeklySeed, affix: weeklyAffix });

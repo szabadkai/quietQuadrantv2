@@ -2009,6 +2009,14 @@ body.qq-no-scanlines .qq-game-frame canvas {
     0 0 8px currentColor;
 }
 
+.qq-howto-note {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--qq-muted);
+  font-style: italic;
+  line-height: 1.5;
+}
+
 /* COLLECTION */
 .qq-filter-bar {
   display: flex;

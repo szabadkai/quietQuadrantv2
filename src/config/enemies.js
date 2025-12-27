@@ -8,7 +8,7 @@ export const ENEMIES = {
     drifter: {
         type: "drifter",
         name: "Drifter",
-        health: 28,
+        health: 12,
         speed: 115,
         radius: 10,
         contactDamage: 1,

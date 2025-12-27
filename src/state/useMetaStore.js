@@ -30,6 +30,7 @@ export const useMetaStore = create(
             pendingCardReward: { active: false, options: [], runId: null },
             lastRewardRunId: null,
             lastRun: null,
+            hasSeenHowToPlay: false,
 
             actions: {
                 setStats: (nextStats) => {
@@ -194,6 +195,8 @@ export const useMetaStore = create(
 
                 hideStreakPopup: () =>
                     set({ streakPopup: { ...INITIAL_STREAK_POPUP } }),
+
+                markHowToPlaySeen: () => set({ hasSeenHowToPlay: true }),
             },
         }),
         {
