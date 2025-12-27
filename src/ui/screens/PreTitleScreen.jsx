@@ -18,12 +18,14 @@ const sequence = [
 export function PreTitleScreen({ onComplete }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [waitingForClick, setWaitingForClick] = useState(false);
+    const [needsTapToPlay, setNeedsTapToPlay] = useState(false);
     const containerRef = useRef(null);
     const videoRef = useRef(null);
 
     const handleEnded = React.useCallback(() => {
         if (currentIndex < sequence.length - 1) {
             setCurrentIndex((prev) => prev + 1);
+            setNeedsTapToPlay(false);
         } else {
             setWaitingForClick(true);
             if (videoRef.current) {
@@ -32,16 +34,46 @@ export function PreTitleScreen({ onComplete }) {
         }
     }, [currentIndex]);
 
+    // Attempt to play video with mobile-friendly approach
+    const attemptPlay = React.useCallback(() => {
+        if (!videoRef.current) return;
+
+        const video = videoRef.current;
+        video.currentTime = 0;
+
+        // Use requestAnimationFrame for more reliable mobile playback
+        requestAnimationFrame(() => {
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        setNeedsTapToPlay(false);
+                    })
+                    .catch((error) => {
+                        console.log("Autoplay prevented:", error.message);
+                        // On mobile, autoplay often fails - show tap to play
+                        setNeedsTapToPlay(true);
+                    });
+            }
+        });
+    }, []);
+
     // Handle video playback
     useEffect(() => {
         const item = sequence[currentIndex];
         if (item.type === "video" && videoRef.current) {
-            videoRef.current.currentTime = 0;
-            videoRef.current.play().catch(() => {
-                // ignore auto-play errors
-            });
+            attemptPlay();
         }
-    }, [currentIndex]);
+    }, [currentIndex, attemptPlay]);
+
+    // Handle tap to start video on mobile
+    const handleTapToPlay = () => {
+        if (needsTapToPlay && videoRef.current) {
+            videoRef.current.play()
+                .then(() => setNeedsTapToPlay(false))
+                .catch(console.error);
+        }
+    };
 
     useEffect(() => {
         // Focus the container to capture key events
@@ -86,7 +118,13 @@ export function PreTitleScreen({ onComplete }) {
                 justifyContent: "center",
                 outline: "none",
             }}
-            onClick={() => waitingForClick && onComplete()}
+            onClick={() => {
+                if (needsTapToPlay) {
+                    handleTapToPlay();
+                } else if (waitingForClick) {
+                    onComplete();
+                }
+            }}
         >
             <video
                 ref={videoRef}
@@ -94,10 +132,41 @@ export function PreTitleScreen({ onComplete }) {
                 src={currentItem.src}
                 style={currentItem.style}
                 onEnded={handleEnded}
-                muted={false}
+                muted={currentIndex === 0}
                 loop={false}
                 playsInline
             />
+
+            {needsTapToPlay && (
+                <div
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexDirection: "column",
+                        cursor: "pointer",
+                    }}
+                >
+                    <div
+                        style={{
+                            color: "white",
+                            fontFamily: "monospace",
+                            fontSize: "1.5rem",
+                            letterSpacing: "0.2em",
+                            opacity: 0.9,
+                            animation: "pulse 2s infinite",
+                        }}
+                    >
+                        TAP TO PLAY
+                    </div>
+                </div>
+            )}
 
             {waitingForClick && (
                 <div
