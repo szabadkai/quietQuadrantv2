@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import paperwhaleVideo from "../../../assets/paperwhale.mp4";
 import introVideo from "../../../assets/intro.mp4";
 import { isSlowConnection, preloadVideo, isVideoCached } from "../../utils/networkUtils.js";
+import { isMobileDevice } from "../../utils/isMobileDevice.js";
 
 const sequence = [
     {
@@ -167,7 +168,7 @@ export function PreTitleScreen({ onComplete }) {
                 src={currentItem.src}
                 style={currentItem.style}
                 onEnded={handleEnded}
-                muted={currentIndex === 0}
+                muted={currentIndex === 0 && isMobileDevice()}
                 loop={false}
                 playsInline
             />
