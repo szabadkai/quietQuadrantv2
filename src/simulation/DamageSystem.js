@@ -2,11 +2,9 @@
 import {
     ARENA_WIDTH,
     ARENA_HEIGHT,
-    PICKUP_RADIUS,
     PLAYER_INVULN_FRAMES,
     TICK_RATE,
 } from "../utils/constants.js";
-import { ENEMIES } from "../config/enemies.js";
 import { spawnEnemy } from "./EnemySystem.js";
 
 const PLAYER_PROJECTILE_MIN_RANGE =

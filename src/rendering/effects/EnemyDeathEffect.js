@@ -2,7 +2,6 @@
 import { PLAYER_RADIUS } from "../../utils/constants.js";
 
 const ENEMY_RED = 0xf14e4e;
-const ENEMY_GOLD = 0xffcc00;
 
 export function spawnEnemyDeath(renderer, x, y) {
     // Smaller base radius than player (0.6x scale)
