@@ -160,6 +160,26 @@ body.qq-no-scanlines::after {
   display: none !important;
 }
 
+/* HEAVY VIDEO SCANLINES */
+.qq-video-scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, 0.5) 0px,
+      rgba(0, 0, 0, 0.5) 2px,
+      transparent 2px,
+      transparent 4px);
+  pointer-events: none;
+  z-index: 10000;
+  opacity: 0.8;
+  animation: crt-flicker 0.15s infinite;
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9);
+}
+
+
 /* VECTREX GLOW ANIMATIONS */
 @keyframes vectrex-glow {
 

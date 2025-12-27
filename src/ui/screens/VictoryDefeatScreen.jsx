@@ -95,15 +95,18 @@ export function VictoryDefeatScreen() {
             }}
         >
             {videoReady ? (
-                <video
-                    ref={videoRef}
-                    src={videoSrc}
-                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                    autoPlay
-                    onEnded={handleComplete}
-                    muted={false}
-                    playsInline
-                />
+                <>
+                    <video
+                        ref={videoRef}
+                        src={videoSrc}
+                        style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                        autoPlay
+                        onEnded={handleComplete}
+                        muted={false}
+                        playsInline
+                    />
+                    <div className="qq-video-scanlines" />
+                </>
             ) : (
                 <div
                     style={{

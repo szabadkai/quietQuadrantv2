@@ -177,6 +177,8 @@ export function PreTitleScreen({ onComplete }) {
                 playsInline
             />
 
+            <div className="qq-video-scanlines" />
+
             {needsTapToPlay && (
                 <div
                     style={{
