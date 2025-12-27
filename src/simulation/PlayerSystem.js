@@ -297,11 +297,9 @@ export const PlayerSystem = {
 
     applyBloodFuelCost(player) {
         if ((player.bloodFuelFireCost ?? 0) <= 0) return;
-        const cost = Math.max(
-            1,
-            Math.ceil(player.health * player.bloodFuelFireCost)
-        );
-        player.health = Math.max(1, player.health - cost);
+        const cost = player.health * player.bloodFuelFireCost;
+        // Allow fractional health (e.g. 0.1 damage on 5 HP) to avoid 1 damage minimum
+        player.health = Math.max(0.1, player.health - cost);
     },
 
     spawnDashSparks(state, player, rng) {
