@@ -116,26 +116,25 @@ export function VictoryDefeatScreen() {
                     LOADING...
                 </div>
             )}
-            {/* SKIP PROMPT DISABLED
-            {showPrompt && (
-                <div style={{
-                    position: "absolute",
-                    bottom: "40px",
-                    left: 0,
-                    width: "100%",
-                    textAlign: "center",
-                    color: "rgba(255, 255, 255, 0.5)",
-                    fontFamily: "monospace",
-                    fontSize: "14px",
-                    letterSpacing: "0.2em",
-                    textTransform: "uppercase",
-                    pointerEvents: "none",
-                    animation: "pulse 2s infinite"
-                }}>
-                    Press any key to skip
-                </div>
-            )}
-            */}
+            {
+                showPrompt && (
+                    <div style={{
+                        position: "absolute",
+                        bottom: "40px",
+                        left: 0,
+                        width: "100%",
+                        textAlign: "center",
+                        color: "rgba(255, 255, 255, 0.5)",
+                        fontFamily: "monospace",
+                        fontSize: "14px",
+                        letterSpacing: "0.2em",
+                        textTransform: "uppercase",
+                        pointerEvents: "none",
+                        animation: "pulse 2s infinite"
+                    }}>
+                        Press any key to skip
+                    </div>
+                )}
             <style>
                 {`
                     @keyframes pulse {
