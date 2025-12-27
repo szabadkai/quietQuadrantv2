@@ -3,6 +3,7 @@ import { useGameStore } from "../../state/useGameStore.js";
 import { useUIStore } from "../../state/useUIStore.js";
 import victoryVideo from "../../../assets/victory.mp4";
 import defeatVideo from "../../../assets/defeat.mp4";
+import { isSlowConnection, preloadVideo } from "../../utils/networkUtils.js";
 
 export function VictoryDefeatScreen() {
     const runSummary = useGameStore((s) => s.lastRun);
@@ -11,6 +12,7 @@ export function VictoryDefeatScreen() {
 
     const [allowSkip, setAllowSkip] = useState(false);
     const [showPrompt, setShowPrompt] = useState(false);
+    const [videoReady, setVideoReady] = useState(false);
 
     const handleComplete = React.useCallback(() => {
         setScreen("summary");
@@ -19,7 +21,27 @@ export function VictoryDefeatScreen() {
     useEffect(() => {
         if (!runSummary) {
             handleComplete();
+            return;
         }
+
+        // Skip videos on slow connections
+        if (isSlowConnection()) {
+            console.log("[VictoryDefeatScreen] Slow connection detected, skipping video");
+            handleComplete();
+            return;
+        }
+
+        // Preload the appropriate video
+        const videoSrc = runSummary.victory ? victoryVideo : defeatVideo;
+        preloadVideo(videoSrc)
+            .then(() => {
+                console.log("[VictoryDefeatScreen] Video preloaded");
+                setVideoReady(true);
+            })
+            .catch((error) => {
+                console.warn("[VictoryDefeatScreen] Video preload failed:", error);
+                setVideoReady(true); // Continue anyway
+            });
     }, [runSummary, handleComplete]);
 
     // Grace period to prevent accidental skips from gameplay mashing
@@ -73,15 +95,28 @@ export function VictoryDefeatScreen() {
                 justifyContent: "center",
             }}
         >
-            <video
-                ref={videoRef}
-                src={videoSrc}
-                style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                autoPlay
-                onEnded={handleComplete}
-                muted={false}
-                playsInline
-            />
+            {videoReady ? (
+                <video
+                    ref={videoRef}
+                    src={videoSrc}
+                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                    autoPlay
+                    onEnded={handleComplete}
+                    muted={false}
+                    playsInline
+                />
+            ) : (
+                <div
+                    style={{
+                        color: "rgba(255, 255, 255, 0.5)",
+                        fontFamily: "monospace",
+                        fontSize: "14px",
+                        letterSpacing: "0.2em",
+                    }}
+                >
+                    LOADING...
+                </div>
+            )}
             {/* SKIP PROMPT DISABLED
             {showPrompt && (
                 <div style={{

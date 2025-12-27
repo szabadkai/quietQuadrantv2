@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import paperwhaleVideo from "../../../assets/paperwhale.mp4";
 import introVideo from "../../../assets/intro.mp4";
+import { isSlowConnection, preloadVideo, isVideoCached } from "../../utils/networkUtils.js";
 
 const sequence = [
     {
@@ -19,8 +20,40 @@ export function PreTitleScreen({ onComplete }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [waitingForClick, setWaitingForClick] = useState(false);
     const [needsTapToPlay, setNeedsTapToPlay] = useState(false);
+    const [skipVideos, setSkipVideos] = useState(false);
+    const [videosReady, setVideosReady] = useState(false);
     const containerRef = useRef(null);
     const videoRef = useRef(null);
+
+    // Check connection speed and skip videos if on slow connection
+    useEffect(() => {
+        const slowConnection = isSlowConnection();
+        if (slowConnection) {
+            console.log("[PreTitleScreen] Slow connection detected, skipping videos");
+            setSkipVideos(true);
+            // Skip directly to completion
+            onComplete();
+            return;
+        }
+
+        // Preload all videos in sequence for caching
+        const preloadAllVideos = async () => {
+            try {
+                await Promise.all(
+                    sequence
+                        .filter((item) => item.type === "video")
+                        .map((item) => preloadVideo(item.src))
+                );
+                console.log("[PreTitleScreen] All videos preloaded and cached");
+                setVideosReady(true);
+            } catch (error) {
+                console.warn("[PreTitleScreen] Video preload failed, continuing anyway:", error);
+                setVideosReady(true);
+            }
+        };
+
+        preloadAllVideos();
+    }, [onComplete]);
 
     const handleEnded = React.useCallback(() => {
         if (currentIndex < sequence.length - 1) {
@@ -60,11 +93,13 @@ export function PreTitleScreen({ onComplete }) {
 
     // Handle video playback
     useEffect(() => {
+        if (skipVideos || !videosReady) return;
+
         const item = sequence[currentIndex];
         if (item.type === "video" && videoRef.current) {
             attemptPlay();
         }
-    }, [currentIndex, attemptPlay]);
+    }, [currentIndex, attemptPlay, skipVideos, videosReady]);
 
     // Handle tap to start video on mobile
     const handleTapToPlay = () => {
