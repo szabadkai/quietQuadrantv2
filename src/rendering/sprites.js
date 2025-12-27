@@ -12,7 +12,6 @@ export const SPRITE_ASSETS = [
         file: resolveAssetPath("sprites/enemy-bullet.svg"),
         size: 64,
     },
-    { key: "xp", file: resolveAssetPath("sprites/xp.svg"), size: 64 },
     { key: "drifter", file: resolveAssetPath("sprites/drifter.svg"), size: 64 },
     { key: "watcher", file: resolveAssetPath("sprites/watcher.svg"), size: 64 },
     { key: "mass", file: resolveAssetPath("sprites/mass.svg"), size: 64 },
@@ -99,6 +98,5 @@ export const SPRITE_KEYS = {
     player: "player",
     bullet: "bullet",
     enemyBullet: "enemy-bullet",
-    xp: "xp",
     bossFallback: "boss",
 };

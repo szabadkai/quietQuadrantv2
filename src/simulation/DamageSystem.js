@@ -107,7 +107,6 @@ export const DamageSystem = {
             state.wave.enemiesRemaining -= 1;
         }
 
-        this.spawnXpPickup(state, enemy);
         this.spawnSplitters(state, rng, enemy);
     },
 
@@ -237,26 +236,6 @@ export const DamageSystem = {
         state.boss = null;
     },
 
-    spawnXpPickup(state, enemy) {
-        const config = ENEMIES[enemy.type];
-        if (!config) return;
-
-        state.pickups.push({
-            id: state.nextPickupId++,
-            type: "xp",
-            value: config.xp ?? 0,
-            x: enemy.x,
-            y: enemy.y,
-            prevX: enemy.x,
-            prevY: enemy.y,
-            vx: enemy.vx ?? 0,
-            vy: enemy.vy ?? 0,
-            magnetized: false,
-            targetId: null,
-            radius: PICKUP_RADIUS,
-            alive: true,
-        });
-    },
 
     spawnSplitters(state, rng, enemy) {
         if (enemy.type !== "splitter") return;

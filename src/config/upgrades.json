@@ -122,26 +122,7 @@
       "chargePierce": 3
     }
   },
-  {
-    "id": "shield-pickup",
-    "name": "XP Shield",
-    "description": "Collecting XP grants 1-hit shield for 2s",
-    "rarity": "common",
-    "category": "defense",
-    "maxStacks": 3,
-    "dropWeight": 1.0,
-    "effects": { "special": "xp-shield", "duration": 2, "cooldown": 5 }
-  },
-  {
-    "id": "magnet-coil",
-    "name": "Magnet Coil",
-    "description": "XP pulls from farther and moves faster",
-    "rarity": "common",
-    "category": "utility",
-    "maxStacks": 3,
-    "dropWeight": 1.0,
-    "effects": { "xpPickupRadiusPct": 0.5 }
-  },
+
   {
     "id": "stabilizers",
     "name": "Stabilizers",

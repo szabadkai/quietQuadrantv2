@@ -57,7 +57,8 @@ describe("LevelSystem", () => {
         const unlocked = ["rapid-fire"];
         const state = createInitialState(1, { unlockedUpgrades: unlocked });
         const rng = new SeededRandom(7);
-        state.xpQueue.push({ playerId: state.players[0].id, amount: 200 });
+        // Manually grant pending upgrade
+        state.players[0].pendingUpgrades = 1;
 
         LevelSystem.update(state, rng);
 

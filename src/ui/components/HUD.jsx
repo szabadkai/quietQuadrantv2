@@ -1,6 +1,5 @@
 import React from "react";
 import { HealthBar } from "./HealthBar.jsx";
-import { XPBar } from "./XPBar.jsx";
 import { WaveIndicator } from "./WaveIndicator.jsx";
 import { TICK_RATE } from "../../utils/constants.js";
 import { WAVES } from "../../config/waves.js";
@@ -16,8 +15,6 @@ export function HUD({ state }) {
     const clock = formatClock(seconds);
     const affixName = state.affix?.name ?? "Standard";
     const bossName = state.boss?.name ?? "-";
-    const xpCurrent = Math.round(player.xp);
-    const xpTotal = Math.round(player.xp + player.xpToNext);
     const hullValue = `${player.health.toFixed(1)} / ${Math.round(player.maxHealth)}`;
     const volatileActive = (player.chainReactionRadius ?? 0) > 0;
 
@@ -38,15 +35,6 @@ export function HUD({ state }) {
                             <div className="qq-hud-value">{hullValue}</div>
                         </div>
                         <HealthBar current={player.health} max={player.maxHealth} />
-                    </div>
-                    <div className="qq-panel qq-hud-panel">
-                        <div className="qq-hud-row">
-                            <div className="qq-hud-label">XP</div>
-                            <div className="qq-hud-value">
-                                LV {player.level} {xpCurrent} / {xpTotal}
-                            </div>
-                        </div>
-                        <XPBar current={player.xp} toNext={player.xpToNext} />
                     </div>
                     <div className="qq-panel qq-hud-panel" style={{ pointerEvents: "auto" }}>
                         <div className="qq-hud-row">

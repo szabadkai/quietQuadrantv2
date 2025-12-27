@@ -10,7 +10,6 @@ import { spawnExplosionRing } from "./effects/ExplosionRingEffect.js";
 import { spawnHeal } from "./effects/HealEffect.js";
 import { spawnHitSpark } from "./effects/HitSparkEffect.js";
 import { spawnBossDeath } from "./effects/BossDeathEffect.js";
-import { spawnLevelUp } from "./effects/LevelUpEffect.js";
 import { spawnPlayerDown } from "./effects/PlayerDownEffect.js";
 import { spawnPlayerDefeat } from "./effects/PlayerDefeatEffect.js";
 import { spawnShieldActivate } from "./effects/ShieldActivateEffect.js";
@@ -19,7 +18,6 @@ import { spawnShrapnelBurst } from "./effects/ShrapnelBurstEffect.js";
 import { spawnSingularity } from "./effects/SingularityEffect.js";
 import { spawnSynergyUnlock } from "./effects/SynergyUnlockEffect.js";
 import { spawnVolatileBurst } from "./effects/VolatileBurstEffect.js";
-import { spawnXPPickup } from "./effects/XPPickupEffect.js";
 
 const MAX_PARTICLES = 250;
 const PARTICLE_POOL_SIZE = 300;
@@ -324,8 +322,6 @@ export class EffectsRenderer {
             spawnHitSpark(this, x, y, PALETTE_HEX.danger);
         else if (t === "enemy-hit")
             spawnHitSpark(this, x, y, PALETTE_HEX.white);
-        else if (t === "xp-pickup") spawnXPPickup(this, x, y);
-        else if (t === "level-up") spawnLevelUp(this, x, y);
         else if (t === "dash") spawnDashTrail(this, x, y);
         else if (t === "boss-death")
             spawnBossDeath(this, x, y, radius ?? undefined);

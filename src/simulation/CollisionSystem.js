@@ -246,49 +246,8 @@ export const CollisionSystem = {
         }
     },
 
-    playersVsPickups(state) {
-        for (const pickup of state.pickups) {
-            if (!pickup.alive) continue;
-
-            for (const player of state.players) {
-                if (!player.alive) continue;
-
-                if (!this.hitTest(pickup, player)) continue;
-
-                if (pickup.type === "xp") {
-                    state.xpQueue.push({
-                        playerId: player.id,
-                        amount: pickup.value,
-                    });
-
-                    // Emit xp-pickup event for sound/visual effects
-                    state.events.push({
-                        type: "xp-pickup",
-                        playerId: player.id,
-                        x: pickup.x,
-                        y: pickup.y,
-                    });
-
-                    if ((player.xpShieldDurationTicks ?? 0) > 0) {
-                        const ready = (player.shieldCooldown ?? 0) <= 0;
-                        if (ready) {
-                            player.shieldActive = true;
-                            player.shieldFrames = player.xpShieldDurationTicks;
-                            player.shieldCooldown = player.xpShieldCooldownTicks ?? 0;
-                            state.events.push({
-                                type: "shield-activate",
-                                playerId: player.id,
-                                x: player.x,
-                                y: player.y,
-                            });
-                        }
-                    }
-                }
-
-                pickup.alive = false;
-                break;
-            }
-        }
+    playersVsPickups(_state) {
+        // No pickups to process - XP system removed
     },
 
     hitTest(a, b) {

@@ -53,6 +53,13 @@ export const WaveSystem = {
                 type: "wave-intermission",
                 nextWave: state.wave.current,
             });
+
+            // Grant upgrade after wave completion
+            for (const player of state.players) {
+                if (player.alive) {
+                    player.pendingUpgrades += 1;
+                }
+            }
         }
     },
 
