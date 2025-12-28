@@ -10,7 +10,7 @@ export const PhantomAI = {
 
         // Telegraph phase: 30 ticks (0.5s) before teleport
         if (enemy.teleportCooldown === 30) {
-            const [minCd, maxCd] = enemy.teleportCooldownRange ?? [180, 240];
+
             
             // Calculate and store the target position ahead of time
             const angle = rng.nextRange(0, Math.PI * 2);

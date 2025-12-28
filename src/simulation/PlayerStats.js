@@ -59,6 +59,8 @@ export const PlayerStats = {
         let neutronBlockRadius = 0;
         let singularityPullStrength = 0;
         let singularityRadius = 0;
+        let energyShield = false;
+        let energyShieldCooldownSec = 0;
 
         for (const [upgradeId, count] of Object.entries(stacks)) {
             const upgrade = UPGRADE_BY_ID[upgradeId];
@@ -243,6 +245,11 @@ export const PlayerStats = {
                     effects.pullRadius ?? 80
                 );
             }
+
+            if (effects.special === "energy-shield") {
+                energyShield = true;
+                energyShieldCooldownSec = effects.shieldCooldown ?? 5.0;
+            }
         }
 
         for (const synergy of synergies) {
@@ -341,6 +348,10 @@ export const PlayerStats = {
             : 0;
         player.singularityPullStrength = Math.max(0, singularityPullStrength);
         player.singularityRadius = Math.max(0, singularityRadius);
+        player.energyShield = energyShield;
+        player.energyShieldCooldownTicks = Math.round(
+            energyShieldCooldownSec * TICK_RATE
+        );
 
         return player;
     },

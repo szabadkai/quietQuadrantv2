@@ -1,4 +1,18 @@
-[
+[ 
+  { 
+    "id": "energy-shield", 
+    "name": "Energy Shield", 
+    "description": "Absorbs 1 damage every 5 seconds", 
+    "rarity": "rare", 
+    "category": "defense", 
+    "maxStacks": 1, 
+    "dropWeight": 1.0, 
+    "effects": { 
+      "special": "energy-shield", 
+      "shieldAmount": 1, 
+      "shieldCooldown": 5.0 
+    } 
+  },
   {
     "id": "power-shot",
     "name": "Power Shot",

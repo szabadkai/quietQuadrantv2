@@ -138,11 +138,13 @@ export function DevConsole() {
                         }}
                     >
                         <option value="">-- Select --</option>
-                        {upgrades.map((u) => (
-                            <option key={u.id} value={u.id}>
-                                {u.name}
-                            </option>
-                        ))}
+                        {[...upgrades]
+                            .sort((a, b) => a.name.localeCompare(b.name))
+                            .map((u) => (
+                                <option key={u.id} value={u.id}>
+                                    {u.name}
+                                </option>
+                            ))}
                     </select>
                     <button
                         onClick={handleForceUpgrade}

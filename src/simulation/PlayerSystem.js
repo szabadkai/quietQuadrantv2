@@ -41,6 +41,18 @@ export const PlayerSystem = {
             }
             if (player.shieldCooldown > 0) {
                 player.shieldCooldown -= 1;
+            } else if (
+                player.energyShield &&
+                !player.shieldActive &&
+                player.alive
+            ) {
+                player.shieldActive = true;
+                state.events.push({
+                    type: "shield-activate",
+                    playerId: player.id,
+                    x: player.x,
+                    y: player.y,
+                });
             }
             if (player.lifestealCooldown > 0) {
                 player.lifestealCooldown -= 1;

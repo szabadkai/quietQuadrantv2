@@ -119,11 +119,12 @@ export const DamageSystem = {
         if (player.shieldActive) {
             player.shieldActive = false;
             player.shieldFrames = 0;
-            if (
-                (player.xpShieldCooldownTicks ?? 0) > 0 &&
-                (player.shieldCooldown ?? 0) <= 0
-            ) {
-                player.shieldCooldown = player.xpShieldCooldownTicks;
+            const cooldown = Math.max(
+                player.xpShieldCooldownTicks ?? 0,
+                player.energyShieldCooldownTicks ?? 0
+            );
+            if (cooldown > 0 && (player.shieldCooldown ?? 0) <= 0) {
+                player.shieldCooldown = cooldown;
             }
             state.events.push({
                 type: "shield-break",
