@@ -397,6 +397,7 @@ body.qq-no-scanlines::after {
 
 .qq-active-upgrade-slot {
   width: 32px;
+  position: relative;
   /* Larger icon size */
   height: 32px;
   background: rgba(0, 10, 20, 0.6);
@@ -449,6 +450,8 @@ body.qq-no-scanlines::after {
   padding: 0 2px;
   pointer-events: none;
   line-height: 1;
+  z-index: 21;
+  text-shadow: 0 0 2px #fff;
 }
 
 /* UPGRADE TOOLTIP */
