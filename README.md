@@ -148,9 +148,6 @@ Uses WebRTC for serverless P2P connections:
 4. Add tests for new features
 5. Submit a pull request
 
-## License
-
-MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 

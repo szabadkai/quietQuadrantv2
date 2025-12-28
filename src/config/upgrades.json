@@ -150,12 +150,12 @@
   {
     "id": "kinetic-siphon",
     "name": "Kinetic Siphon",
-    "description": "On kill heal small amount with cooldown",
+    "description": "On kill heal very small amount (0.2 HP) with short cooldown",
     "rarity": "common",
     "category": "defense",
     "maxStacks": 3,
     "dropWeight": 0.9,
-    "effects": { "special": "lifesteal", "healAmount": 1, "cooldown": 3 }
+    "effects": { "special": "lifesteal", "healAmount": 0.2, "cooldown": 1.0 }
   },
   {
     "id": "prism-spread",
