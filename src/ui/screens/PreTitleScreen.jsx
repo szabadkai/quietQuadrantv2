@@ -3,6 +3,7 @@ import paperwhaleVideo from "../../../assets/paperwhale.mp4";
 import introVideo from "../../../assets/intro.mp4";
 import { isSlowConnection, preloadVideo } from "../../utils/networkUtils.js";
 import { isMobileDevice } from "../../utils/isMobileDevice.js";
+import { isNativeMobile } from "../../utils/platform.js";
 import { AssetPreloader } from "../../utils/AssetPreloader.js";
 
 const sequence = [
@@ -90,7 +91,10 @@ export function PreTitleScreen({ onComplete }) {
                     .catch((error) => {
                         console.log("Autoplay prevented:", error.message);
                         // On mobile, autoplay often fails - show tap to play
-                        setNeedsTapToPlay(true);
+                        // On native mobile (Capacitor), we suppress this as requested
+                        if (!isNativeMobile()) {
+                            setNeedsTapToPlay(true);
+                        }
                     });
             }
         });
@@ -172,7 +176,8 @@ export function PreTitleScreen({ onComplete }) {
                 src={currentItem.src}
                 style={currentItem.style}
                 onEnded={handleEnded}
-                muted={currentIndex === 0 && isMobileDevice()}
+
+                muted={currentIndex === 0 && isMobileDevice() && !isNativeMobile()}
                 loop={false}
                 playsInline
             />
