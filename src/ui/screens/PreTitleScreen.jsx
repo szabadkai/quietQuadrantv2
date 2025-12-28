@@ -161,7 +161,7 @@ export function PreTitleScreen({ onComplete }) {
             onClick={() => {
                 if (needsTapToPlay) {
                     handleTapToPlay();
-                } else if (waitingForClick) {
+                } else {
                     onComplete();
                 }
             }}

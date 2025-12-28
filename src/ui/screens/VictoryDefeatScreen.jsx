@@ -93,6 +93,12 @@ export function VictoryDefeatScreen() {
                 alignItems: "center",
                 justifyContent: "center",
             }}
+            onClick={(e) => {
+                if (allowSkip) {
+                    e.preventDefault();
+                    handleComplete();
+                }
+            }}
         >
             {videoReady ? (
                 <>
@@ -134,7 +140,7 @@ export function VictoryDefeatScreen() {
                     pointerEvents: "none",
                     animation: "pulse 2s infinite"
                 }}>
-                    Press any key to skip
+                    Tap or press key to skip
                 </div>
             )}
             <style>
