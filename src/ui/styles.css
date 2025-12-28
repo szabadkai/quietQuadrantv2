@@ -269,99 +269,148 @@ body.qq-no-scanlines::after {
   animation: qq-panel-glow 2s ease-in-out infinite;
 }
 
-/* HUD STYLING */
-.qq-hud-bar {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 6px;
-  font-family: var(--qq-hud-font);
-  text-transform: uppercase;
-}
-
-.qq-hud-wrap {
+/* HUD STYLING - Distributed & Transparent */
+.qq-hud-layer {
   position: absolute;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(980px, calc(100% - 16px));
+  inset: 0;
+  pointer-events: none;
   z-index: 10;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-.qq-hud-panel {
-  border: 2px solid var(--qq-accent);
-  background: rgba(0, 0, 0, 0.85);
-  box-shadow:
-    0 0 8px var(--qq-accent),
-    0 0 16px rgba(0, 255, 255, 0.4),
-    inset 0 0 12px rgba(0, 255, 255, 0.15);
-  min-height: clamp(32px, 5vw, 45px);
-  padding: 4px 8px;
+/* Cluster Containers */
+.qq-hud-cluster {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  justify-content: center;
+  gap: 8px;
+  pointer-events: auto;
+  /* Allow interaction if needed */
 }
 
-.qq-hud-row {
-  display: flex;
+.qq-hud-cluster.left {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.qq-hud-cluster.center {
   align-items: center;
-  justify-content: space-between;
-  gap: 4px;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 16px;
+}
+
+.qq-hud-cluster.right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* Transparent items instead of panels */
+.qq-hud-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 4px;
 }
 
 .qq-hud-label {
-  font-size: clamp(7px, 1.6vw, 9px);
-  color: var(--qq-accent);
+  font-size: 9px;
   letter-spacing: 0.2em;
+  color: var(--qq-accent);
   text-transform: uppercase;
-  text-shadow:
-    0 0 4px var(--qq-accent),
-    0 0 8px var(--qq-accent);
-  animation: vectrex-glow 3s ease-in-out infinite;
+  text-shadow: 0 0 8px var(--qq-accent);
+  opacity: 0.9;
+  margin-bottom: 1px;
 }
 
 .qq-hud-value {
   font-family: var(--qq-hud-number-font);
-  font-size: clamp(9px, 2.2vw, 12px);
-  color: var(--qq-text);
+  font-size: 16px;
+  color: #fff;
   text-shadow:
-    0 0 4px var(--qq-text),
-    0 0 8px var(--qq-text);
-  font-variant-numeric: tabular-nums;
+    0 0 4px var(--qq-accent),
+    0 0 10px var(--qq-accent);
+  font-weight: 700;
+  line-height: 1;
 }
 
-.qq-hud-value-large {
-  font-size: clamp(11px, 3vw, 15px);
-  letter-spacing: 0.12em;
+.qq-hud-value.large {
+  font-size: 20px;
+  letter-spacing: 0.1em;
 }
 
-/* ACTIVE UPGRADES HUD */
+.qq-hud-value.jumbo {
+  font-size: 24px;
+  letter-spacing: 0.1em;
+  color: #fff;
+  text-shadow:
+    0 0 5px var(--qq-text),
+    0 0 15px var(--qq-accent),
+    0 0 30px var(--qq-accent);
+}
+
+.qq-hud-meta {
+  font-family: var(--qq-hud-number-font);
+  font-size: 10px;
+  color: var(--qq-accent-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+
+/* Custom Health Display */
+.qq-hull-display {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.qq-hull-current {
+  font-size: 20px;
+  color: var(--qq-player);
+  text-shadow: 0 0 10px var(--qq-player);
+}
+
+.qq-hull-max {
+  font-size: 12px;
+  color: var(--qq-muted);
+  padding-bottom: 3px;
+}
+
+/* Active Upgrades Refinement - Now in Top Left */
 .qq-active-upgrades {
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  gap: 2px;
-  margin-top: 4px;
-  padding-top: 4px;
-  border-top: 1px solid rgba(159, 240, 255, 0.1);
-  width: 100%;
-  overflow: visible;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  /* Left align */
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 0;
+  border-top: none;
+  width: auto;
+  max-width: 300px;
 }
 
-
-
 .qq-active-upgrade-slot {
-  width: 18px;
-  height: 18px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid var(--qq-accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  font-size: 10px;
-  box-shadow: 0 0 2px rgba(0, 255, 255, 0.2);
-  cursor: help;
+  width: 32px;
+  /* Larger icon size */
+  height: 32px;
+  background: rgba(0, 10, 20, 0.6);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.05);
+  transition: transform 0.1s, border-color 0.1s, background 0.1s;
+}
+
+.qq-active-upgrade-slot:hover {
+  transform: scale(1.15);
+  border-color: var(--qq-accent);
+  background: rgba(0, 30, 40, 0.9);
+  z-index: 20;
+  box-shadow: 0 0 12px var(--qq-accent);
 }
 
 
@@ -369,7 +418,10 @@ body.qq-no-scanlines::after {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 2px;
+  padding: 0;
+  /* Remove padding to keep image tight to border/glow */
+  display: block;
+  /* Ensure no line-height issues */
 }
 
 .qq-active-upgrade-slot.fallback {
@@ -496,14 +548,17 @@ body.qq-no-scanlines::after {
 
 .qq-hud-barline {
   margin-top: 2px;
-  height: clamp(3px, 0.8vw, 5px);
+  height: 2px;
+  /* Thinner, sleeker line */
+  width: 100%;
+  /* Match container width or text */
+  max-width: 220px;
   border-radius: 0;
-  background: #000000;
-  border: 1px solid var(--qq-accent);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.3);
   overflow: hidden;
-  box-shadow:
-    0 0 4px var(--qq-accent),
-    inset 0 0 4px rgba(0, 255, 255, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 255, 255, 0.05);
 }
 
 .qq-hud-barfill {

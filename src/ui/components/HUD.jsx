@@ -15,70 +15,58 @@ export function HUD({ state }) {
     const clock = formatClock(seconds);
     const affixName = state.affix?.name ?? "Standard";
     const bossName = state.boss?.name ?? "-";
-    const hullValue = `${player.health.toFixed(1)} / ${Math.round(player.maxHealth)}`;
-    const volatileActive = (player.chainReactionRadius ?? 0) > 0;
+    const currentHealth = Math.round(player.health);
+    const maxHealth = Math.round(player.maxHealth);
+
+    // Safety check for wave object
+    const currentWave = state.wave?.current ?? 0;
+    const wavePhase = state.phase ?? "normal";
+    // If state.wave.total exists, use it, otherwise fall back to WAVES length
+    const totalWaves = state.wave?.total ?? WAVES.length;
 
     return (
-        <div
-            style={{
-                position: "absolute",
-                inset: 0,
-                pointerEvents: "none"
-            }}
-        >
-            <div className="qq-hud-wrap">
-                <div className="qq-hud-bar">
-                    <div className="qq-panel qq-hud-panel" style={{ pointerEvents: "auto" }}>
-
-                        <div className="qq-hud-row">
-                            <div className="qq-hud-label">HULL</div>
-                            <div className="qq-hud-value">{hullValue}</div>
-                        </div>
-                        <HealthBar current={player.health} max={player.maxHealth} />
+        <div className="qq-hud-layer">
+            {/* LEFT CLUSTER: Health & Status */}
+            <div className="qq-hud-cluster left">
+                <div className="qq-hud-item">
+                    <div className="qq-hud-label">HULL INTEGRITY</div>
+                    <div className="qq-hull-display">
+                        <span className="qq-hull-current">{currentHealth}</span>
+                        <span className="qq-hull-max">/ {maxHealth}</span>
                     </div>
-                    <div className="qq-panel qq-hud-panel" style={{ pointerEvents: "auto" }}>
-                        <div className="qq-hud-row">
-                            <div className="qq-hud-label">WAVE</div>
+                </div>
+                <HealthBar current={player.health} max={player.maxHealth} />
 
-                            <div className="qq-hud-value qq-hud-value-large">
-                                <WaveIndicator wave={state.wave.current} phase={state.phase} total={WAVES.length} />
-                            </div>
-                        </div>
-                        <ActiveUpgrades upgrades={player.upgrades} />
-                    </div>
+                {/* Active Upgrades moved to left cluster */}
+                <ActiveUpgrades upgrades={player.upgrades} />
+            </div>
 
-                    <div className="qq-panel qq-hud-panel">
-                        <div className="qq-hud-row">
-                            <div className="qq-hud-label">CLOCK</div>
-                            <div className="qq-hud-value qq-hud-value-large">{clock}</div>
-                        </div>
-                        <div className="qq-hud-row">
-                            <div className="qq-hud-label">FPS</div>
-                            <div className={`qq-hud-value ${state.fps < 50 ? "qq-hud-tag" : ""}`}>
-                                {state.fps ?? "--"}
-                            </div>
-                        </div>
-                        {import.meta.env.DEV && (
-                            <div className="qq-hud-row" style={{ fontSize: "8px", marginTop: "2px" }}>
-                                <div style={{ color: state.debug?.glow ? "var(--qq-accent)" : "#555" }}>GLW</div>
-                                <div style={{ color: state.debug?.crt ? "var(--qq-accent)" : "#555" }}>CRT</div>
-                            </div>
-                        )}
+            {/* CENTER CLUSTER: Wave Progress & Boss Info */}
+            <div className="qq-hud-cluster center">
+                <div className="qq-hud-item">
+                    <div className="qq-hud-label">WAVE STATUS</div>
+                    <div className="qq-hud-value jumbo">
+                        <WaveIndicator wave={currentWave} phase={wavePhase} total={totalWaves} />
                     </div>
-                    <div className="qq-panel qq-hud-panel glow">
-                        <div className="qq-hud-row">
-                            <div className="qq-hud-label">WEEKLY</div>
-                            <div className="qq-hud-meta">Seed {state.seed}</div>
+                    {(bossName !== "-" || affixName !== "Standard") && (
+                        <div className="qq-hud-meta">
+                            {bossName !== "-" ? bossName : affixName}
                         </div>
-                        <div className="qq-hud-row">
-                            <div className="qq-hud-meta">{bossName}</div>
-                            <div className="qq-hud-meta">
-                                {affixName}
-                                {volatileActive ? (
-                                    <span className="qq-hud-tag"> / VOLATILE</span>
-                                ) : null}
-                            </div>
-                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* RIGHT CLUSTER: Clock, FPS, Meta */}
+            <div className="qq-hud-cluster right">
+                <div className="qq-hud-item">
+                    <div className="qq-hud-label">MISSION TIME</div>
+                    <div className="qq-hud-value large">{clock}</div>
+                </div>
+
+                <div className="qq-hud-item">
+                    <div className="qq-hud-label">FPS</div>
+                    <div className={`qq-hud-value ${state.fps < 50 ? "qq-hud-tag" : ""}`} style={{ fontSize: "14px" }}>
+                        {state.fps ?? "--"}
                     </div>
                 </div>
             </div>
