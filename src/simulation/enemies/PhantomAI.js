@@ -7,17 +7,58 @@ export const PhantomAI = {
         if (!target) return;
 
         enemy.teleportCooldown -= 1;
+
+        // Telegraph phase: 30 ticks (0.5s) before teleport
+        if (enemy.teleportCooldown === 30) {
+            const [minCd, maxCd] = enemy.teleportCooldownRange ?? [180, 240];
+            
+            // Calculate and store the target position ahead of time
+            const angle = rng.nextRange(0, Math.PI * 2);
+            const distance = rng.nextRange(80, 140);
+            let nextX = target.x + Math.cos(angle) * distance;
+            let nextY = target.y + Math.sin(angle) * distance;
+            
+            // Clamp immediately so the telegraph shows the actual valid destination
+            nextX = clamp(nextX, enemy.radius, ARENA_WIDTH - enemy.radius);
+            nextY = clamp(nextY, enemy.radius, ARENA_HEIGHT - enemy.radius);
+            
+            enemy.teleportTarget = { x: nextX, y: nextY };
+            
+            if (state.events) {
+                state.events.push({
+                    type: "phantom-telegraph",
+                    x: nextX,
+                    y: nextY,
+                    radius: enemy.radius
+                });
+            }
+        }
+        
+        // Execute teleport
         if (enemy.teleportCooldown <= 0) {
+            // Use stored target or fallback if something went wrong
+            let nextX, nextY;
+            if (enemy.teleportTarget) {
+                nextX = enemy.teleportTarget.x;
+                nextY = enemy.teleportTarget.y;
+                delete enemy.teleportTarget;
+            } else {
+                // Fallback (should normally be handled by the telegraph block)
+                const angle = rng.nextRange(0, Math.PI * 2);
+                const distance = rng.nextRange(80, 140);
+                nextX = target.x + Math.cos(angle) * distance;
+                nextY = target.y + Math.sin(angle) * distance;
+                nextX = clamp(nextX, enemy.radius, ARENA_WIDTH - enemy.radius);
+                nextY = clamp(nextY, enemy.radius, ARENA_HEIGHT - enemy.radius);
+            }
+
+            // Reset cooldown
             const [minCd, maxCd] = enemy.teleportCooldownRange ?? [180, 240];
             enemy.teleportCooldown = rng.nextInt(minCd, maxCd);
 
-            const angle = rng.nextRange(0, Math.PI * 2);
-            const distance = rng.nextRange(80, 140);
-            const nextX = target.x + Math.cos(angle) * distance;
-            const nextY = target.y + Math.sin(angle) * distance;
-
-            enemy.x = clamp(nextX, enemy.radius, ARENA_WIDTH - enemy.radius);
-            enemy.y = clamp(nextY, enemy.radius, ARENA_HEIGHT - enemy.radius);
+            // Move
+            enemy.x = nextX;
+            enemy.y = nextY;
             enemy.prevX = enemy.x;
             enemy.prevY = enemy.y;
         }

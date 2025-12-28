@@ -46,6 +46,13 @@ const GLOW_PRESETS_BASE = {
             innerStrength: 0.4,
             quality: 3, // Reduced from 8
         },
+        bulletNeutron: {
+            color: 0xcb42f5,
+            tint: 0xcb42f5,
+            outerRadius: 2.5,
+            innerStrength: 0.6,
+            quality: 4,
+        },
         pickup: {
             color: 0x00ff00,
             outerRadius: 1.5,
@@ -224,6 +231,7 @@ export const GLOW_PRESETS = {
     bulletPlayer: "bulletPlayer",
     bulletEnemy: "bulletEnemy",
     bulletBoss: "bulletBoss",
+    bulletNeutron: "bulletNeutron",
     pickup: "pickup",
     boss: "boss",
 };

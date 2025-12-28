@@ -46,7 +46,7 @@ export const ENEMIES = {
         name: "Phantom",
         health: 24,
         speed: 95,
-        radius: 10,
+        radius: 12,
         contactDamage: 1,
         xp: 10,
         eliteBehavior: "burst",

@@ -18,6 +18,7 @@ import { spawnShrapnelBurst } from "./effects/ShrapnelBurstEffect.js";
 import { spawnSingularity } from "./effects/SingularityEffect.js";
 import { spawnSynergyUnlock } from "./effects/SynergyUnlockEffect.js";
 import { spawnVolatileBurst } from "./effects/VolatileBurstEffect.js";
+import { spawnPhantomTelegraph } from "./effects/PhantomTelegraphEffect.js";
 
 const MAX_PARTICLES = 250;
 const PARTICLE_POOL_SIZE = 300;
@@ -36,13 +37,17 @@ export class EffectsRenderer {
         this.activeRects = [];
         this.textPool = [];
         this.activeTexts = [];
+        this.activeTexts = [];
         this.activeSequences = [];
+        this.phasedPool = [];
+        this.activePhasedEffects = [];
         this.settings = { damageNumbers: false };
         this.initPool();
         this.initLinePool();
         this.initRingPool();
         this.initRectPool();
         this.initTextPool();
+        this.initPhasedPool();
     }
 
     initPool() {
@@ -91,6 +96,15 @@ export class EffectsRenderer {
             t.setVisible(false);
             t.setDepth(10);
             this.textPool.push(t);
+        }
+    }
+
+    initPhasedPool() {
+        for (let i = 0; i < 50; i++) {
+            const g = this.scene.add.graphics({ x: 0, y: 0 });
+            g.setVisible(false);
+            g.setDepth(11);
+            this.phasedPool.push(g);
         }
     }
 
@@ -178,6 +192,7 @@ export class EffectsRenderer {
         this.updateRects(dt);
         this.updateTexts(dt);
         this.updateSequences(dt);
+        this.updatePhasedEffects(dt);
     }
 
     updateParticles(dt) {
@@ -306,6 +321,35 @@ export class EffectsRenderer {
         });
     }
 
+    spawnPhasedEffect(effectClass, x, y, ...args) {
+        const graphics = this.phasedPool.find((g) => !g.visible);
+        if (!graphics) return null;
+        
+        graphics.clear();
+        graphics.setVisible(true);
+        graphics.setAlpha(1);
+        graphics.setPosition(0, 0); // Reset position as effect might use absolute coordinates
+        
+        const effect = new effectClass(graphics, x, y, ...args);
+        this.activePhasedEffects.push(effect);
+        return effect;
+    }
+
+    updatePhasedEffects(dt) {
+        for (let i = this.activePhasedEffects.length - 1; i >= 0; i--) {
+            const effect = this.activePhasedEffects[i];
+            
+            // Effect returns false when it's done
+            const isAlive = effect.update(dt);
+            
+            if (!isAlive) {
+                effect.graphics.setVisible(false);
+                effect.graphics.clear();
+                this.activePhasedEffects.splice(i, 1);
+            }
+        }
+    }
+
     setSettings(settings) {
         this.settings = { ...this.settings, ...settings };
     }
@@ -350,6 +394,8 @@ export class EffectsRenderer {
             spawnPlayerDefeat(this, x, y);
         else if (t === "damage-number" && this.settings.damageNumbers)
             this.spawnDamageNumber(x, y, e.amount, e.isCrit);
+        else if (t === "phantom-telegraph")
+            spawnPhantomTelegraph(this, x, y, radius);
     }
 
     spawnDamageNumber(x, y, amount, isCrit = false) {
@@ -388,6 +434,8 @@ export class EffectsRenderer {
             this.textPool =
             this.activeTexts =
             this.activeSequences =
+            this.phasedPool =
+            this.activePhasedEffects =
             this.particles = 
             this.pool = 
                 [];

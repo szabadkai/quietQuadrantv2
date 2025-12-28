@@ -50,16 +50,6 @@ export class PlayerRenderer {
                 sprite.clearTint();
             }
 
-            const ring = this.ensureNeutronRing(player);
-            if (ring) {
-                const pulse =
-                    0.45 + Math.sin(this.scene.time.now * 0.006) * 0.2;
-                const radius = Math.max(18, player.neutronBlockRadius ?? 0);
-                ring.setPosition(sprite.x, sprite.y);
-                ring.setRadius(radius);
-                ring.setStrokeStyle(2, 0x6dd6ff, pulse);
-            }
-
             const { outer: shieldOuter, inner: shieldInner } =
                 this.ensureShieldRing(player);
             if (shieldOuter) {
@@ -89,11 +79,6 @@ export class PlayerRenderer {
                 GlowManager.clearGlow(sprite);
                 sprite.destroy();
                 this.sprites.delete(id);
-                const ring = this.neutronRings.get(id);
-                if (ring) {
-                    ring.destroy();
-                    this.neutronRings.delete(id);
-                }
                 const shield = this.shieldRings.get(id);
                 if (shield) {
                     shield.destroy();
@@ -123,27 +108,6 @@ export class PlayerRenderer {
         GlowManager.applyGlow(sprite, GLOW_PRESETS.player);
 
         return sprite;
-    }
-
-    ensureNeutronRing(player) {
-        const hasCore =
-            player.neutronCore && (player.neutronBlockRadius ?? 0) > 0;
-        let ring = this.neutronRings.get(player.id);
-        if (hasCore) {
-            if (!ring) {
-                // Use Arc instead of Graphics - no triangulation needed
-                ring = this.scene.add.arc(0, 0, 18, 0, 360, false, 0x000000, 0);
-                ring.setStrokeStyle(2, 0x6dd6ff, 0.45);
-                ring.setDepth(4);
-                this.neutronRings.set(player.id, ring);
-            }
-            ring.setVisible(true);
-            return ring;
-        }
-        if (ring) {
-            ring.setVisible(false);
-        }
-        return null;
     }
 
     ensureShieldRing(player) {

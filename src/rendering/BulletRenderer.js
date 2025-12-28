@@ -11,6 +11,7 @@ export class BulletRenderer {
             player: [],
             enemy: [],
             boss: [],
+            neutron: [],
         };
         this.maxBullets = maxBullets;
 
@@ -30,14 +31,16 @@ export class BulletRenderer {
                         ? GLOW_PRESETS.bulletPlayer
                         : poolKey === "boss"
                             ? GLOW_PRESETS.bulletBoss
-                            : GLOW_PRESETS.bulletEnemy;
+                            : poolKey === "neutron"
+                                ? GLOW_PRESETS.bulletNeutron
+                                : GLOW_PRESETS.bulletEnemy;
                 GlowManager.applyGlow(sprite, preset);
             }
         }
     }
 
     render(bullets, interpolation) {
-        const used = { player: 0, enemy: 0, boss: 0 };
+        const used = { player: 0, enemy: 0, boss: 0, neutron: 0 };
         
         // Off-screen culling margin (accounts for bullet size and glow)
         const CULL_MARGIN = 50;
@@ -83,11 +86,14 @@ export class BulletRenderer {
         this.hideUnused(this.pools.player, used.player);
         this.hideUnused(this.pools.enemy, used.enemy);
         this.hideUnused(this.pools.boss, used.boss);
+        this.hideUnused(this.pools.neutron, used.neutron);
     }
 
     createSprite(poolKey) {
         const key =
-            poolKey === "player" ? SPRITE_KEYS.bullet : SPRITE_KEYS.enemyBullet;
+            poolKey === "player" || poolKey === "neutron"
+                ? SPRITE_KEYS.bullet
+                : SPRITE_KEYS.enemyBullet;
         const sprite = this.scene.add.image(-100, -100, key);
         sprite.setOrigin(0.5, 0.5);
         sprite.setVisible(false);
@@ -98,7 +104,9 @@ export class BulletRenderer {
                 ? GLOW_PRESETS.bulletPlayer
                 : poolKey === "boss"
                     ? GLOW_PRESETS.bulletBoss
-                    : GLOW_PRESETS.bulletEnemy;
+                    : poolKey === "neutron"
+                        ? GLOW_PRESETS.bulletNeutron
+                        : GLOW_PRESETS.bulletEnemy;
         GlowManager.applyGlow(sprite, preset);
 
         return sprite;
@@ -114,6 +122,7 @@ export class BulletRenderer {
 function getPoolKey(bullet) {
     if (bullet.owner === "boss") return "boss";
     if (bullet.owner === "enemy") return "enemy";
+    if (bullet.blockShots) return "neutron";
     return "player";
 }
 
