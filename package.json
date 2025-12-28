@@ -65,7 +65,16 @@
             "identity": null
         },
         "win": {
-            "target": "portable"
+            "target": [
+                "nsis",
+                "portable"
+            ],
+            "verifyUpdateCodeSignature": false
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "deleteAppDataOnUninstall": true
         },
         "linux": {
             "target": "AppImage"

@@ -15,20 +15,22 @@ export function MultiplayerSetupScreen() {
                 </div>
 
                 <div className="qq-menu-list">
+                    {/* Online multiplayer temporarily disabled
                     <Button primary onClick={() => setScreen("host")}>
-            Host Online Game
+                        Host Online Game
                     </Button>
                     <Button onClick={() => setScreen("join")}>
-            Join Online Game
+                        Join Online Game
                     </Button>
+                    */}
                     <Button onClick={() => setScreen("twin")}>
-            Local Co-op
+                        Local Co-op
                     </Button>
                 </div>
 
                 <div className="qq-screen-actions">
                     <Button onClick={() => setScreen("title")}>
-            Back to Menu
+                        Back to Menu
                     </Button>
                 </div>
             </div>

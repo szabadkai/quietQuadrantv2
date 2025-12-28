@@ -42,6 +42,13 @@ export function TitleScreen() {
         setScreen("game");
     };
 
+    const handleExit = () => {
+        if (window.require) {
+            const { ipcRenderer } = window.require("electron");
+            ipcRenderer.send("app-exit");
+        }
+    };
+
     return (
         <div className="qq-screen">
             <div className="qq-panel qq-panel-narrow">
@@ -69,6 +76,11 @@ export function TitleScreen() {
                     <Button onClick={() => setSettingsOpen(true)}>
                         Settings
                     </Button>
+                    {window.require && (
+                        <Button onClick={handleExit}>
+                            Exit Game
+                        </Button>
+                    )}
                 </div>
 
                 <div className="qq-season-card">
