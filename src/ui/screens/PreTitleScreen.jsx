@@ -100,15 +100,56 @@ export function PreTitleScreen({ onComplete }) {
         });
     }, []);
 
+    const [waitingForRelease, setWaitingForRelease] = useState(false);
+
     // Handle video playback
     useEffect(() => {
-        if (skipVideos || !videosReady) return;
+        // If we are waiting for release, we effectively stop playback logic
+        if (skipVideos || !videosReady || waitingForRelease) return;
 
         const item = sequence[currentIndex];
         if (item.type === "video" && videoRef.current) {
             attemptPlay();
         }
-    }, [currentIndex, attemptPlay, skipVideos, videosReady]);
+    }, [currentIndex, attemptPlay, skipVideos, videosReady, waitingForRelease]);
+
+    // Poll for gamepad input to skip, with debounce (wait for release)
+    useEffect(() => {
+        let rafId;
+        const checkGamepad = () => {
+            if (typeof navigator !== "undefined" && navigator.getGamepads) {
+                const pads = navigator.getGamepads();
+                let anyPressed = false;
+
+                for (const pad of pads) {
+                    if (pad && pad.buttons.some(b => b.pressed)) {
+                        anyPressed = true;
+                        break;
+                    }
+                }
+
+                if (!waitingForRelease) {
+                    // Detect initial press
+                    if (anyPressed) {
+                        setWaitingForRelease(true);
+                        // Optional: Pause video immediately to give feedback
+                        if (videoRef.current) videoRef.current.pause();
+                    }
+                } else {
+                    // Waiting for release
+                    if (!anyPressed) {
+                        onComplete();
+                        return; // Stop loop
+                    }
+                }
+            }
+            rafId = requestAnimationFrame(checkGamepad);
+        };
+        rafId = requestAnimationFrame(checkGamepad);
+        return () => {
+            if (rafId) cancelAnimationFrame(rafId);
+        };
+    }, [onComplete, waitingForRelease]);
 
     // Handle tap to start video on mobile
     const handleTapToPlay = () => {

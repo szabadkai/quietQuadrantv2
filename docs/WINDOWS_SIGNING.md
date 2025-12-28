@@ -46,6 +46,38 @@ export CSC_KEY_PASSWORD="your-certificate-password"
 ## Step 3: Switch to Installer (NSIS)
 Portable executables (`.exe` that runs directly) are scrutinized more heavily than Installers. We have updated your configuration to use `nsis` (Standard Windows Installer) which helps establish a proper install location in `Program Files`.
 
+### Silent Installation (Automation)
+The installer supports standard NSIS silent installation flags, which is often requested by enterprise testers.
+*   **Silent Mode**: `/S` (Case sensitive)
+*   **Custom Path**: `/D=C:\Path\To\Install` (Must be the last argument, no quotes even if path has spaces)
+
+**Example**:
+```powershell
+.\Quiet Quadrant V2 Setup.exe /S
+```
+
+**Example**:
+```powershell
+.\Quiet Quadrant V2 Setup.exe /S
+```
+
+## Microsoft Store / Intune Submission Info
+
+If submitting to the Microsoft Store or Intune as a Win32 app, you will need to define the installer return codes. Since this is an NSIS installer, it uses the following standard codes:
+
+**Documentation URL**: [https://nsis.sourceforge.io/Docs/Chapter4.html#error-levels](https://nsis.sourceforge.io/Docs/Chapter4.html#error-levels)
+
+| Scenario | Return Code | Notes |
+| :--- | :--- | :--- |
+| **Installation successful** | `0` | Standard success code. |
+| **Installation cancelled by user** | `1` | Occurs if the user closes the window or clicks Cancel. |
+| **Disk space is full** | `2` | Generic script error (Aborted). |
+| **Network failure** | `2` | (Not applicable for this offline installer). |
+| **Package rejected** | `2` | Generic script error. |
+| **Application already exists** | `0` | The installer handles updates automatically (Success). |
+| **Installation already in progress** | `2` | NSIS will typically fail or wait; safer to treat as error if blocked. |
+| **Reboot required** | `0` | This application does not require a reboot. |
+
 ## Step 4: Submit for Malware Analysis (Free)
 If you cannot afford a certificate, or if you have one but are still getting flagged:
 1.  Go to [Microsoft Security Intelligence - Submit a file](https://www.microsoft.com/en-us/wdsi/filesubmission)

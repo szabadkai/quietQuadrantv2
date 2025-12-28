@@ -11,7 +11,7 @@ export function getActiveScope() {
     return (
         document.querySelector(".qq-modal") ||
         document.querySelector(".qq-upgrade-panel") ||
-        document.querySelector(".qq-menu-list") ||
+        // Prefer the full screen container so we can hit buttons outside the menu-list (like "Back")
         document.querySelector(".qq-screen")
     );
 }

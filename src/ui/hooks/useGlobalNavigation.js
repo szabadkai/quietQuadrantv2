@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { readGamepad } from "../../input/gamepad.js";
+import { getAnyGamepad } from "../../input/gamepad.js";
 import {
     activateElement,
     findScrollable,
@@ -145,6 +145,9 @@ export function useGlobalNavigation() {
             if (scope !== navRef.current.lastScope) {
                 navRef.current.lastScope = scope;
                 navRef.current.focusIndex = 0;
+                // Prevent immediate activation if button is held during transition
+                navRef.current.lastActivate = true;
+                navRef.current.lastBack = true;
             }
 
             if (scope && focusable.length > 0) {
@@ -156,7 +159,7 @@ export function useGlobalNavigation() {
                     focusAndReveal(focusable[currentIndex]);
                 }
 
-                const pad = readGamepad(0);
+                const pad = getAnyGamepad();
                 if (pad) {
                     const horizontalDir =
                         pad.buttons.dpadRight || pad.left.x > NAV_AXIS_THRESHOLD

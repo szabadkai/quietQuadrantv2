@@ -10,7 +10,7 @@ import { useMetaStore } from "../../state/useMetaStore.js";
 import { checkAchievements } from "../../systems/AchievementChecker.js";
 import { notifyAchievement, notifyRankUp } from "../../state/useNotificationStore.js";
 import { transmissionManager } from "../../audio/TransmissionManager.js";
-import { readGamepad } from "../../input/gamepad.js";
+import { readGamepad, getAnyGamepad } from "../../input/gamepad.js";
 import { TouchTwinSticks } from "../components/TouchTwinSticks.jsx";
 import { isMobileDevice } from "../../utils/isMobileDevice.js";
 import { useGameTransmissions } from "../hooks/useGameTransmissions.js";
@@ -81,7 +81,7 @@ export function GameScreen() {
     useEffect(() => {
         let rafId;
         const tick = () => {
-            const pad = readGamepad(0);
+            const pad = getAnyGamepad();
             const isStart = pad?.buttons.start ?? false;
             const gameState = useGameStore.getState().state;
             const currentSession = useGameStore.getState().session;

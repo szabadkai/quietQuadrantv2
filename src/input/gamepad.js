@@ -71,11 +71,32 @@ export function hasFireIntent(gamepad) {
     );
 }
 
+
 export function hasDashIntent(gamepad) {
     if (!gamepad) return false;
     return (
         gamepad.buttons.leftTrigger > FIRE_THRESHOLD ||
-    gamepad.buttons.leftShoulder ||
-    gamepad.buttons.east
+        gamepad.buttons.leftShoulder ||
+        gamepad.buttons.east
     );
+}
+
+export function getAnyGamepad() {
+    // Check virtual pads first
+    for (let i = 0; i < 4; i++) {
+        const vp = getVirtualGamepad(i);
+        if (vp) return vp;
+    }
+
+    if (typeof navigator === "undefined" || !navigator.getGamepads) {
+        return null;
+    }
+
+    const pads = navigator.getGamepads();
+    for (let i = 0; i < pads.length; i++) {
+        if (pads[i] && pads[i].connected) {
+            return readGamepad(pads[i].index);
+        }
+    }
+    return null;
 }

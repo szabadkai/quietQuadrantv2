@@ -1,6 +1,6 @@
 import { soundManager } from "../audio/SoundManager.js";
 import { musicManager } from "../audio/MusicManager.js";
-import { hasDashIntent, hasFireIntent, readGamepad } from "./gamepad.js";
+import { hasDashIntent, hasFireIntent, readGamepad, getAnyGamepad } from "./gamepad.js";
 
 const MOVE_KEYS = new Set([
     "KeyW",
@@ -109,7 +109,7 @@ export class InputManager {
     }
 
     getInputForPlayer(player) {
-        const gamepad = readGamepad(this.gamepadIndex);
+        const gamepad = this.gamepadIndex === 0 ? getAnyGamepad() : readGamepad(this.gamepadIndex);
 
         let moveX = this.axis(
             this.isDown("KeyA") || this.isDown("ArrowLeft"),
