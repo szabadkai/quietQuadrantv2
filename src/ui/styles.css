@@ -1012,7 +1012,7 @@ body.qq-no-scanlines::after {
 
 
 .qq-upgrade-title {
-  font-size: 12px;
+  font-size: 24px;
   font-weight: 800;
   font-family: var(--qq-hud-font);
   /* Apply HUD font */
@@ -1171,8 +1171,7 @@ body.qq-no-scanlines::after {
 }
 
 
-@media (max-width: 920px),
-(max-height: 500px) {
+@media (max-height: 500px) {
   .qq-upgrade-grid {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 4px;
@@ -1193,7 +1192,7 @@ body.qq-no-scanlines::after {
 
   .qq-upgrade-title {
     margin-bottom: 4px;
-    font-size: 13px;
+    font-size: 18px;
     /* Header slightly larger */
     letter-spacing: 0.1em;
   }
@@ -1204,24 +1203,31 @@ body.qq-no-scanlines::after {
     /* Allow shrinking */
     padding: 4px;
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
+    /* Changed from stretch to center for alignment */
     gap: 2px;
     display: flex;
+    overflow: hidden;
+    /* Prevent overflow */
   }
 
   .qq-upgrade-card__illustration {
     display: flex !important;
     min-height: 0;
-    height: 18px;
-    /* Reduced from 25px to 18px */
-    margin: 1px 0;
+    height: 40px;
+    margin: 2px 0;
+    width: 60%;
+    align-self: center;
+    /* Explicitly align self center */
     aspect-ratio: auto;
     justify-content: center;
+    flex-shrink: 0;
+    /* Prevent squishing */
   }
 
   .qq-upgrade-card__image {
-    padding: 0;
-    max-height: 100%;
+    padding: 10px;
+    max-height: 60%;
     width: auto;
     object-fit: contain;
   }
@@ -1235,6 +1241,8 @@ body.qq-no-scanlines::after {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
+    /* Ensure full width */
   }
 
   .qq-upgrade-card__rarity {
@@ -1243,17 +1251,20 @@ body.qq-no-scanlines::after {
   }
 
   .qq-upgrade-card__name {
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 800;
-    /* Much smaller */
-    margin-bottom: 1px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin-bottom: 2px;
+    white-space: normal;
+    line-height: 1.1;
+    text-align: center;
+    width: 100%;
+    /* Ensure centered text takes full width */
+    word-break: break-word;
+    /* enhance wrapping */
   }
 
   .qq-upgrade-card__desc {
-    font-size: 12px;
+    font-size: 13px;
     /* Strict requirement */
     /* Tiny but readable on high DPI */
     line-height: 1.1;
@@ -1271,12 +1282,13 @@ body.qq-no-scanlines::after {
   }
 
   .qq-upgrade-card__footer {
-    margin-top: 1px;
     padding-top: 1px;
     font-size: 12px;
-    /* Strict requirement */
     display: flex;
     justify-content: space-between;
+    width: 100%;
+    margin-top: auto;
+    /* Push to bottom */
   }
 
   .qq-upgrade-card__type-icon {
@@ -3728,5 +3740,26 @@ body.qq-no-scanlines .qq-game-frame canvas {
     right: 20px;
     padding: 6px 10px;
     font-size: 9px;
+  }
+}
+
+/* Mobile HUD Adjustments */
+@media (max-width: 640px) {
+  .qq-active-upgrades {
+    position: absolute;
+    bottom: 90px;
+    left: 10px;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    max-height: 40vh;
+    flex-wrap: wrap-reverse;
+    gap: 4px;
+    z-index: 20;
+    /* Ensure above touch layer if needed, though hud is already 10 */
+  }
+
+  .qq-active-upgrade-slot {
+    width: 24px;
+    height: 24px;
   }
 }
