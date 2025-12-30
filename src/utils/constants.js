@@ -7,3 +7,8 @@ export const BULLET_RADIUS = 3;
 export const ENEMY_BULLET_RADIUS = 4;
 export const PICKUP_RADIUS = 6;
 export const PLAYER_INVULN_FRAMES = 30;
+
+// Weapon heat system - prevents projectile spam
+export const MAX_PLAYER_BULLETS = 70;
+export const HEAT_WARNING_THRESHOLD = 0.6; // 60% = warning starts
+export const OVERHEAT_COOLDOWN_TICKS = 180; // 2 seconds at 60 TPS

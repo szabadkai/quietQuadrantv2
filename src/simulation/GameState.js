@@ -187,6 +187,8 @@ export function createPlayer(id, position = {}) {
         upgrades: [],
         synergies: [],
         pendingUpgrades: 0,
+        weaponHeat: 0, // 0.0 - 1.0 representing current heat level
+        overheatCooldown: 0, // Ticks remaining on forced cooldown penalty
         base: {
             maxHealth: PLAYER_BASE.maxHealth,
             speed: PLAYER_BASE.speed,

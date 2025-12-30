@@ -4,6 +4,9 @@ import {
     ARENA_HEIGHT,
     PLAYER_RADIUS,
     TICK_RATE,
+    MAX_PLAYER_BULLETS,
+    HEAT_WARNING_THRESHOLD,
+    OVERHEAT_COOLDOWN_TICKS,
 } from "../utils/constants.js";
 import { clamp, normalize } from "../utils/math.js";
 
@@ -57,6 +60,9 @@ export const PlayerSystem = {
             if (player.lifestealCooldown > 0) {
                 player.lifestealCooldown -= 1;
             }
+
+            // Weapon heat system: calculate heat and manage overheat cooldown
+            this.updateWeaponHeat(state, player);
 
             player.prevX = player.x;
             player.prevY = player.y;
@@ -171,6 +177,11 @@ export const PlayerSystem = {
     applyFire(state, player, input, rng) {
         if (player.fireCooldown > 0) {
             player.fireCooldown -= 1;
+        }
+
+        // Block firing if weapons are overheated
+        if (player.overheatCooldown > 0) {
+            return;
         }
 
         if (player.chargedShotDamagePct > 0) {
@@ -355,6 +366,53 @@ export const PlayerSystem = {
                 blockShots: player.neutronCore ?? false,
                 alive: true,
                 isShrapnel: true,
+            });
+        }
+    },
+
+    updateWeaponHeat(state, player) {
+        // Count player's bullets on screen
+        const playerBullets = state.bullets.filter(
+            (b) => b.alive && b.owner === player.id
+        ).length;
+        
+        // Calculate heat as percentage of max
+        const heat = Math.min(1, playerBullets / MAX_PLAYER_BULLETS);
+        const wasOverheating = player.weaponHeat >= HEAT_WARNING_THRESHOLD;
+        const wasFullyOverheated = player.overheatCooldown > 0;
+        
+        player.weaponHeat = heat;
+        
+        // Decrement overheat cooldown if active
+        if (player.overheatCooldown > 0) {
+            player.overheatCooldown -= 1;
+            
+            // Emit cooldown end event when cooling finishes
+            if (player.overheatCooldown <= 0) {
+                state.events.push({
+                    type: "overheat-end",
+                    playerId: player.id,
+                });
+            }
+            return;
+        }
+        
+        // Check if we just hit 100% - trigger overheat
+        if (heat >= 1.0) {
+            player.overheatCooldown = OVERHEAT_COOLDOWN_TICKS;
+            state.events.push({
+                type: "overheat",
+                playerId: player.id,
+            });
+            return;
+        }
+        
+        // Emit warning event when crossing 90% threshold
+        if (heat >= HEAT_WARNING_THRESHOLD && !wasOverheating) {
+            state.events.push({
+                type: "heat-warning",
+                playerId: player.id,
+                heat,
             });
         }
     },

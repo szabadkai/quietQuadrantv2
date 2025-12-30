@@ -4,6 +4,7 @@ import { WaveIndicator } from "./WaveIndicator.jsx";
 import { TICK_RATE } from "../../utils/constants.js";
 import { WAVES } from "../../config/waves.js";
 import { ActiveUpgrades } from "./ActiveUpgrades.jsx";
+import { HeatWarning } from "./HeatWarning.jsx";
 
 
 export function HUD({ state }) {
@@ -70,6 +71,9 @@ export function HUD({ state }) {
                     </div>
                 </div>
             </div>
+
+            {/* Weapon Heat Warning - placed outside clusters for true center positioning */}
+            <HeatWarning player={player} />
         </div>
     );
 }
