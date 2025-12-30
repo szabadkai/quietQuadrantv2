@@ -1,14 +1,40 @@
-import React from "react";
-import { HEAT_WARNING_THRESHOLD } from "../../utils/constants.js";
+import React, { useState, useEffect, useRef } from "react";
+import { HEAT_WARNING_THRESHOLD, HEAT_WARNING_MIN_DISPLAY_MS } from "../../utils/constants.js";
 
 export function HeatWarning({ player }) {
-    if (!player) return null;
+    const [visible, setVisible] = useState(false);
+    const showTimeRef = useRef(null);
 
-    const heat = player.weaponHeat ?? 0;
-    const isOverheated = player.overheatCooldown > 0;
+    const heat = player?.weaponHeat ?? 0;
+    const isOverheated = player?.overheatCooldown > 0;
+    const shouldShow = heat >= HEAT_WARNING_THRESHOLD || isOverheated;
 
-    // Don't show anything below threshold
-    if (heat < HEAT_WARNING_THRESHOLD && !isOverheated) return null;
+    useEffect(() => {
+        if (shouldShow) {
+            // Start showing - record the time
+            if (!visible) {
+                showTimeRef.current = Date.now();
+            }
+            setVisible(true);
+        } else if (visible) {
+            // Check if we've been visible long enough
+            const elapsed = Date.now() - (showTimeRef.current ?? 0);
+            if (elapsed >= HEAT_WARNING_MIN_DISPLAY_MS) {
+                setVisible(false);
+                showTimeRef.current = null;
+            } else {
+                // Schedule hide after remaining time
+                const remaining = HEAT_WARNING_MIN_DISPLAY_MS - elapsed;
+                const timeout = setTimeout(() => {
+                    setVisible(false);
+                    showTimeRef.current = null;
+                }, remaining);
+                return () => clearTimeout(timeout);
+            }
+        }
+    }, [shouldShow, visible]);
+
+    if (!player || !visible) return null;
 
     const warningClass = isOverheated
         ? "qq-heat-warning qq-heat-offline"

@@ -10,7 +10,7 @@ import { useMetaStore } from "../../state/useMetaStore.js";
 import { checkAchievements } from "../../systems/AchievementChecker.js";
 import { notifyAchievement, notifyRankUp } from "../../state/useNotificationStore.js";
 import { transmissionManager } from "../../audio/TransmissionManager.js";
-import { readGamepad, getAnyGamepad } from "../../input/gamepad.js";
+import { getAnyGamepad } from "../../input/gamepad.js";
 import { TouchTwinSticks } from "../components/TouchTwinSticks.jsx";
 import { isMobileDevice } from "../../utils/isMobileDevice.js";
 import { useGameTransmissions } from "../hooks/useGameTransmissions.js";

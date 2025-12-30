@@ -7,6 +7,7 @@ import {
     MAX_PLAYER_BULLETS,
     HEAT_WARNING_THRESHOLD,
     OVERHEAT_COOLDOWN_TICKS,
+    HEAT_COOLDOWN_RATE,
 } from "../utils/constants.js";
 import { clamp, normalize } from "../utils/math.js";
 
@@ -376,12 +377,21 @@ export const PlayerSystem = {
             (b) => b.alive && b.owner === player.id
         ).length;
         
-        // Calculate heat as percentage of max
-        const heat = Math.min(1, playerBullets / MAX_PLAYER_BULLETS);
-        const wasOverheating = player.weaponHeat >= HEAT_WARNING_THRESHOLD;
-        const wasFullyOverheated = player.overheatCooldown > 0;
+        // Calculate target heat based on bullet count
+        const targetHeat = Math.min(1, playerBullets / MAX_PLAYER_BULLETS);
+        const currentHeat = player.weaponHeat ?? 0;
+        const wasOverheating = currentHeat >= HEAT_WARNING_THRESHOLD;
         
-        player.weaponHeat = heat;
+        let newHeat;
+        if (targetHeat > currentHeat) {
+            // Heat up instantly based on bullets (proportional)
+            newHeat = targetHeat;
+        } else {
+            // Cool down at constant rate
+            newHeat = Math.max(0, currentHeat - HEAT_COOLDOWN_RATE);
+        }
+        
+        player.weaponHeat = newHeat;
         
         // Decrement overheat cooldown if active
         if (player.overheatCooldown > 0) {
@@ -398,7 +408,7 @@ export const PlayerSystem = {
         }
         
         // Check if we just hit 100% - trigger overheat
-        if (heat >= 1.0) {
+        if (newHeat >= 1.0) {
             player.overheatCooldown = OVERHEAT_COOLDOWN_TICKS;
             state.events.push({
                 type: "overheat",
@@ -407,12 +417,12 @@ export const PlayerSystem = {
             return;
         }
         
-        // Emit warning event when crossing 90% threshold
-        if (heat >= HEAT_WARNING_THRESHOLD && !wasOverheating) {
+        // Emit warning event when crossing threshold
+        if (newHeat >= HEAT_WARNING_THRESHOLD && !wasOverheating) {
             state.events.push({
                 type: "heat-warning",
                 playerId: player.id,
-                heat,
+                heat: newHeat,
             });
         }
     },
