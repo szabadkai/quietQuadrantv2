@@ -2,6 +2,7 @@ import { lerp } from "../utils/math.js";
 import { ELITE_SPRITES, ENEMY_SPRITES } from "./sprites.js";
 import { GlowManager, GLOW_PRESETS } from "./GlowManager.js";
 import { safeNumber, safeSize } from "./sizeUtils.js";
+import { TextureValidator } from "./TextureValidator.js";
 
 export class EnemyRenderer {
     constructor(scene) {
@@ -32,6 +33,13 @@ export class EnemyRenderer {
                 sprite = this.createSprite(enemy);
                 this.sprites.set(enemy.id, sprite);
             }
+
+            // Safety check: Validate sprite texture/frame
+            if (!TextureValidator.validateSprite(sprite, ENEMY_SPRITES.drifter, this.scene)) {
+                sprite.setVisible(false);
+                continue; // Skip rendering/updating this sprite
+            }
+            sprite.setVisible(true);
 
             const nextX = lerp(enemy.prevX, enemy.x, interpolation);
             const nextY = lerp(enemy.prevY, enemy.y, interpolation);
@@ -67,13 +75,20 @@ export class EnemyRenderer {
     }
 
     createSprite(enemy) {
-        const key = enemy.elite
+        let key = enemy.elite
             ? ELITE_SPRITES[enemy.type]
             : ENEMY_SPRITES[enemy.type];
-        const spriteKey = key ?? ENEMY_SPRITES.drifter;
+        
+        // Ensure key is valid using Validator
+        key = TextureValidator.validateTextureKey(
+            this.scene, 
+            key, 
+            ENEMY_SPRITES.drifter
+        );
+
         const size = getEnemySize(enemy);
         const displaySize = safeSize(enemy.elite ? size * 1.2 : size);
-        const sprite = this.scene.add.image(enemy.x, enemy.y, spriteKey);
+        const sprite = this.scene.add.image(enemy.x, enemy.y, key);
         sprite.setOrigin(0.5, 0.5);
         sprite.setDisplaySize(displaySize, displaySize);
         sprite.baseSize = displaySize;

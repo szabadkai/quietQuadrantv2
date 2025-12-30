@@ -109,6 +109,7 @@ export function BenchmarkConfig() {
                     <option value="standard">Standard Scenario</option>
                     <option value="swarm">Swarm (Tight Spacing)</option>
                     <option value="boss">Boss Fight</option>
+                    <option value="mixed">Mixed (Stress Test)</option>
                 </select>
             </div>
 

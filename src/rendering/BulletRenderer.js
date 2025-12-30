@@ -3,6 +3,7 @@ import { SPRITE_KEYS } from "./sprites.js";
 import { GlowManager, GLOW_PRESETS } from "./GlowManager.js";
 import { safeNumber, safeSize } from "./sizeUtils.js";
 import { ARENA_WIDTH, ARENA_HEIGHT } from "../utils/constants.js";
+import { TextureValidator } from "./TextureValidator.js";
 
 export class BulletRenderer {
     constructor(scene, maxBullets = 200) {
@@ -63,6 +64,12 @@ export class BulletRenderer {
                 this.pools[poolKey].push(sprite);
             }
 
+            // Safety check: Validate sprite before use
+            if (!TextureValidator.validateSprite(sprite, SPRITE_KEYS.bullet, this.scene)) {
+                sprite.setVisible(false);
+                continue; 
+            }
+
             sprite.setPosition(
                 safeNumber(x, sprite.x ?? 0),
                 safeNumber(y, sprite.y ?? 0)
@@ -90,10 +97,18 @@ export class BulletRenderer {
     }
 
     createSprite(poolKey) {
-        const key =
+        let key =
             poolKey === "player" || poolKey === "neutron"
                 ? SPRITE_KEYS.bullet
                 : SPRITE_KEYS.enemyBullet;
+        
+        // Ensure key is valid using Validator
+        key = TextureValidator.validateTextureKey(
+            this.scene, 
+            key, 
+            SPRITE_KEYS.bullet
+        );
+
         const sprite = this.scene.add.image(-100, -100, key);
         sprite.setOrigin(0.5, 0.5);
         sprite.setVisible(false);

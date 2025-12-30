@@ -58,6 +58,22 @@ export class GameSimulation {
                 enemy.radius = 8;
                 enemy.x = ARENA_WIDTH / 2 + (this.rng.next() - 0.5) * 300;
                 enemy.y = ARENA_HEIGHT / 2 + (this.rng.next() - 0.5) * 300;
+            } else if (config.type === "mixed") {
+                const rand = this.rng.next();
+                if (rand < 0.5) {
+                    enemy.type = "drifter";
+                } else if (rand < 0.7) {
+                    enemy.type = "charger";
+                    enemy.radius = 12;
+                    enemy.vx *= 1.5;
+                    enemy.vy *= 1.5;
+                } else if (rand < 0.85) {
+                    enemy.type = "swarmer";
+                    enemy.radius = 8;
+                } else {
+                    enemy.type = "phantom";
+                    enemy.radius = 14;
+                }
             }
             
             enemies.push(enemy);
