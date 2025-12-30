@@ -17,53 +17,9 @@ import { setTheme } from "../utils/palette.js";
 import { GlowManager } from "./GlowManager.js";
 import { AssetPreloader } from "../utils/AssetPreloader.js";
 
-const SETTINGS_KEY = "quiet-quadrant-settings";
-const DEFAULT_SETTINGS = {
-    screenShake: true,
-    screenFlash: true,
-    reducedMotion: false,
-    damageNumbers: false,
-    highContrast: false,
-    crtScanlines: true,
-    crtIntensity: 0.5,
-    colorTheme: "vectrex",
-    lowFX: false, // Performance mode: disables glow effects
-};
+import { calculateBenchmarkResults } from "../utils/benchmark.js";
 
-function loadSettings() {
-    try {
-        const stored = localStorage.getItem(SETTINGS_KEY);
-        if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
-    } catch (e) {
-        // ignore
-    }
-    return { ...DEFAULT_SETTINGS };
-}
-
-function applyBodyClasses(settings) {
-    if (typeof document === "undefined") return;
-    document.body.classList.toggle(
-        "qq-high-contrast",
-        settings.highContrast ?? false
-    );
-    document.body.classList.toggle(
-        "qq-reduced-motion",
-        settings.reducedMotion ?? false
-    );
-    document.body.classList.toggle(
-        "qq-no-scanlines",
-        !(settings.crtScanlines ?? true)
-    );
-
-    // Apply CRT intensity as CSS variable
-    const intensity = settings.crtScanlines ? settings.crtIntensity ?? 0.5 : 0;
-    document.documentElement.style.setProperty("--crt-intensity", intensity);
-    document.documentElement.style.setProperty("--glow-intensity", intensity);
-
-    // Apply color theme
-    const theme = settings.colorTheme || "vectrex";
-    document.body.setAttribute("data-theme", theme);
-}
+import { loadSettings, applyBodyClasses } from "../utils/settings.js";
 
 class GameScene extends Phaser.Scene {
     constructor(gameRenderer) {
@@ -97,6 +53,12 @@ export class GameRenderer {
         this.enemyRenderer = null;
         this.pickupRenderer = null;
         this.bossRenderer = null;
+        
+        this.benchmarkStats = {
+            samples: [],
+            startTime: 0,
+            active: false
+        };
 
         this.gameLoop = new GameLoop({
             tickRate: TICK_RATE,
@@ -228,6 +190,35 @@ export class GameRenderer {
     render(interpolation) {
         const state = this.getState();
         if (!state) return;
+
+        // Benchmark Collection
+        if (state.isBenchmarking) {
+            if (!this.benchmarkStats.active) {
+                this.benchmarkStats.active = true;
+                this.benchmarkStats.startTime = performance.now();
+                this.benchmarkStats.samples = [];
+                console.log("[GameRenderer] Benchmark Started");
+            }
+
+            if (!state.benchmarkComplete) {
+                // Collect Sample
+                const fps = this.game.loop.actualFps;
+                // Ignore initial warm-up frames (first 60)
+                if (state.tick > 60) {
+                     this.benchmarkStats.samples.push(fps);
+                }
+            } else if (!state.benchmarkResults) {
+                // Finalize Results using utility
+                state.benchmarkResults = calculateBenchmarkResults(
+                    this.benchmarkStats.samples,
+                    this.benchmarkStats.startTime
+                );
+                console.log("[GameRenderer] Benchmark Results:", state.benchmarkResults);
+                this.benchmarkStats.active = false;
+            }
+        } else {
+            this.benchmarkStats.active = false;
+        }
 
         // Add FPS and debug info to state for HUD display
         state.fps = Math.round(this.game.loop.actualFps);

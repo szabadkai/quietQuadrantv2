@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useGameStore } from "../../state/useGameStore.js";
+import { useUIStore } from "../../state/useUIStore.js";
 import { useMetaStore } from "../../state/useMetaStore.js";
+import { getWeeklyAffix, getWeeklySeed } from "../../config/affixes.js";
 import { WAVES } from "../../config/waves.js";
 import upgrades from "../../config/upgrades.json";
+import { BenchmarkConfig } from "./BenchmarkConfig.jsx";
 
 /**
  * Developer Console for testing and debugging.
@@ -12,10 +15,47 @@ export function DevConsole() {
     const [visible, setVisible] = useState(false);
     const [selectedWave, setSelectedWave] = useState(0);
     const [selectedUpgrade, setSelectedUpgrade] = useState("");
+    const [testDate, setTestDate] = useState("");
+
     const simulation = useGameStore((s) => s.simulation);
     const state = useGameStore((s) => s.state);
+    const { actions: gameActions } = useGameStore();
+    const { actions: uiActions } = useUIStore();
     const metaStats = useMetaStore((s) => s.lifetimeStats);
     const metaActions = useMetaStore((s) => s.actions);
+
+    // Auto-enable invincibility when console is open
+    useEffect(() => {
+        if (!simulation) return;
+
+        // When opening console, force invincibility ON
+        if (visible) {
+            simulation.setInvincibility("p1", true);
+        }
+        // When closing, force OFF (unless test setup overrides, but for general convenience this is expected)
+        else {
+            simulation.setInvincibility("p1", false);
+        }
+    }, [visible, simulation]);
+
+    const handlePredictAffix = () => {
+        if (!testDate) return;
+        const date = new Date(testDate);
+        const affix = getWeeklyAffix(date);
+        console.log(`%c[Affix Prediction] Date: ${testDate}`, "color: #0ff; font-weight: bold");
+        console.log("Affix:", affix);
+    };
+
+    const handleStartWeekly = () => {
+        if (!testDate) return;
+        const date = new Date(testDate);
+        const affix = getWeeklyAffix(date);
+        const seed = getWeeklySeed(date);
+
+        gameActions.startGame({ seed, affix });
+        uiActions.setScreen("game");
+        setVisible(false);
+    };
 
     useEffect(() => {
         // Only allow DevConsole in development mode
@@ -178,6 +218,9 @@ export function DevConsole() {
                 >
                     {isInvincible ? "🛡️ INVINCIBLE (ON)" : "🛡️ INVINCIBILITY (OFF)"}
                 </button>
+                <div style={{ fontSize: 9, color: "#888", marginTop: 2, textAlign: "center" }}>
+                    (Auto-enabled while console is open)
+                </div>
             </div>
 
             {/* Streak Tools */}
@@ -217,6 +260,62 @@ export function DevConsole() {
                     Current: {metaStats.currentDailyStreak} | Best: {metaStats.bestDailyStreak}
                 </div>
             </div>
+
+            {/* Affix Testing */}
+            <div style={{ marginBottom: 8, borderTop: "1px solid #333", paddingTop: 8 }}>
+                <label style={{ display: "block", marginBottom: 4, color: "#c0f" }}>Affix Testing:</label>
+                <input
+                    type="date"
+                    value={testDate}
+                    onChange={(e) => setTestDate(e.target.value)}
+                    style={{
+                        width: "100%",
+                        background: "#111",
+                        color: "#0ff",
+                        border: "1px solid #444",
+                        marginBottom: 4,
+                        padding: 4,
+                        fontSize: 10
+                    }}
+                />
+                <div style={{ display: "flex", gap: 4 }}>
+                    <button
+                        onClick={handlePredictAffix}
+                        disabled={!testDate}
+                        style={{
+                            flex: 1,
+                            background: "#333",
+                            color: testDate ? "#c0f" : "#555",
+                            border: "1px solid #444",
+                            padding: "4px 8px",
+                            cursor: testDate ? "pointer" : "not-allowed",
+                            fontSize: 10,
+                            fontWeight: "bold"
+                        }}
+                    >
+                        LOG AFFIX
+                    </button>
+                    <button
+                        onClick={handleStartWeekly}
+                        disabled={!testDate}
+                        style={{
+                            flex: 1,
+                            background: testDate ? "#c0f" : "#333",
+                            color: testDate ? "#000" : "#555",
+                            border: "none",
+                            padding: "4px 8px",
+                            cursor: testDate ? "pointer" : "not-allowed",
+                            fontSize: 10,
+                            fontWeight: "bold"
+                        }}
+                    >
+                        START RUN
+                    </button>
+                </div>
+            </div>
+
+            {/* Benchmark Section (Extracted) */}
+            <BenchmarkConfig visible={visible} />
 
             {/* Stats Display */}
             <div style={{ fontSize: 10, color: "#888", borderTop: "1px solid #333", paddingTop: 4 }}>

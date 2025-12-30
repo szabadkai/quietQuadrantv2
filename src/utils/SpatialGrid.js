@@ -28,7 +28,16 @@ export class SpatialGrid {
     }
 
     getIndex(x, y) {
-        if (x < 0 || x >= this.width || y < 0 || y >= this.height) return -1;
+        if (
+            !Number.isFinite(x) || 
+            !Number.isFinite(y) || 
+            x < 0 || 
+            x >= this.width || 
+            y < 0 || 
+            y >= this.height
+        ) {
+            return -1;
+        }
         const col = Math.floor(x / this.cellSize);
         const row = Math.floor(y / this.cellSize);
         return row * this.cols + col;
