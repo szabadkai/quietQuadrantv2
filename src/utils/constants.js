@@ -16,6 +16,6 @@ export const HEAT_WARNING_MIN_DISPLAY_MS = 3000; // Minimum time warning stays v
 export const HEAT_COOLDOWN_RATE = 0.008; // Heat drops by this amount per tick when not firing
 
 // Singularity Rounds upgrade - gravitational pull effect
-export const SINGULARITY_PULL_STRENGTH = 5000; // Force applied to enemies (was 200)
-export const SINGULARITY_PULL_RADIUS = 420; // Effect radius in pixels (was 80)
-export const SINGULARITY_DURATION_TICKS = 180; // How long the pull lasts (1 second at 60 TPS)
+export const SINGULARITY_PULL_STRENGTH = 1000; // Force applied to enemies (was 200)
+export const SINGULARITY_PULL_RADIUS = 120; // Effect radius in pixels (was 80)
+export const SINGULARITY_DURATION_TICKS = 60; // How long the pull lasts (1 second at 60 TPS)
