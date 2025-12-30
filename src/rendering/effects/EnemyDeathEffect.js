@@ -1,7 +1,8 @@
 /** Enemy death animation - phased draw call implementation. */
 import { PLAYER_RADIUS } from "../../utils/constants.js";
+import { PALETTE_HEX } from "../../utils/palette.js";
 
-const ENEMY_RED = 0xf14e4e;
+const ENEMY_BLAST = PALETTE_HEX.gold;
 
 class PhasedEnemyDeath {
     constructor(graphics, x, y) {
@@ -46,7 +47,7 @@ class PhasedEnemyDeath {
             // Start thick, get thinner
             const width = 3 * (1 - t);
             if (width > 0.5) {
-                g.lineStyle(width, ENEMY_RED, 1);
+                g.lineStyle(width, ENEMY_BLAST, 1);
                 g.strokeCircle(0, 0, r);
             }
         }
@@ -83,7 +84,7 @@ export function spawnEnemyDeath(renderer, x, y) {
             y,
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
-            color: ENEMY_RED,
+            color: ENEMY_BLAST,
             size: 4,
             life: 0.4 + Math.random() * 0.2,
             fade: true,
