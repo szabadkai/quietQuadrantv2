@@ -30,8 +30,14 @@ export const WatcherAI = {
         }
 
         const move = normalize(moveX, moveY);
-        enemy.vx = move.x * speed;
-        enemy.vy = move.y * speed;
+
+        // Blend AI velocity with external forces (e.g. singularity pull)
+        const targetVx = move.x * speed;
+        const targetVy = move.y * speed;
+        const blend = 0.15;
+        enemy.vx = enemy.vx * (1 - blend) + targetVx * blend;
+        enemy.vy = enemy.vy * (1 - blend) + targetVy * blend;
+
         enemy.x += enemy.vx / TICK_RATE;
         enemy.y += enemy.vy / TICK_RATE;
 

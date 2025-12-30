@@ -1,7 +1,11 @@
 /* eslint-disable max-lines */
 import { UPGRADE_BY_ID } from "../config/upgrades.js";
 import { SYNERGIES } from "../config/synergies.js";
-import { TICK_RATE } from "../utils/constants.js";
+import {
+    TICK_RATE,
+    SINGULARITY_PULL_STRENGTH,
+    SINGULARITY_PULL_RADIUS,
+} from "../utils/constants.js";
 import { clamp } from "../utils/math.js";
 
 // Each boost level adds 4% effectiveness to the upgrade
@@ -238,11 +242,11 @@ export const PlayerStats = {
             if (effects.special === "singularity") {
                 singularityPullStrength = Math.max(
                     singularityPullStrength,
-                    effects.pullStrength ?? 200
+                    effects.pullStrength ?? SINGULARITY_PULL_STRENGTH
                 );
                 singularityRadius = Math.max(
                     singularityRadius,
-                    effects.pullRadius ?? 80
+                    effects.pullRadius ?? SINGULARITY_PULL_RADIUS
                 );
             }
 

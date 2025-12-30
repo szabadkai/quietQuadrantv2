@@ -4,6 +4,8 @@ import {
     ARENA_HEIGHT,
     PLAYER_INVULN_FRAMES,
     TICK_RATE,
+    SINGULARITY_PULL_STRENGTH,
+    SINGULARITY_DURATION_TICKS,
 } from "../utils/constants.js";
 import { spawnEnemy } from "./EnemySystem.js";
 
@@ -369,25 +371,55 @@ export const DamageSystem = {
     applySingularity(state, player, source) {
         const radius = player.singularityRadius ?? 0;
         if (radius <= 0) return;
-        const pull = player.singularityPullStrength ?? 200;
-        const radiusSq = radius * radius;
-        for (const enemy of state.enemies) {
-            if (!enemy.alive) continue;
-            const dx = source.x - enemy.x;
-            const dy = source.y - enemy.y;
-            const distSq = dx * dx + dy * dy;
-            if (distSq === 0 || distSq > radiusSq) continue;
-            const dist = Math.sqrt(distSq);
-            const nx = dx / dist;
-            const ny = dy / dist;
-            enemy.vx += (nx * pull) / TICK_RATE;
-            enemy.vy += (ny * pull) / TICK_RATE;
-        }
+        const pull = player.singularityPullStrength ?? SINGULARITY_PULL_STRENGTH;
+        
+        // Spawn a persistent singularity that pulls enemies over time
+        if (!state.singularities) state.singularities = [];
+        state.singularities.push({
+            x: source.x,
+            y: source.y,
+            radius,
+            pull,
+            ttl: SINGULARITY_DURATION_TICKS,
+        });
+        
         state.events.push({
             type: "singularity",
             x: source.x,
             y: source.y,
         });
+    },
+
+    // Called each tick to update active singularities
+    updateSingularities(state) {
+        if (!state.singularities || state.singularities.length === 0) return;
+
+        for (let i = state.singularities.length - 1; i >= 0; i--) {
+            const singularity = state.singularities[i];
+            singularity.ttl -= 1;
+
+            if (singularity.ttl <= 0) {
+                state.singularities.splice(i, 1);
+                continue;
+            }
+
+            // Apply pull to all enemies in range
+            const radiusSq = singularity.radius * singularity.radius;
+            for (const enemy of state.enemies) {
+                if (!enemy.alive) continue;
+                const dx = singularity.x - enemy.x;
+                const dy = singularity.y - enemy.y;
+                const distSq = dx * dx + dy * dy;
+                if (distSq === 0 || distSq > radiusSq) continue;
+                const dist = Math.sqrt(distSq);
+                const nx = dx / dist;
+                const ny = dy / dist;
+                // Stronger pull when closer (inverse distance falloff)
+                const strength = (singularity.pull / TICK_RATE) * (1 - dist / singularity.radius);
+                enemy.vx += nx * strength;
+                enemy.vy += ny * strength;
+            }
+        }
     },
 };
 

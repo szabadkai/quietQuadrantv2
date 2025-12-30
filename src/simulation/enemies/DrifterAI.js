@@ -9,8 +9,13 @@ export const DrifterAI = {
         const speed = enemy.speed * helpers.getEliteSpeedMultiplier(enemy);
         const dir = normalize(target.x - enemy.x, target.y - enemy.y);
 
-        enemy.vx = dir.x * speed;
-        enemy.vy = dir.y * speed;
+        // Blend AI velocity with external forces (e.g. singularity pull)
+        const targetVx = dir.x * speed;
+        const targetVy = dir.y * speed;
+        const blend = 0.15; // How quickly AI regains control
+        enemy.vx = enemy.vx * (1 - blend) + targetVx * blend;
+        enemy.vy = enemy.vy * (1 - blend) + targetVy * blend;
+
         enemy.x += enemy.vx / TICK_RATE;
         enemy.y += enemy.vy / TICK_RATE;
     }

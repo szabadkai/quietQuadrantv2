@@ -13,8 +13,13 @@ export const OrbiterAI = {
         const dir = normalize(orbitX - enemy.x, orbitY - enemy.y);
         const speed = enemy.speed * helpers.getEliteSpeedMultiplier(enemy);
 
-        enemy.vx = dir.x * speed;
-        enemy.vy = dir.y * speed;
+        // Blend AI velocity with external forces (e.g. singularity pull)
+        const targetVx = dir.x * speed;
+        const targetVy = dir.y * speed;
+        const blend = 0.15;
+        enemy.vx = enemy.vx * (1 - blend) + targetVx * blend;
+        enemy.vy = enemy.vy * (1 - blend) + targetVy * blend;
+
         enemy.x += enemy.vx / TICK_RATE;
         enemy.y += enemy.vy / TICK_RATE;
 

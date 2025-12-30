@@ -65,6 +65,7 @@ export class GameSimulation {
         BulletSystem.update(this.state);
         CollisionSystem.update(this.state);
         DamageSystem.update(this.state, this.rng);
+        DamageSystem.updateSingularities(this.state);
         PickupSystem.update(this.state);
         LevelSystem.update(this.state, this.rng);
         GameEndSystem.update(this.state);
