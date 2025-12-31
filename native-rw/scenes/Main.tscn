@@ -1,0 +1,221 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/Enemy.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/Bullet.tscn" id="4"]
+[ext_resource type="AudioStream" path="res://assets/music/level1.mp3" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/EnemyBullet.tscn" id="6"]
+[ext_resource type="Script" path="res://scripts/Background.gd" id="8"]
+[ext_resource type="Script" path="res://scripts/SoundManager.gd" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/Explosion.tscn" id="10"]
+[ext_resource type="Script" path="res://scripts/CRTOverlay.gd" id="11"]
+[ext_resource type="Shader" path="res://shaders/crt.gdshader" id="12"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+shader = ExtResource("12")
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1")
+enemy_scene = ExtResource("3")
+bullet_scene = ExtResource("4")
+enemy_bullet_scene = ExtResource("6")
+explosion_scene = ExtResource("10")
+
+[node name="BackgroundStars" type="Node2D" parent="."]
+script = ExtResource("8")
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector2(640, 400)
+
+[node name="EnemySpawnTimer" type="Timer" parent="."]
+wait_time = 0.7
+autostart = true
+one_shot = false
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5")
+volume_db = -8.0
+
+[node name="SoundManager" type="Node" parent="."]
+script = ExtResource("9")
+
+[node name="Shot" type="AudioStreamPlayer" parent="SoundManager"]
+
+[node name="Hit" type="AudioStreamPlayer" parent="SoundManager"]
+
+[node name="Damage" type="AudioStreamPlayer" parent="SoundManager"]
+
+[node name="CRTOverlay" type="CanvasLayer" parent="."]
+script = ExtResource("11")
+layer = 10
+
+[node name="Overlay" type="ColorRect" parent="CRTOverlay"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(1, 1, 1, 1)
+material = SubResource("ShaderMaterial_1")
+mouse_filter = 2
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Background" type="ColorRect" parent="UI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.06, 0.08, 0.2)
+
+[node name="HUDRoot" type="Control" parent="UI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="LeftCluster" type="VBoxContainer" parent="UI/HUDRoot"]
+anchor_left = 0.0
+anchor_top = 0.0
+offset_left = 16.0
+offset_top = 16.0
+
+[node name="HullLabel" type="Label" parent="UI/HUDRoot/LeftCluster"]
+text = "HULL INTEGRITY"
+theme_override_colors/font_color = Color(0.55, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 9
+
+[node name="HullDisplay" type="HBoxContainer" parent="UI/HUDRoot/LeftCluster"]
+
+[node name="HullCurrent" type="Label" parent="UI/HUDRoot/LeftCluster/HullDisplay"]
+text = "5"
+theme_override_colors/font_color = Color(0.5, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 20
+
+[node name="HullMax" type="Label" parent="UI/HUDRoot/LeftCluster/HullDisplay"]
+text = "/ 5"
+theme_override_colors/font_color = Color(0.6, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+
+[node name="HealthBarBack" type="ColorRect" parent="UI/HUDRoot/LeftCluster"]
+custom_minimum_size = Vector2(180, 6)
+color = Color(0.08, 0.12, 0.16, 0.6)
+
+[node name="HealthBarFill" type="ColorRect" parent="UI/HUDRoot/LeftCluster/HealthBarBack"]
+anchor_right = 0.0
+anchor_bottom = 1.0
+color = Color(0.62, 0.95, 1, 1)
+
+[node name="ActiveUpgrades" type="HFlowContainer" parent="UI/HUDRoot/LeftCluster"]
+custom_minimum_size = Vector2(220, 36)
+separation = 6
+
+[node name="CenterCluster" type="VBoxContainer" parent="UI/HUDRoot"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -120.0
+offset_right = 120.0
+offset_top = 16.0
+alignment = 1
+
+[node name="WaveLabel" type="Label" parent="UI/HUDRoot/CenterCluster"]
+text = "WAVE STATUS"
+theme_override_colors/font_color = Color(0.55, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 9
+horizontal_alignment = 1
+
+[node name="WaveValue" type="Label" parent="UI/HUDRoot/CenterCluster"]
+text = "1/5"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+
+[node name="WaveMeta" type="Label" parent="UI/HUDRoot/CenterCluster"]
+text = "-"
+theme_override_colors/font_color = Color(0.4, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 10
+horizontal_alignment = 1
+visible = false
+
+[node name="RightCluster" type="VBoxContainer" parent="UI/HUDRoot"]
+anchor_right = 1.0
+offset_right = -16.0
+offset_top = 16.0
+alignment = 2
+
+[node name="MissionLabel" type="Label" parent="UI/HUDRoot/RightCluster"]
+text = "MISSION TIME"
+theme_override_colors/font_color = Color(0.55, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 9
+horizontal_alignment = 2
+
+[node name="MissionTime" type="Label" parent="UI/HUDRoot/RightCluster"]
+text = "00:00"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 2
+
+[node name="FpsLabel" type="Label" parent="UI/HUDRoot/RightCluster"]
+text = "FPS"
+theme_override_colors/font_color = Color(0.55, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 9
+horizontal_alignment = 2
+
+[node name="FpsValue" type="Label" parent="UI/HUDRoot/RightCluster"]
+text = "--"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+
+[node name="GameOver" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -30.0
+offset_right = 260.0
+offset_bottom = 30.0
+text = "Transmission lost. Press R to reboot."
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 0.42, 0.4, 1)
+theme_override_font_sizes/font_size = 24
+visible = false
+
+[node name="UpgradePanel" type="ColorRect" parent="UI"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -140.0
+offset_right = 280.0
+offset_bottom = 140.0
+color = Color(0.05, 0.08, 0.12, 0.95)
+visible = false
+
+[node name="UpgradeTitle" type="Label" parent="UI/UpgradePanel"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -120.0
+offset_right = 120.0
+offset_top = 16.0
+text = "Choose Upgrade"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.9, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 20
+
+[node name="Option1" type="Label" parent="UI/UpgradePanel"]
+offset_left = 24.0
+offset_top = 56.0
+text = "[1] Rapid Fire\n+15% fire rate"
+theme_override_colors/font_color = Color(0.7, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 18
+
+[node name="Option2" type="Label" parent="UI/UpgradePanel"]
+offset_left = 24.0
+offset_top = 100.0
+text = "[2] Power Shot\n+15% damage"
+theme_override_colors/font_color = Color(0.7, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 18
+
+[node name="Option3" type="Label" parent="UI/UpgradePanel"]
+offset_left = 24.0
+offset_top = 144.0
+text = "[3] Engine Tune\n+10% move speed"
+theme_override_colors/font_color = Color(0.7, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 18
