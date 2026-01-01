@@ -6,7 +6,6 @@ export const INITIAL_UNLOCKED_UPGRADES = [
     "plating",
     "sidecar",
     "pierce",
-    "shield-pickup",
     "kinetic-siphon",
     "dash-sparks",
 ];

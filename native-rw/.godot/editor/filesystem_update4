@@ -1,2 +1,7 @@
 res://scripts/Player.gd
 res://scripts/SettingsState.gd
+res://scripts/Background.gd
+res://scripts/CRTOverlay.gd
+res://scripts/Main.gd
+res://scripts/SoundManager.gd
+res://scripts/Title.gd

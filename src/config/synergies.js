@@ -42,13 +42,6 @@ export const SYNERGIES = [
         effects: { }
     },
     {
-        id: "immortal-engine",
-        name: "Immortal Engine",
-        requires: ["shield-pickup", "kinetic-siphon"],
-        description: "Shield pickups and siphoned energy keep the engine running.",
-        effects: { }
-    },
-    {
         id: "phantom-striker",
         name: "Phantom Striker",
         requires: ["dash-sparks", "shrapnel"],

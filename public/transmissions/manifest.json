@@ -129,14 +129,12 @@
         ],
         "defense": [
             "./transmissions/upgrades/lite_plating.mp3",
-            "./transmissions/upgrades/xp_shield.mp3",
             "./transmissions/upgrades/stabilizers.mp3",
             "./transmissions/upgrades/kinetic_syphon.mp3",
             "./transmissions/upgrades/neutron_core.mp3"
         ],
         "utility": [
             "./transmissions/upgrades/engine_tune.mp3",
-            "./transmissions/upgrades/magnet_coil.mp3",
             "./transmissions/upgrades/dash_sparks.mp3",
             "./transmissions/upgrades/momentum_feed.mp3",
             "./transmissions/upgrades/quantum_tunneling.mp3"

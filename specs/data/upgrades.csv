@@ -1,4 +1,5 @@
 id,name,description,rarity,category,maxStacks,dropWeight,effect_type,effect_value,effect_secondary,diminishing_after
+energy-shield,Energy Shield,Absorbs 1 damage every 5 seconds,rare,defense,1,1.0,special,energy_shield,shieldAmount:1;shieldCooldown:5,
 power-shot,Power Shot,+15% damage and +5% crit chance,common,offense,6,1.1,damage,0.15,critChance:0.05,4
 rapid-fire,Rapid Fire,+15% fire rate,common,offense,6,1.1,fireRate,0.15,,4
 swift-projectiles,Swift Projectiles,+20% projectile speed,common,offense,6,1.0,projectileSpeed,0.20,,
@@ -10,8 +11,6 @@ heavy-barrel,Heavy Barrel,+25% size +20% damage +5% crit damage -10% fire rate,c
 rebound,Rebound,+2 ricochets -5% projectile speed per stack,common,offense,3,0.9,ricochet,2,projectileSpeed:-0.05,
 dash-sparks,Dash Sparks,Dashing detonates close-range shrapnel burst,common,utility,3,1.0,special,dash_sparks,shrapnelCount:8,
 held-charge,Held Charge,Hold fire to charge +80% damage; pierces 3 foes,common,offense,3,1.0,special,held_charge,chargeDamage:0.80;chargePierce:3,
-shield-pickup,XP Shield,Collecting XP grants 1-hit shield for 2s,common,defense,3,1.0,special,xp_shield,duration:2;cooldown:5,
-magnet-coil,Magnet Coil,XP pulls from farther and moves faster,common,utility,3,1.0,magnetRadius,0.50,,
 stabilizers,Stabilizers,Reduce collision damage and knockback,common,defense,3,0.9,collisionReduction,0.25,,
 shrapnel,Shrapnel,Enemies destroyed spray forward cone of fragments,rare,offense,2,0.85,special,shrapnel,fragmentCount:5;fragmentDamage:0.3,
 kinetic-siphon,Kinetic Siphon,On kill heal small amount with cooldown,common,defense,3,0.9,special,lifesteal,healAmount:1;cooldown:3,

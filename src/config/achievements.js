@@ -215,14 +215,6 @@ export const ACHIEVEMENTS = {
         category: "build",
         check: (run) => run.synergies?.includes("vampire")
     },
-    synergyImmortal: {
-        id: "synergyImmortal",
-        name: "Immortal Engine",
-        description: "Unlock the Immortal Engine synergy",
-        icon: "♾️",
-        category: "build",
-        check: (run) => run.synergies?.includes("immortal-engine")
-    },
     synergyPrism: {
         id: "synergyPrism",
         name: "Prism Cannon",

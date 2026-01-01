@@ -1002,13 +1002,6 @@ export const SYNERGIES = [
         requires: ["held-charge", "quantum-tunneling", "swift-projectiles"],
         bonus: { critChance: 0.05, critDamage: 0.25 },
     },
-    {
-        id: "immortal-engine",
-        name: "Immortal Engine",
-        description: "XP shields + healing = near-invulnerability.",
-        requires: ["shield-pickup", "kinetic-siphon"],
-        bonus: { shieldDuration: 0.5 },
-    },
     // ... 10 more synergies
 ];
 ```
@@ -1474,7 +1467,6 @@ const INITIAL_UNLOCKED_UPGRADES = [
     "plating",
     "sidecar",
     "pierce",
-    "shield-pickup",
     "kinetic-siphon",
     "dash-sparks",
 ];
