@@ -572,6 +572,90 @@ body.qq-no-scanlines::after {
     0 0 12px var(--qq-accent);
 }
 
+/* BOSS HEALTH BAR */
+.qq-boss-health-container {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(600px, 80%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.qq-boss-health-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 4px;
+}
+
+.qq-boss-name {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow:
+    0 0 8px var(--qq-accent),
+    0 0 16px var(--qq-accent);
+}
+
+.qq-boss-phase {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--qq-accent);
+  text-shadow: 0 0 8px var(--qq-accent);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px 8px;
+  border: 1px solid var(--qq-accent);
+}
+
+.qq-boss-health-bar {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid var(--qq-accent);
+  box-shadow:
+    0 0 12px rgba(0, 255, 255, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+
+.qq-boss-health-fill {
+  height: 100%;
+  transition: width 0.15s ease-out, background 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.qq-boss-phase-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.qq-boss-health-numbers {
+  font-family: var(--qq-hud-number-font);
+  font-size: 12px;
+  color: #fff;
+  text-shadow: 0 0 6px var(--qq-accent);
+}
+
+.qq-boss-health-max {
+  color: var(--qq-muted);
+  font-size: 10px;
+}
+
+
 /* BUTTONS */
 .qq-button,
 .qq-btn {

@@ -42,6 +42,12 @@ export const BossSystem = {
         const health = Math.round(
             BASE_BOSS.health * config.healthMultiplier * affixHealth
         );
+        
+        // Store base stats for phase modifier calculations
+        const baseSpeed = BASE_BOSS.speed * (config.speedMultiplier ?? 1);
+        const baseFireRate = config.fireRateMultiplier ?? 1;
+        const baseProjectileSpeed = config.projectileSpeedMultiplier ?? 1;
+        
         const boss = {
             id: config.id,
             name: config.name,
@@ -52,11 +58,17 @@ export const BossSystem = {
             health,
             maxHealth: health,
             radius: BASE_BOSS.radius,
-            speed: BASE_BOSS.speed * (config.speedMultiplier ?? 1),
-            fireRateMultiplier: config.fireRateMultiplier ?? 1,
-            projectileSpeedMultiplier: config.projectileSpeedMultiplier ?? 1,
+            // Base stats (unmodified by phase)
+            baseSpeed,
+            baseFireRate,
+            baseProjectileSpeed,
+            // Current stats (modified by phase)
+            speed: baseSpeed,
+            fireRateMultiplier: baseFireRate,
+            projectileSpeedMultiplier: baseProjectileSpeed,
             patterns: config.patterns,
             phases: config.phases,
+            phaseModifiers: config.phaseModifiers ?? null,
             phaseIndex: 0,
             patternIndex: 0,
             pattern: config.patterns[0],
@@ -104,10 +116,20 @@ export const BossSystem = {
         if (nextIndex !== boss.phaseIndex) {
             boss.phaseIndex = nextIndex;
             boss.patternTick = 0;
+            
+            // Apply phase modifiers to escalate difficulty
+            if (boss.phaseModifiers && boss.phaseModifiers[nextIndex]) {
+                const mod = boss.phaseModifiers[nextIndex];
+                boss.speed = boss.baseSpeed * (mod.speed ?? 1);
+                boss.fireRateMultiplier = boss.baseFireRate * (mod.fireRate ?? 1);
+                boss.projectileSpeedMultiplier = boss.baseProjectileSpeed * (mod.projectileSpeed ?? 1);
+            }
+            
             state.events.push({
                 type: "boss-phase",
                 bossId: boss.id,
                 phase: boss.phaseIndex,
+                totalPhases: boss.phases.length,
             });
         }
     },

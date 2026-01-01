@@ -5,6 +5,7 @@ import { TICK_RATE } from "../../utils/constants.js";
 import { WAVES } from "../../config/waves.js";
 import { ActiveUpgrades } from "./ActiveUpgrades.jsx";
 import { HeatWarning } from "./HeatWarning.jsx";
+import { BossHealthBar } from "./BossHealthBar.jsx";
 
 
 export function HUD({ state }) {
@@ -74,6 +75,9 @@ export function HUD({ state }) {
 
             {/* Weapon Heat Warning - placed outside clusters for true center positioning */}
             <HeatWarning player={player} />
+
+            {/* Boss Health Bar - shown during boss fights */}
+            <BossHealthBar boss={state.boss} />
         </div>
     );
 }
