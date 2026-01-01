@@ -65,6 +65,10 @@ export const PlayerStats = {
         let singularityRadius = 0;
         let energyShield = false;
         let energyShieldCooldownSec = 0;
+        let dashCooldownMult = player.dashCooldownMult ?? 1;
+        let explosiveRadiusBonusPct = 0;
+        let accuracyPenaltyReductionPct = 0;
+        let chargeHomingStrengthMult = 1;
 
         for (const [upgradeId, count] of Object.entries(stacks)) {
             const upgrade = UPGRADE_BY_ID[upgradeId];
@@ -268,10 +272,29 @@ export const PlayerStats = {
             if (effects.homingStrength)
                 homingStrength += effects.homingStrength;
             if (effects.accuracyPct) accuracyPct += effects.accuracyPct;
+            if (effects.critChance) critChance += effects.critChance;
+            if (effects.critDamage) critDamage += effects.critDamage;
+            if (effects.arcDamage) chainArcDamagePct += effects.arcDamage;
+            if (effects.chainDamage) chainReactionDamagePct += effects.chainDamage;
+            if (effects.explosionRadius)
+                explosiveRadiusBonusPct += effects.explosionRadius;
+            if (effects.dashCooldown) dashCooldownMult += effects.dashCooldown;
+            if (effects.accuracyPenaltyReduction)
+                accuracyPenaltyReductionPct += effects.accuracyPenaltyReduction;
+            if (effects.homingStrengthOnCharge)
+                chargeHomingStrengthMult = Math.max(
+                    chargeHomingStrengthMult,
+                    effects.homingStrengthOnCharge
+                );
         }
 
         if (spreadTightenPct > 0) {
             spreadDeg *= Math.max(0, 1 - spreadTightenPct);
+        }
+
+        if (accuracyPenaltyReductionPct > 0 && accuracyPct < 1) {
+            const penalty = 1 - accuracyPct;
+            accuracyPct += penalty * accuracyPenaltyReductionPct;
         }
 
         if (maxHealthCap !== null) {
@@ -307,6 +330,12 @@ export const PlayerStats = {
         player.homingStrength = Math.max(0, homingStrength);
         player.homingRange = Math.max(0, homingRange);
         player.explosiveRadius = Math.max(0, explosiveRadius);
+        if (player.explosiveRadius > 0 && explosiveRadiusBonusPct > 0) {
+            player.explosiveRadius = Math.max(
+                0,
+                player.explosiveRadius * (1 + explosiveRadiusBonusPct)
+            );
+        }
         player.explosiveDamagePct = explosiveDamagePct;
         player.splitShot = splitShot;
         player.chargedShotDamagePct = Math.max(0, chargedShotDamagePct);
@@ -315,6 +344,15 @@ export const PlayerStats = {
         player.xpPickupRadiusPct = Math.max(0, xpPickupRadiusPct);
         player.critChance = clamp(critChance, 0, 1);
         player.critDamage = Math.max(2.0, critDamage);
+        player.dashCooldownMs = Math.max(
+            0,
+            (base.dashCooldownMs ?? player.dashCooldownMs ?? 0) *
+                Math.max(0, dashCooldownMult)
+        );
+        player.chargeHomingStrengthMult = Math.max(
+            1,
+            chargeHomingStrengthMult
+        );
         player.synergies = synergies.map((synergy) => synergy.id);
         player.damageReduction = clamp(damageReductionPct, 0, 0.8);
         player.collisionDamageReduction = clamp(

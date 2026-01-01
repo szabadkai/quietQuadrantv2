@@ -39,6 +39,7 @@ export const AffixSystem = {
                 1,
                 player.base.maxHealth + state.modifiers.playerMaxHealth
             );
+            player.dashCooldownMult = state.modifiers.dashCooldownMult;
             PlayerStats.recalculate(player);
         }
     }

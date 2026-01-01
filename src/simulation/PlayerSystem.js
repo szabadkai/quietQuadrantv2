@@ -205,6 +205,7 @@ export const PlayerSystem = {
                         player.bulletPierce,
                         player.chargePierce ?? 0
                     ),
+                    homingStrengthMult: player.chargeHomingStrengthMult ?? 1,
                 });
                 player.fireCooldown = this.getFireCooldownTicks(player);
             }
@@ -257,7 +258,9 @@ export const PlayerSystem = {
                 pierce: options.pierceOverride ?? player.bulletPierce,
                 ttl,
                 radius: player.bulletRadius,
-                homingStrength: player.homingStrength ?? 0,
+                homingStrength:
+                    (player.homingStrength ?? 0) *
+                    (options.homingStrengthMult ?? 1),
                 homingRange: player.homingRange ?? 0,
                 explosiveRadius: player.explosiveRadius ?? 0,
                 explosiveDamagePct: player.explosiveDamagePct ?? undefined,

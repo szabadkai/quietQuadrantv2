@@ -201,6 +201,7 @@ export function createPlayer(id, position = {}) {
             accuracyPct: PLAYER_BASE.accuracyPct ?? 1,
             magnetRadius: PLAYER_BASE.magnetRadius ?? 0,
             damageReduction: PLAYER_BASE.damageReduction ?? 0,
+            dashCooldownMs: PLAYER_BASE.dashCooldownMs ?? 0,
         },
     };
 }
