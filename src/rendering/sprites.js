@@ -22,6 +22,13 @@ export const SPRITE_ASSETS = [
         file: resolveAssetPath("sprites/splitter.svg"),
         size: 64,
     },
+    { key: "charger", file: resolveAssetPath("sprites/charger.svg"), size: 64 },
+    {
+        key: "shielder",
+        file: resolveAssetPath("sprites/shielder.svg"),
+        size: 64,
+    },
+    { key: "bomber", file: resolveAssetPath("sprites/bomber.svg"), size: 64 },
     {
         key: "elite-drifter",
         file: resolveAssetPath("sprites/elite-drifter.svg"),
@@ -53,6 +60,21 @@ export const SPRITE_ASSETS = [
         size: 64,
     },
     {
+        key: "elite-charger",
+        file: resolveAssetPath("sprites/elite-charger.svg"),
+        size: 64,
+    },
+    {
+        key: "elite-shielder",
+        file: resolveAssetPath("sprites/elite-shielder.svg"),
+        size: 64,
+    },
+    {
+        key: "elite-bomber",
+        file: resolveAssetPath("sprites/elite-bomber.svg"),
+        size: 64,
+    },
+    {
         key: "boss-sentinel",
         file: resolveAssetPath("sprites/boss-sentinel.svg"),
         size: 64,
@@ -77,6 +99,9 @@ export const ENEMY_SPRITES = {
     phantom: "phantom",
     orbiter: "orbiter",
     splitter: "splitter",
+    charger: "charger",
+    shielder: "shielder",
+    bomber: "bomber",
 };
 
 export const ELITE_SPRITES = {
@@ -86,6 +111,9 @@ export const ELITE_SPRITES = {
     phantom: "elite-phantom",
     orbiter: "elite-orbiter",
     splitter: "elite-splitter",
+    charger: "elite-charger",
+    shielder: "elite-shielder",
+    bomber: "elite-bomber",
 };
 
 export const BOSS_SPRITES = {

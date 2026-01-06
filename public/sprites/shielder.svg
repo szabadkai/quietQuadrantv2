@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+    <!-- Shield (front arc) -->
+    <path d="M 16 20 Q 32 8 48 20 L 48 44 Q 32 56 16 44 Z" fill="none" stroke="#44aaff" stroke-width="4" opacity="0.9"/>
+    <!-- Body -->
+    <circle cx="32" cy="32" r="12" fill="#0d1a28" stroke="#a8b0c2" stroke-width="2"/>
+    <!-- Inner core -->
+    <circle cx="32" cy="32" r="6" fill="#44aaff" opacity="0.7"/>
+    <!-- Shield energy nodes -->
+    <circle cx="20" cy="24" r="3" fill="#44aaff"/>
+    <circle cx="44" cy="24" r="3" fill="#44aaff"/>
+    <circle cx="20" cy="40" r="3" fill="#44aaff"/>
+    <circle cx="44" cy="40" r="3" fill="#44aaff"/>
+    <!-- Gun port -->
+    <rect x="30" y="44" width="4" height="8" fill="#a8b0c2"/>
+</svg>

@@ -9,8 +9,7 @@ import {
 } from "../utils/constants.js";
 import { spawnEnemy } from "./EnemySystem.js";
 
-const PLAYER_PROJECTILE_MIN_RANGE =
-    Math.max(ARENA_WIDTH, ARENA_HEIGHT) * 1.5;
+const PLAYER_PROJECTILE_MIN_RANGE = Math.max(ARENA_WIDTH, ARENA_HEIGHT) * 1.5;
 const BOSS_DEATH_ANIMATION_TICKS = Math.round(TICK_RATE * 1.5);
 
 export const DamageSystem = {
@@ -107,14 +106,50 @@ export const DamageSystem = {
             state.wave.enemiesRemaining -= 1;
         }
 
+        // Handle bomber explosion on death
+        if (enemy.type === "bomber") {
+            this.applyBomberExplosion(state, enemy);
+        }
+
         this.spawnSplitters(state, rng, enemy);
+    },
+
+    applyBomberExplosion(state, enemy) {
+        const radius = enemy.explosionRadius ?? 60;
+        const damage = enemy.explosionDamage ?? 2;
+
+        // Damage nearby players
+        for (const player of state.players) {
+            if (!player.alive) continue;
+            const dx = player.x - enemy.x;
+            const dy = player.y - enemy.y;
+            const distSq = dx * dx + dy * dy;
+            const combinedRadius = radius + player.radius;
+
+            if (distSq <= combinedRadius * combinedRadius) {
+                state.damageQueue.push({
+                    target: "player",
+                    id: player.id,
+                    amount: damage,
+                    source: { type: "bomber-explosion" },
+                });
+            }
+        }
+
+        // Visual event
+        state.events.push({
+            type: "bomber-explosion",
+            x: enemy.x,
+            y: enemy.y,
+            radius,
+        });
     },
 
     applyPlayerDamage(state, damage) {
         const player = state.players.find((p) => p.id === damage.id);
         if (!player || !player.alive) return;
         if (player.invulnFrames > 0) return;
-        
+
         // Debug mode: skip all damage when invincible
         if (player.debugInvincible) return;
 
@@ -237,7 +272,6 @@ export const DamageSystem = {
         state.boss = null;
     },
 
-
     spawnSplitters(state, rng, enemy) {
         if (enemy.type !== "splitter") return;
         if (enemy.splitDepth >= 1) return;
@@ -272,7 +306,8 @@ export const DamageSystem = {
         }
 
         if ((player.shrapnelCount ?? 0) > 0) {
-            const sourceDamage = damage.source?.damage ?? player.bulletDamage ?? 1;
+            const sourceDamage =
+                damage.source?.damage ?? player.bulletDamage ?? 1;
             this.spawnShrapnel(
                 state,
                 enemy,
@@ -371,8 +406,9 @@ export const DamageSystem = {
     applySingularity(state, player, source) {
         const radius = player.singularityRadius ?? 0;
         if (radius <= 0) return;
-        const pull = player.singularityPullStrength ?? SINGULARITY_PULL_STRENGTH;
-        
+        const pull =
+            player.singularityPullStrength ?? SINGULARITY_PULL_STRENGTH;
+
         // Spawn a persistent singularity that pulls enemies over time
         if (!state.singularities) state.singularities = [];
         state.singularities.push({
@@ -382,7 +418,7 @@ export const DamageSystem = {
             pull,
             ttl: SINGULARITY_DURATION_TICKS,
         });
-        
+
         state.events.push({
             type: "singularity",
             x: source.x,
@@ -415,7 +451,9 @@ export const DamageSystem = {
                 const nx = dx / dist;
                 const ny = dy / dist;
                 // Stronger pull when closer (inverse distance falloff)
-                const strength = (singularity.pull / TICK_RATE) * (1 - dist / singularity.radius);
+                const strength =
+                    (singularity.pull / TICK_RATE) *
+                    (1 - dist / singularity.radius);
                 enemy.vx += nx * strength;
                 enemy.vy += ny * strength;
             }
@@ -477,9 +515,7 @@ DamageSystem.spawnSplitBullets = function spawnSplitBullets(state, source) {
     if (!split) return;
     const speed = Math.hypot(source.vx, source.vy) || 0;
     if (speed === 0) return;
-    const minTtl = Math.ceil(
-        (PLAYER_PROJECTILE_MIN_RANGE / speed) * TICK_RATE
-    );
+    const minTtl = Math.ceil((PLAYER_PROJECTILE_MIN_RANGE / speed) * TICK_RATE);
     const ttl = Math.max(Math.floor(60 * 2), minTtl);
 
     const baseAngle = Math.atan2(source.vy, source.vx);
@@ -559,8 +595,7 @@ DamageSystem.spawnCritShrapnel = function spawnCritShrapnel(
                 ? 3
                 : sourceRadius
             : playerRadius;
-    const blockShots =
-        source.blockShots ?? (player.neutronCore ? true : false);
+    const blockShots = source.blockShots ?? (player.neutronCore ? true : false);
 
     for (let i = 0; i < count; i += 1) {
         const angle = (Math.PI * 2 * i) / count;

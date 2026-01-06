@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+    <!-- Elite glow -->
+    <circle cx="32" cy="32" r="24" fill="#44aaff" opacity="0.15"/>
+    <!-- Shield (front arc) - stronger -->
+    <path d="M 12 18 Q 32 4 52 18 L 52 46 Q 32 60 12 46 Z" fill="none" stroke="#00ffff" stroke-width="5"/>
+    <!-- Body -->
+    <circle cx="32" cy="32" r="12" fill="#0d1a28" stroke="#00ffff" stroke-width="3"/>
+    <!-- Inner core -->
+    <circle cx="32" cy="32" r="6" fill="#00ffff"/>
+    <!-- Shield energy nodes - brighter -->
+    <circle cx="16" cy="22" r="4" fill="#00ffff"/>
+    <circle cx="48" cy="22" r="4" fill="#00ffff"/>
+    <circle cx="16" cy="42" r="4" fill="#00ffff"/>
+    <circle cx="48" cy="42" r="4" fill="#00ffff"/>
+    <!-- Gun port -->
+    <rect x="29" y="44" width="6" height="10" fill="#00ffff"/>
+</svg>

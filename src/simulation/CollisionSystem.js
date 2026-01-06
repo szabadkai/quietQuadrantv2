@@ -1,19 +1,20 @@
 /* eslint-disable max-lines */
 import { clamp, distanceSq } from "../utils/math.js";
 import { ARENA_HEIGHT, ARENA_WIDTH } from "../utils/constants.js";
+import { ShielderAI } from "./enemies/ShielderAI.js";
 
 const PLAYER_BULLET_COLLISION_SCALE = 3;
 
 export const CollisionSystem = {
     update(state) {
         if (!state.spatialGrid) return;
-        
+
         // 1. Rebuild Grid with all alive enemies
         state.spatialGrid.clear();
         for (const enemy of state.enemies) {
             if (enemy.alive) state.spatialGrid.insert(enemy);
         }
-        
+
         // 2. Perform Collision Checks
         this.playerBulletsVsEnemies(state);
         this.playerBulletsVsBoss(state);
@@ -34,6 +35,22 @@ export const CollisionSystem = {
                 if (!enemy.alive) continue;
 
                 if (!this.hitTest(bullet, enemy)) continue;
+
+                // Check if shielder blocks this bullet
+                if (enemy.type === "shielder" && enemy.shieldArc) {
+                    if (
+                        ShielderAI.shouldBlockBullet(enemy, bullet.x, bullet.y)
+                    ) {
+                        bullet.alive = false;
+                        state.events.push({
+                            type: "shield-block",
+                            x: bullet.x,
+                            y: bullet.y,
+                            enemyId: enemy.id,
+                        });
+                        break;
+                    }
+                }
 
                 // Emit hit event for visual effects
                 state.events.push({
@@ -92,7 +109,8 @@ export const CollisionSystem = {
                 if (player.neutronCore) {
                     const dx = bullet.x - player.x;
                     const dy = bullet.y - player.y;
-                    const radius = player.neutronBlockRadius ?? player.radius * 2.4;
+                    const radius =
+                        player.neutronBlockRadius ?? player.radius * 2.4;
                     if (dx * dx + dy * dy <= radius * radius) {
                         bullet.alive = false;
                         state.events.push({
@@ -170,14 +188,14 @@ export const CollisionSystem = {
     },
 
     playerBulletsVsEnemyBullets(state) {
-        if (!state.players.some((player) => player.alive && player.neutronCore)) {
+        if (
+            !state.players.some((player) => player.alive && player.neutronCore)
+        ) {
             return;
         }
         const blockers = state.bullets.filter(
             (bullet) =>
-                bullet.alive &&
-                this.isPlayerBullet(bullet) &&
-                bullet.blockShots
+                bullet.alive && this.isPlayerBullet(bullet) && bullet.blockShots
         );
         if (!blockers.length) return;
 
@@ -212,8 +230,7 @@ export const CollisionSystem = {
                 if (!this.hitTest(enemy, player)) continue;
 
                 this.resolveOverlap(enemy, player, 0.4, 0.6);
-                const knockbackReduction =
-                    player.collisionDamageReduction ?? 0;
+                const knockbackReduction = player.collisionDamageReduction ?? 0;
                 if (knockbackReduction > 0) {
                     player.vx *= 1 - knockbackReduction;
                     player.vy *= 1 - knockbackReduction;
@@ -232,14 +249,18 @@ export const CollisionSystem = {
     enemiesVsEnemies(state) {
         for (const enemyA of state.enemies) {
             if (!enemyA.alive) continue;
-            
+
             // Query nearby enemies using spatial grid
-            const nearby = state.spatialGrid.query(enemyA.x, enemyA.y, enemyA.radius * 2);
+            const nearby = state.spatialGrid.query(
+                enemyA.x,
+                enemyA.y,
+                enemyA.radius * 2
+            );
             for (const enemyB of nearby) {
                 if (!enemyB.alive || enemyA === enemyB) continue;
                 // Use ID ordering to prevent double-checking pairs
                 if (enemyA.id >= enemyB.id) continue;
-                
+
                 if (!this.hitTest(enemyA, enemyB)) continue;
                 this.resolveOverlap(enemyA, enemyB, 0.5, 0.5);
             }

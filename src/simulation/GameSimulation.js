@@ -12,6 +12,7 @@ import { UpgradeSystem } from "./UpgradeSystem.js";
 import { BossSystem } from "./BossSystem.js";
 import { GameEndSystem } from "./GameEndSystem.js";
 import { AffixSystem } from "./AffixSystem.js";
+import { DeckScaling } from "./DeckScaling.js";
 import { ARENA_WIDTH, ARENA_HEIGHT } from "../utils/constants.js";
 
 export class GameSimulation {
@@ -21,11 +22,19 @@ export class GameSimulation {
         const seed = resolvedConfig.seed ?? 0;
         this.rng = new SeededRandom(seed);
         this.state = createInitialState(seed, resolvedConfig);
-        
+
         // Benchmark Setup
         if (resolvedConfig.benchmark) {
             this.setupBenchmark(resolvedConfig.benchmark);
         }
+
+        // Apply deck-based difficulty scaling before affixes
+        // (affixes will multiply on top of deck scaling)
+        DeckScaling.applyToState(
+            this.state,
+            resolvedConfig.cardBoosts,
+            resolvedConfig.unlockedUpgrades
+        );
 
         if (resolvedConfig.affix) {
             AffixSystem.apply(this.state, resolvedConfig.affix);
@@ -36,11 +45,11 @@ export class GameSimulation {
         this.state.isBenchmarking = true;
         this.state.benchmarkDuration = config.duration || 300; // Shortened to 5s
         this.state.benchmarkComplete = false;
-        
+
         // Setup initial enemies based on count
         const enemies = [];
         const count = config.enemies || 100;
-        
+
         for (let i = 0; i < count; i++) {
             const enemy = {
                 id: i + 1000,
@@ -51,7 +60,7 @@ export class GameSimulation {
                 vx: (this.rng.next() - 0.5) * 100,
                 vy: (this.rng.next() - 0.5) * 100,
                 type: "drifter",
-                health: 1000 // High health to ensure they stick around
+                health: 1000, // High health to ensure they stick around
             };
 
             if (config.type === "swarm") {
@@ -75,7 +84,7 @@ export class GameSimulation {
                     enemy.radius = 14;
                 }
             }
-            
+
             enemies.push(enemy);
         }
         this.state.enemies = enemies;
@@ -85,9 +94,9 @@ export class GameSimulation {
         if (this.state.benchmarkTargetBullets > 0) {
             this.spawnBenchmarkBullets(this.state.benchmarkTargetBullets);
         }
-        
+
         // Make players invincible
-        this.state.players.forEach(p => {
+        this.state.players.forEach((p) => {
             p.debugInvincible = true;
         });
     }
@@ -100,7 +109,7 @@ export class GameSimulation {
 
     tick(inputs = {}) {
         this.state.tick += 1;
-        
+
         if (this.state.isBenchmarking) {
             if (this.state.benchmarkDuration > 0) {
                 this.state.benchmarkDuration--;
@@ -111,16 +120,18 @@ export class GameSimulation {
             if (!this.state.benchmarkComplete) {
                 // Maintain bullet count
                 if (this.state.benchmarkTargetBullets > 0) {
-                     const currentBullets = this.state.bullets.length;
-                     if (currentBullets < this.state.benchmarkTargetBullets) {
-                         this.spawnBenchmarkBullets(this.state.benchmarkTargetBullets - currentBullets);
-                     }
+                    const currentBullets = this.state.bullets.length;
+                    if (currentBullets < this.state.benchmarkTargetBullets) {
+                        this.spawnBenchmarkBullets(
+                            this.state.benchmarkTargetBullets - currentBullets
+                        );
+                    }
                 }
-                
+
                 // Automated inputs for benchmark
                 const tick = this.state.tick;
                 const time = tick / 60;
-                
+
                 // Circular movement
                 const moveX = Math.cos(time * 2);
                 const moveY = Math.sin(time * 2);
@@ -134,11 +145,11 @@ export class GameSimulation {
                     p1: {
                         moveX,
                         moveY,
-                        aimX, 
+                        aimX,
                         aimY,
                         fire: true, // Always firing
-                        dash: tick % 120 === 0 // Dash every 2 seconds
-                    }
+                        dash: tick % 120 === 0, // Dash every 2 seconds
+                    },
                 };
             }
         }
@@ -206,7 +217,7 @@ export class GameSimulation {
                 vx: (this.rng.next() - 0.5) * 300,
                 vy: (this.rng.next() - 0.5) * 300,
                 damage: 1,
-                ttl: 600 // Long life
+                ttl: 600, // Long life
             });
         }
     }

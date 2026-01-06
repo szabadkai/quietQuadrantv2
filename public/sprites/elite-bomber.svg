@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+    <!-- Elite glow -->
+    <circle cx="32" cy="32" r="24" fill="#ff4444" opacity="0.2"/>
+    <!-- Outer warning ring - double -->
+    <circle cx="32" cy="32" r="20" fill="none" stroke="#ff2222" stroke-width="2" stroke-dasharray="4 2"/>
+    <circle cx="32" cy="32" r="16" fill="none" stroke="#ff6644" stroke-width="2"/>
+    <!-- Body -->
+    <circle cx="32" cy="32" r="14" fill="#1a0808" stroke="#ff2222" stroke-width="3"/>
+    <!-- Explosive core (pulsing) -->
+    <circle cx="32" cy="32" r="10" fill="#ff2222"/>
+    <circle cx="32" cy="32" r="6" fill="#ffff44"/>
+    <!-- Warning symbol -->
+    <polygon points="32,20 27,34 37,34" fill="#1a0808"/>
+    <circle cx="32" cy="39" r="2.5" fill="#1a0808"/>
+    <!-- Fuse nodes - more -->
+    <circle cx="18" cy="32" r="4" fill="#ff2222"/>
+    <circle cx="46" cy="32" r="4" fill="#ff2222"/>
+    <circle cx="32" cy="18" r="4" fill="#ff2222"/>
+    <circle cx="32" cy="46" r="4" fill="#ff2222"/>
+    <circle cx="22" cy="22" r="3" fill="#ff6644"/>
+    <circle cx="42" cy="22" r="3" fill="#ff6644"/>
+    <circle cx="22" cy="42" r="3" fill="#ff6644"/>
+    <circle cx="42" cy="42" r="3" fill="#ff6644"/>
+</svg>

@@ -3,7 +3,7 @@ import {
     ARENA_WIDTH,
     ARENA_HEIGHT,
     ENEMY_BULLET_RADIUS,
-    TICK_RATE
+    TICK_RATE,
 } from "../utils/constants.js";
 import { clamp, normalize } from "../utils/math.js";
 import { DrifterAI } from "./enemies/DrifterAI.js";
@@ -12,10 +12,13 @@ import { MassAI } from "./enemies/MassAI.js";
 import { PhantomAI } from "./enemies/PhantomAI.js";
 import { OrbiterAI } from "./enemies/OrbiterAI.js";
 import { SplitterAI } from "./enemies/SplitterAI.js";
+import { ChargerAI } from "./enemies/ChargerAI.js";
+import { ShielderAI } from "./enemies/ShielderAI.js";
+import { BomberAI } from "./enemies/BomberAI.js";
 import {
     getEliteSpeedMultiplier,
     initEliteBehavior,
-    updateEliteBehavior
+    updateEliteBehavior,
 } from "./EliteBehaviors.js";
 
 const AI_MAP = {
@@ -24,7 +27,10 @@ const AI_MAP = {
     mass: MassAI,
     phantom: PhantomAI,
     orbiter: OrbiterAI,
-    splitter: SplitterAI
+    splitter: SplitterAI,
+    charger: ChargerAI,
+    shielder: ShielderAI,
+    bomber: BomberAI,
 };
 
 export const EnemySystem = {
@@ -52,14 +58,14 @@ export const EnemySystem = {
         return {
             getNearestPlayer,
             spawnBullet: spawnEnemyBullet,
-            getEliteSpeedMultiplier
+            getEliteSpeedMultiplier,
         };
     },
 
     clampToArena(enemy) {
         enemy.x = clamp(enemy.x, enemy.radius, ARENA_WIDTH - enemy.radius);
         enemy.y = clamp(enemy.y, enemy.radius, ARENA_HEIGHT - enemy.radius);
-    }
+    },
 };
 
 export function spawnEnemy(state, kind, rng, options = {}) {
@@ -67,7 +73,9 @@ export function spawnEnemy(state, kind, rng, options = {}) {
     if (!base) return null;
 
     const elite = options.elite ?? false;
-    const modifiers = elite ? ELITE_MODIFIERS : { health: 1, speed: 1, damage: 1 };
+    const modifiers = elite
+        ? ELITE_MODIFIERS
+        : { health: 1, speed: 1, damage: 1 };
     const affixMods = state.modifiers ?? {};
     const scale = options.scale ?? 1;
     const position = options.position ?? randomEdgePosition(rng);
@@ -76,12 +84,12 @@ export function spawnEnemy(state, kind, rng, options = {}) {
         base.health * modifiers.health * (affixMods.enemyHealth ?? 1) * scale
     );
     const speed =
-    base.speed *
-    modifiers.speed *
-    (affixMods.enemySpeed ?? 1) *
-    (options.speedScale ?? 1);
+        base.speed *
+        modifiers.speed *
+        (affixMods.enemySpeed ?? 1) *
+        (options.speedScale ?? 1);
     const contactDamage =
-    base.contactDamage * modifiers.damage * (affixMods.enemyDamage ?? 1);
+        base.contactDamage * modifiers.damage * (affixMods.enemyDamage ?? 1);
     const bulletDamage = base.bulletDamage
         ? base.bulletDamage * modifiers.damage * (affixMods.enemyDamage ?? 1)
         : 0;
@@ -111,7 +119,7 @@ export function spawnEnemy(state, kind, rng, options = {}) {
         elite,
         eliteBehavior: base.eliteBehavior ?? null,
         splitDepth: options.splitDepth ?? 0,
-        alive: true
+        alive: true,
     };
 
     if (kind === "phantom") {
@@ -165,7 +173,7 @@ function spawnEnemyBullet(state, enemy, dirX, dirY) {
         pierce: 0,
         ttl: Math.floor(TICK_RATE * 3),
         radius: ENEMY_BULLET_RADIUS,
-        alive: true
+        alive: true,
     });
 }
 

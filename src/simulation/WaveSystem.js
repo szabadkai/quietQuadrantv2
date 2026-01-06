@@ -1,6 +1,7 @@
 import { WAVES } from "../config/waves.js";
 import { spawnEnemy } from "./EnemySystem.js";
 import { BossSystem } from "./BossSystem.js";
+import { DeckScaling } from "./DeckScaling.js";
 
 export const WaveSystem = {
     update(state, rng) {
@@ -83,12 +84,33 @@ export const WaveSystem = {
 
     buildSpawnQueue(waveConfig, state, rng) {
         const queue = [];
+        const eliteChanceMult = state.modifiers?.eliteChance ?? 1;
+
         for (const entry of waveConfig.enemies) {
             const count = Math.round(entry.count * (entry.countScale ?? 1));
             const modifier = state.modifiers?.enemyCount ?? 1;
             const finalCount = Math.max(1, Math.round(count * modifier));
             for (let i = 0; i < finalCount; i += 1) {
-                queue.push({ kind: entry.kind, elite: entry.elite ?? false });
+                // Apply elite chance multiplier from deck scaling
+                let isElite = entry.elite ?? false;
+                if (!isElite && eliteChanceMult > 1) {
+                    // Base 5% chance, scaled by modifier
+                    isElite = rng.next() < 0.05 * eliteChanceMult;
+                }
+                queue.push({ kind: entry.kind, elite: isElite });
+            }
+        }
+
+        // Inject scaled enemies based on deck progression
+        const progressionScore = state.deckScaling?.progressionScore ?? 0;
+        if (progressionScore > 0) {
+            const waveNumber = state.wave.current + 1;
+            const scaledEnemies = DeckScaling.getScaledEnemies(
+                progressionScore,
+                waveNumber
+            );
+            for (const enemy of scaledEnemies) {
+                queue.push(enemy);
             }
         }
 
