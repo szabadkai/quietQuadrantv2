@@ -10,9 +10,9 @@ export const BOSSES = [
         phases: [1.0, 0.75, 0.5, 0.25],
         phaseModifiers: [
             { speed: 1.0, fireRate: 1.0, projectileSpeed: 1.0 },
-            { speed: 1.15, fireRate: 1.2, projectileSpeed: 1.1 },
-            { speed: 1.3, fireRate: 1.4, projectileSpeed: 1.2 },
-            { speed: 1.5, fireRate: 1.6, projectileSpeed: 1.3 }
+            { speed: 1.25, fireRate: 1.35, projectileSpeed: 1.2 },
+            { speed: 1.5, fireRate: 1.7, projectileSpeed: 1.4 },
+            { speed: 1.8, fireRate: 2.0, projectileSpeed: 1.6 }
         ]
     },
     {
@@ -25,9 +25,9 @@ export const BOSSES = [
         phases: [1.0, 0.75, 0.5, 0.25],
         phaseModifiers: [
             { speed: 1.0, fireRate: 1.0, projectileSpeed: 1.0 },
-            { speed: 1.1, fireRate: 1.25, projectileSpeed: 1.1 },
-            { speed: 1.2, fireRate: 1.5, projectileSpeed: 1.15 },
-            { speed: 1.35, fireRate: 1.8, projectileSpeed: 1.2 }
+            { speed: 1.2, fireRate: 1.4, projectileSpeed: 1.15 },
+            { speed: 1.4, fireRate: 1.8, projectileSpeed: 1.25 },
+            { speed: 1.6, fireRate: 2.2, projectileSpeed: 1.4 }
         ]
     },
     {
@@ -40,9 +40,9 @@ export const BOSSES = [
         phases: [1.0, 0.75, 0.5, 0.25],
         phaseModifiers: [
             { speed: 1.0, fireRate: 1.0, projectileSpeed: 1.0 },
-            { speed: 1.1, fireRate: 1.15, projectileSpeed: 1.15 },
-            { speed: 1.2, fireRate: 1.3, projectileSpeed: 1.3 },
-            { speed: 1.3, fireRate: 1.5, projectileSpeed: 1.5 }
+            { speed: 1.15, fireRate: 1.25, projectileSpeed: 1.25 },
+            { speed: 1.3, fireRate: 1.5, projectileSpeed: 1.5 },
+            { speed: 1.5, fireRate: 1.8, projectileSpeed: 1.8 }
         ]
     }
 ];

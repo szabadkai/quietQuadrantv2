@@ -32,18 +32,66 @@ async function generateChecksum(payload) {
 
 /**
  * Calculate score from run stats.
- * Formula: (wave * 1000) + (kills * 10) + (damage / 10) + victory bonus
+ * Enhanced formula with multiple differentiation factors:
+ * - Wave progression (base points)
+ * - Kill points with 3x elite multiplier
+ * - Time bonus for fast clears
+ * - Survival bonus for remaining health
+ * - Flawless bonus for no-hit runs
  * @param {Object} runStats
  * @returns {number}
  */
 export function calculateScore(runStats) {
     const wave = runStats.wave ?? 0;
     const kills = runStats.kills ?? 0;
+    const eliteKills = runStats.eliteKills ?? 0;
     const damageDealt = runStats.damageDealt ?? 0;
+    const duration = runStats.duration ?? 0; // in seconds
     const victory = runStats.victory ?? false;
+    const bossDefeated = runStats.bossDefeated ?? false;
+    const damageTaken = runStats.damageTaken ?? 0;
+    const maxHealth = runStats.maxHealth ?? 100;
+    const endHealth = runStats.endHealth ?? 0;
+
+    // Base points from waves
+    const wavePoints = wave * 1000;
+
+    // Kill points with elite multiplier (3x for elites)
+    const normalKillPoints = (kills - eliteKills) * 10;
+    const eliteKillPoints = eliteKills * 30;
+
+    // Damage efficiency (capped at 500)
+    const damagePoints = Math.min(500, damageDealt / 20);
+
+    // Time bonus: faster clears earn more (max 3000 points at <2min victory)
+    // Decays linearly - penalty kicks in after 3 minutes
+    const timeBonus = victory
+        ? Math.max(0, Math.floor(3000 - duration * 8))
+        : 0;
+
+    // Victory bonus
+    const victoryBonus = victory ? 5000 : 0;
+
+    // Boss defeat bonus
+    const bossBonus = bossDefeated ? 2000 : 0;
+
+    // Survival bonus: % of health remaining (up to 1000)
+    const healthRatio = maxHealth > 0 ? endHealth / maxHealth : 0;
+    const survivalBonus = victory ? Math.floor(healthRatio * 1000) : 0;
+
+    // Flawless bonus (no damage taken)
+    const flawlessBonus = damageTaken === 0 && victory ? 2000 : 0;
 
     return Math.floor(
-        wave * 1000 + kills * 10 + damageDealt / 10 + (victory ? 5000 : 0)
+        wavePoints +
+        normalKillPoints +
+        eliteKillPoints +
+        damagePoints +
+        timeBonus +
+        victoryBonus +
+        bossBonus +
+        survivalBonus +
+        flawlessBonus
     );
 }
 

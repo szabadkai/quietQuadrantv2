@@ -200,6 +200,23 @@ export const useMetaStore = create(
                 markHowToPlaySeen: () => set({ hasSeenHowToPlay: true }),
 
                 setPlayerName: (name) => set({ playerName: name }),
+
+                resetProgress: () => {
+                    set({
+                        pilotXP: 0,
+                        pilotRank: 1,
+                        lifetimeStats: { ...INITIAL_LIFETIME_STATS },
+                        stats: { ...INITIAL_LIFETIME_STATS },
+                        cardCollection: {
+                            unlockedUpgrades: [...INITIAL_UNLOCKED_UPGRADES],
+                            upgradeBoosts: {},
+                            totalCardsCollected: 0,
+                        },
+                        achievements: {},
+                        lastRun: null,
+                        hasSeenHowToPlay: false,
+                    });
+                },
             },
         }),
         {

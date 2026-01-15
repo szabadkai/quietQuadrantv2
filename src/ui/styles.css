@@ -2117,6 +2117,24 @@ body.qq-no-scanlines .qq-game-frame canvas {
     0 0 12px var(--qq-accent);
 }
 
+.qq-reset-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.qq-reset-confirm .qq-warning {
+  color: var(--qq-danger);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-shadow: 0 0 6px var(--qq-danger);
+}
+
+.qq-reset-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .qq-settings-modal {
   max-width: 450px;
 }

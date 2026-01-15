@@ -86,6 +86,9 @@ export const DamageSystem = {
         enemy.alive = false;
         if (state.runStats) {
             state.runStats.kills += 1;
+            if (enemy.elite) {
+                state.runStats.eliteKills = (state.runStats.eliteKills ?? 0) + 1;
+            }
         }
 
         // Emit death event with position for effects

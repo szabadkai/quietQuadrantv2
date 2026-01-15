@@ -3,6 +3,7 @@ import { Button } from "../components/Button.jsx";
 import { Slider } from "../components/Slider.jsx";
 import { soundManager } from "../../audio/SoundManager.js";
 import { musicManager } from "../../audio/MusicManager.js";
+import { useMetaStore } from "../../state/useMetaStore.js";
 
 const SETTINGS_KEY = "quiet-quadrant-settings";
 const DEFAULT_SETTINGS = {
@@ -62,6 +63,8 @@ function notifySettingsChanged(settings) {
 
 export function SettingsModal({ onClose }) {
     const [settings, setSettings] = useState(loadSettings);
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const { actions } = useMetaStore();
 
     useEffect(() => {
         soundManager.setMasterVolume(settings.masterVolume);
@@ -156,6 +159,40 @@ export function SettingsModal({ onClose }) {
                     <h3>Accessibility</h3>
                     <Toggle label="High Contrast" settingKey="highContrast" />
                     <Toggle label="Reduced Motion" settingKey="reducedMotion" />
+                </div>
+
+                <div className="qq-settings-section">
+                    <h3>Data</h3>
+                    {!showResetConfirm ? (
+                        <Button
+                            variant="danger"
+                            onClick={() => setShowResetConfirm(true)}
+                        >
+                            Reset All Progress
+                        </Button>
+                    ) : (
+                        <div className="qq-reset-confirm">
+                            <p className="qq-warning">
+                                This will reset ALL upgrades, unlocks, and stats.
+                                This cannot be undone!
+                            </p>
+                            <div className="qq-reset-actions">
+                                <Button
+                                    variant="danger"
+                                    onClick={() => {
+                                        actions.resetProgress();
+                                        setShowResetConfirm(false);
+                                        onClose();
+                                    }}
+                                >
+                                    Yes, Reset Everything
+                                </Button>
+                                <Button onClick={() => setShowResetConfirm(false)}>
+                                    Cancel
+                                </Button>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="qq-modal-actions">

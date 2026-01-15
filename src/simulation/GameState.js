@@ -62,6 +62,7 @@ export function createInitialState(seed = 0, config = {}) {
             ticks: 0,
             wave: 0,
             kills: 0,
+            eliteKills: 0,
             bossDefeated: false,
             damageDealt: 0,
             damageTaken: 0,

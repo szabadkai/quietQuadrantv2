@@ -24,7 +24,7 @@ const PATTERNS = {
 };
 
 const BASE_BOSS = {
-    health: 800,
+    health: 2000,
     speed: 55,
     radius: 32,
 };
