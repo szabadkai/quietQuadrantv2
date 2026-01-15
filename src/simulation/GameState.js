@@ -27,6 +27,7 @@ export function createInitialState(seed = 0, config = {}) {
             intermission: 0,
         },
         boss: null,
+        bossId: config.bossId ?? null, // Deterministic boss ID from config
         bossDeathTimer: 0,
         nextBulletId: 1,
         nextEnemyId: 1,

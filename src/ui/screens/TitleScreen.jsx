@@ -38,7 +38,7 @@ export function TitleScreen() {
     }, [setScreen]);
 
     const handleWeekly = () => {
-        startGame({ seed: weeklySeed, affix: weeklyAffix });
+        startGame({ seed: weeklySeed, affix: weeklyAffix, bossId: weeklyBoss?.id });
         setScreen("game");
     };
 

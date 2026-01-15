@@ -1,7 +1,19 @@
 import { WAVES } from "../config/waves.js";
+import { BOSSES } from "../config/bosses.js";
 import { spawnEnemy } from "./EnemySystem.js";
 import { BossSystem } from "./BossSystem.js";
 import { DeckScaling } from "./DeckScaling.js";
+
+/**
+ * Get the boss ID to spawn. Uses explicit bossId from config if available,
+ * otherwise falls back to seed-based deterministic selection.
+ */
+function getBossId(state) {
+    if (state.bossId) return state.bossId;
+    // Fallback: calculate from seed for backwards compatibility
+    const index = Math.abs(state.seed) % BOSSES.length;
+    return BOSSES[index].id;
+}
 
 export const WaveSystem = {
     update(state, rng) {
@@ -38,7 +50,8 @@ export const WaveSystem = {
         ) {
             state.wave.current += 1;
             if (state.wave.current >= WAVES.length - 1) {
-                BossSystem.spawnBoss(state, rng);
+                const bossId = getBossId(state);
+                BossSystem.spawnBoss(state, rng, bossId);
                 return;
             }
 
@@ -72,7 +85,8 @@ export const WaveSystem = {
         }
 
         if (waveConfig.id === "boss") {
-            BossSystem.spawnBoss(state, rng);
+            const bossId = getBossId(state);
+            BossSystem.spawnBoss(state, rng, bossId);
             return;
         }
 
