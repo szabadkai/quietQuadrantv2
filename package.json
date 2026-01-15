@@ -7,6 +7,9 @@
     "author": "Waffle Dog Studio",
     "description": "A minimalist roguelike space shooter.",
     "scripts": {
+        "supabase:login": "supabase login",
+        "supabase": "supabase functions deploy submit-score",
+        "supabase:secrets": "supabase secrets set SCORE_HMAC_SECRET=qq-leaderboard-2026-v1",
         "dev": "vite --host",
         "build": "vite build",
         "build:pages": "tsc -b && BUILD_TARGET=pages vite build",
@@ -28,6 +31,7 @@
     },
     "dependencies": {
         "@sentry/react": "^10.32.1",
+        "@supabase/supabase-js": "^2.90.1",
         "phaser": "^3.80.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
@@ -51,6 +55,7 @@
         "eslint-plugin-react": "^7.34.0",
         "eslint-plugin-react-hooks": "^4.6.0",
         "jsdom": "^27.4.0",
+        "supabase": "^2.72.7",
         "vite": "^5.2.0",
         "vitest": "^1.4.0"
     },

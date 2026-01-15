@@ -13,6 +13,7 @@ import { JoinGameScreen } from "./ui/screens/JoinGameScreen.jsx";
 import { TwinSetupScreen } from "./ui/screens/TwinSetupScreen.jsx";
 import { PreTitleScreen } from "./ui/screens/PreTitleScreen.jsx";
 import { VictoryDefeatScreen } from "./ui/screens/VictoryDefeatScreen.jsx";
+import { LeaderboardScreen } from "./ui/screens/LeaderboardScreen.jsx";
 
 import { NotificationToast } from "./ui/components/NotificationToast.jsx";
 import { AchievementPopup } from "./ui/modals/AchievementPopup.jsx";
@@ -130,6 +131,7 @@ export function App() {
             {screen === "join" && <JoinGameScreen />}
             {screen === "twin" && <TwinSetupScreen />}
             {screen === "victory_defeat" && <VictoryDefeatScreen />}
+            {screen === "leaderboard" && <LeaderboardScreen />}
 
             <NotificationToast />
             <AchievementPopup />

@@ -70,7 +70,8 @@ export const GameEndSystem = {
             affixName: state.affix?.name ?? null,
             bossId: stats.bossId ?? state.boss?.id ?? null,
             bossName: stats.bossName ?? state.boss?.name ?? null,
-            wavesCleared: stats.wave ?? 0
+            wavesCleared: stats.wave ?? 0,
+            weeklySeed: state.seed ?? null
         };
     }
 };

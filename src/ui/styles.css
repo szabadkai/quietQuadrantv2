@@ -3953,3 +3953,367 @@ body.qq-no-scanlines .qq-game-frame canvas {
   box-shadow: 0 0 8px #ff4400, 0 0 12px #ff2200;
   transition: width 0.1s ease-out;
 }
+
+/* ============================================
+   LEADERBOARD STYLES
+   ============================================ */
+
+.qq-leaderboard-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border: 2px solid var(--qq-accent);
+}
+
+.qq-tab {
+  flex: 1;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  color: var(--qq-muted);
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.qq-tab:first-child {
+  border-right: 1px solid var(--qq-accent);
+}
+
+.qq-tab:hover {
+  color: var(--qq-text);
+  background: rgba(0, 255, 255, 0.05);
+}
+
+.qq-tab.active {
+  color: var(--qq-text);
+  background: rgba(0, 255, 255, 0.15);
+  text-shadow: 0 0 8px var(--qq-accent);
+  box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+.qq-weekly-info {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.qq-leaderboard-content {
+  min-height: 300px;
+  max-height: 50vh;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.qq-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px;
+  color: var(--qq-muted);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+}
+
+.qq-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--qq-muted);
+  border-top-color: var(--qq-accent);
+  border-radius: 50%;
+  animation: qq-spin 0.8s linear infinite;
+}
+
+.qq-spinner-small {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--qq-muted);
+  border-top-color: var(--qq-accent);
+  border-radius: 50%;
+  animation: qq-spin 0.8s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes qq-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.qq-error-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--qq-danger);
+}
+
+.qq-error-message p {
+  margin-bottom: 16px;
+}
+
+.qq-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.qq-empty-state p {
+  margin: 8px 0;
+}
+
+.qq-leaderboard-table {
+  border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+.qq-leaderboard-header {
+  display: grid;
+  grid-template-columns: 50px 1fr 100px 60px 70px 70px;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(0, 255, 255, 0.1);
+  border-bottom: 1px solid var(--qq-accent);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--qq-accent);
+}
+
+.qq-leaderboard-rows {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.qq-leaderboard-row {
+  display: grid;
+  grid-template-columns: 50px 1fr 100px 60px 70px 70px;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+  font-size: 12px;
+  transition: background 0.1s;
+}
+
+.qq-leaderboard-row:hover {
+  background: rgba(0, 255, 255, 0.05);
+}
+
+.qq-leaderboard-row.highlight {
+  background: rgba(0, 255, 255, 0.15);
+  border-left: 3px solid var(--qq-accent);
+}
+
+.qq-leaderboard-row.gold .qq-col-rank {
+  color: #ffd700;
+  text-shadow: 0 0 8px #ffd700;
+  font-weight: 700;
+}
+
+.qq-leaderboard-row.silver .qq-col-rank {
+  color: #c0c0c0;
+  text-shadow: 0 0 8px #c0c0c0;
+  font-weight: 700;
+}
+
+.qq-leaderboard-row.bronze .qq-col-rank {
+  color: #cd7f32;
+  text-shadow: 0 0 8px #cd7f32;
+  font-weight: 700;
+}
+
+.qq-col-rank {
+  font-weight: 700;
+  color: var(--qq-accent);
+}
+
+.qq-col-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.qq-col-score {
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 6px var(--qq-accent);
+}
+
+.qq-col-wave,
+.qq-col-time,
+.qq-col-date {
+  color: var(--qq-muted);
+  font-size: 11px;
+}
+
+.qq-victory-badge {
+  color: #ffd700;
+  text-shadow: 0 0 6px #ffd700;
+  font-size: 10px;
+}
+
+/* ============================================
+   NAME INPUT MODAL STYLES
+   ============================================ */
+
+.qq-name-input-modal {
+  max-width: 400px;
+  text-align: center;
+}
+
+.qq-name-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.qq-input-group {
+  position: relative;
+  width: 100%;
+}
+
+.qq-text-input {
+  width: 100%;
+  padding: 14px 50px 14px 16px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid var(--qq-accent);
+  color: var(--qq-text);
+  font-family: inherit;
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  outline: none;
+  transition: all 0.15s ease;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+  box-sizing: border-box;
+}
+
+.qq-text-input::placeholder {
+  color: var(--qq-muted);
+  opacity: 0.6;
+}
+
+.qq-text-input:focus {
+  border-color: #fff;
+  box-shadow:
+    0 0 12px var(--qq-accent),
+    0 0 24px rgba(0, 255, 255, 0.3);
+}
+
+.qq-char-count {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: var(--qq-muted);
+  pointer-events: none;
+}
+
+.qq-input-error {
+  color: var(--qq-danger);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 6px var(--qq-danger);
+  margin-top: -8px;
+}
+
+.qq-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.qq-modal-actions .qq-button {
+  flex: 1;
+  max-width: 150px;
+}
+
+.qq-small {
+  font-size: 10px;
+  margin-top: 16px;
+}
+
+/* ============================================
+   SCORE SUBMISSION STATUS
+   ============================================ */
+
+.qq-submission-status {
+  text-align: center;
+  padding: 10px 0;
+  margin: 8px 0;
+  min-height: 30px;
+}
+
+.qq-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 6px 12px;
+  border-radius: 2px;
+}
+
+.qq-status.submitting {
+  color: var(--qq-muted);
+}
+
+.qq-status.success {
+  color: var(--qq-safe);
+  text-shadow: 0 0 6px var(--qq-safe);
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.qq-status.error {
+  color: var(--qq-danger);
+  text-shadow: 0 0 6px var(--qq-danger);
+  background: rgba(255, 0, 255, 0.1);
+  border: 1px solid rgba(255, 0, 255, 0.3);
+}
+
+.qq-retry-link {
+  background: none;
+  border: none;
+  color: var(--qq-accent);
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  margin-left: 8px;
+}
+
+.qq-retry-link:hover {
+  color: #fff;
+}
+
+/* Score highlight in summary */
+.qq-summary-row-highlight {
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  padding: 8px 12px;
+  margin: -4px -12px 8px;
+}
+
+.qq-score-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow:
+    0 0 8px var(--qq-accent),
+    0 0 16px var(--qq-accent);
+}
+
+/* Wide panel for leaderboard */
+.qq-panel-wide {
+  width: 90%;
+  max-width: 700px;
+}

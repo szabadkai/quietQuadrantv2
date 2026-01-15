@@ -31,6 +31,7 @@ export const useMetaStore = create(
             lastRewardRunId: null,
             lastRun: null,
             hasSeenHowToPlay: false,
+            playerName: null,
 
             actions: {
                 setStats: (nextStats) => {
@@ -197,6 +198,8 @@ export const useMetaStore = create(
                     set({ streakPopup: { ...INITIAL_STREAK_POPUP } }),
 
                 markHowToPlaySeen: () => set({ hasSeenHowToPlay: true }),
+
+                setPlayerName: (name) => set({ playerName: name }),
             },
         }),
         {

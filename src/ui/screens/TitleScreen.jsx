@@ -70,6 +70,9 @@ export function TitleScreen() {
                     <Button onClick={() => setScreen("stats")}>
                         Stats
                     </Button>
+                    <Button onClick={() => setScreen("leaderboard")}>
+                        Leaderboards
+                    </Button>
                     <Button onClick={() => setScreen("howtoplay")}>
                         How to Play
                     </Button>

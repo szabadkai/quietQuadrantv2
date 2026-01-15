@@ -92,6 +92,8 @@ jobs:
               env:
                   VITE_BUILD_VERSION: ${{ steps.version.outputs.NEW_VERSION }}
                   BUILD_TARGET: pages
+                  VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+                  VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
               run: npm run build:pages
 
             - name: Commit version bump
