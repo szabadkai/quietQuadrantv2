@@ -201,8 +201,8 @@ export class TransmissionPlayer {
     }
 
     resume() {
-        if (this.context?.state === "suspended") {
-            this.context.resume();
+        if (this.context && this.context.state !== "closed" && this.context.state === "suspended") {
+            this.context.resume().catch(() => {});
         }
     }
 
