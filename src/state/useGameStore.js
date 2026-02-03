@@ -72,6 +72,75 @@ export const useGameStore = create((set, get) => ({
                 stateVersion: 0,
                 session,
             });
+            // Register debug event listeners for dev tools (DEV only)
+            if (import.meta.env.DEV && typeof window !== "undefined") {
+                // Ensure we don't double-register
+                if (!window.__qq_dev_listeners_registered__) {
+                    window.addEventListener("qq-toggle-invincibility", (e) => {
+                        const sim = get().simulation;
+                        if (!sim) return;
+                        const playerId = e?.detail?.playerId ?? "p1";
+                        sim.toggleInvincibility(playerId);
+                        // trigger UI update
+                        set({
+                            state: sim.getState(),
+                            stateVersion: get().stateVersion + 1,
+                        });
+                    });
+
+                    window.addEventListener("qq-set-invincibility", (e) => {
+                        const sim = get().simulation;
+                        if (!sim) return;
+                        const playerId = e?.detail?.playerId ?? "p1";
+                        const enabled = !!e?.detail?.enabled;
+                        sim.setInvincibility(playerId, enabled);
+                        set({
+                            state: sim.getState(),
+                            stateVersion: get().stateVersion + 1,
+                        });
+                    });
+
+                    window.addEventListener("qq-apply-loadout", (e) => {
+                        const sim = get().simulation;
+                        if (!sim) return;
+                        const idx = Number(e?.detail?.index ?? 0);
+                        // lazy import to avoid adding to bundle unless used
+                        import("../simulation/devLoadouts.js").then((m) => {
+                            m.applyDevLoadout(
+                                sim,
+                                idx,
+                                e?.detail?.playerId ?? "p1",
+                            );
+                            set({
+                                state: sim.getState(),
+                                stateVersion: get().stateVersion + 1,
+                            });
+                        });
+                    });
+
+                    window.__qq_dev_listeners_registered__ = true;
+                }
+            }
+        },
+        toggleInvincibility: (playerId = "p1") => {
+            const { simulation, stateVersion } = get();
+            if (!simulation) return;
+            simulation.toggleInvincibility(playerId);
+            set({
+                state: simulation.getState(),
+                stateVersion: stateVersion + 1,
+            });
+        },
+        applyDevLoadout: (index = 0, playerId = "p1") => {
+            const { simulation, stateVersion } = get();
+            if (!simulation) return;
+            return import("../simulation/devLoadouts.js").then((m) => {
+                m.applyDevLoadout(simulation, index, playerId);
+                set({
+                    state: simulation.getState(),
+                    stateVersion: stateVersion + 1,
+                });
+            });
         },
         tick: (inputs = {}) => {
             const { simulation, session, stateVersion } = get();

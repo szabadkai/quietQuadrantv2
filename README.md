@@ -148,7 +148,6 @@ Uses WebRTC for serverless P2P connections:
 4. Add tests for new features
 5. Submit a pull request
 
-
 ---
 
 _"A minimalist void where clean lines, tight movement, and small choices decide survival—now with a friend."_

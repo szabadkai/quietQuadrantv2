@@ -123,6 +123,9 @@ export function DevConsole() {
         >
             <div style={{ marginBottom: 8, fontWeight: "bold", borderBottom: "1px solid #0ff", paddingBottom: 4 }}>
                 DEV CONSOLE (Shift+F)
+                <div style={{ fontSize: 10, color: "#888", marginTop: 4 }}>
+                    Hotkeys: Shift+I (Invincible), Shift+L (Cycle Loadout), Shift+G/Shift+C (Glow/CRT)
+                </div>
             </div>
 
             {/* Wave Jump */}

@@ -53,11 +53,11 @@ export class GameRenderer {
         this.enemyRenderer = null;
         this.pickupRenderer = null;
         this.bossRenderer = null;
-        
+
         this.benchmarkStats = {
             samples: [],
             startTime: 0,
-            active: false
+            active: false,
         };
 
         this.gameLoop = new GameLoop({
@@ -158,12 +158,12 @@ export class GameRenderer {
         // First, inject any pre-rasterized sprites from AssetPreloader
         // These were loaded during PreTitleScreen/TitleScreen
         const injectedCount = AssetPreloader.injectIntoPhaser(scene);
-        
+
         const isMobile =
             scene.sys.game.device.os.iOS || scene.sys.game.device.os.android;
         // Use larger rasterization size on mobile for better quality at various display sizes
         const sizeMultiplier = isMobile ? 2 : 1;
-        
+
         // Only load sprites that weren't pre-rasterized
         let loadedCount = 0;
         for (const asset of SPRITE_ASSETS) {
@@ -175,11 +175,15 @@ export class GameRenderer {
                 loadedCount++;
             }
         }
-        
+
         if (loadedCount > 0) {
-            console.log(`[GameRenderer] Loading ${loadedCount} sprites via Phaser (not pre-cached)`);
+            console.log(
+                `[GameRenderer] Loading ${loadedCount} sprites via Phaser (not pre-cached)`,
+            );
         } else if (injectedCount > 0) {
-            console.log(`[GameRenderer] All sprites pre-cached, no loading needed`);
+            console.log(
+                `[GameRenderer] All sprites pre-cached, no loading needed`,
+            );
         }
     }
 
@@ -205,15 +209,18 @@ export class GameRenderer {
                 const fps = this.game.loop.actualFps;
                 // Ignore initial warm-up frames (first 60)
                 if (state.tick > 60) {
-                     this.benchmarkStats.samples.push(fps);
+                    this.benchmarkStats.samples.push(fps);
                 }
             } else if (!state.benchmarkResults) {
                 // Finalize Results using utility
                 state.benchmarkResults = calculateBenchmarkResults(
                     this.benchmarkStats.samples,
-                    this.benchmarkStats.startTime
+                    this.benchmarkStats.startTime,
                 );
-                console.log("[GameRenderer] Benchmark Results:", state.benchmarkResults);
+                console.log(
+                    "[GameRenderer] Benchmark Results:",
+                    state.benchmarkResults,
+                );
                 this.benchmarkStats.active = false;
             }
         } else {
@@ -250,7 +257,7 @@ export class GameRenderer {
                     window.dispatchEvent(
                         new CustomEvent("qq-wave-intermission", {
                             detail: { nextWave: event.nextWave },
-                        })
+                        }),
                     );
                 }
             }
@@ -270,30 +277,47 @@ export class GameRenderer {
         // Only allow debug hotkeys in development mode
         if (!import.meta.env.DEV) return;
 
+        // dev-only hotkeys: Shift+G (glow), Shift+C (CRT), Shift+I (invincible), Shift+L (cycle loadout)
+        this.devLoadoutIndex = 0;
         window.addEventListener("keydown", (e) => {
-            if (e.shiftKey) {
-                if (e.key.toLowerCase() === "g") {
-                    this.debugSettings.glow = !this.debugSettings.glow;
-                    const intensity = this.debugSettings.glow
-                        ? loadSettings().crtIntensity || 0.5
-                        : 0;
-                    this.updateGlowIntensityAcrossRenderers(intensity);
-                    console.log(
-                        `[DEBUG] Glow: ${
-                            this.debugSettings.glow ? "ON" : "OFF"
-                        }`
-                    );
-                }
-                if (e.key.toLowerCase() === "c") {
-                    this.debugSettings.crt = !this.debugSettings.crt;
-                    document.body.classList.toggle(
-                        "qq-no-scanlines",
-                        !this.debugSettings.crt
-                    );
-                    console.log(
-                        `[DEBUG] CRT: ${this.debugSettings.crt ? "ON" : "OFF"}`
-                    );
-                }
+            if (!e.shiftKey) return;
+            const key = e.key.toLowerCase();
+            if (key === "g") {
+                this.debugSettings.glow = !this.debugSettings.glow;
+                const intensity = this.debugSettings.glow
+                    ? loadSettings().crtIntensity || 0.5
+                    : 0;
+                this.updateGlowIntensityAcrossRenderers(intensity);
+                console.log(
+                    `[DEBUG] Glow: ${this.debugSettings.glow ? "ON" : "OFF"}`,
+                );
+            } else if (key === "c") {
+                this.debugSettings.crt = !this.debugSettings.crt;
+                document.body.classList.toggle(
+                    "qq-no-scanlines",
+                    !this.debugSettings.crt,
+                );
+                console.log(
+                    `[DEBUG] CRT: ${this.debugSettings.crt ? "ON" : "OFF"}`,
+                );
+            } else if (key === "i") {
+                // Toggle invincibility via global event so store/simulation can handle it
+                window.dispatchEvent(
+                    new CustomEvent("qq-toggle-invincibility", {
+                        detail: { playerId: "p1" },
+                    }),
+                );
+            } else if (key === "l") {
+                // Cycle dev loadouts and apply
+                this.devLoadoutIndex = (this.devLoadoutIndex + 1) % 3; // match devLoadouts count
+                window.dispatchEvent(
+                    new CustomEvent("qq-apply-loadout", {
+                        detail: { index: this.devLoadoutIndex, playerId: "p1" },
+                    }),
+                );
+                console.log(
+                    `[DEBUG] Applied dev loadout index ${this.devLoadoutIndex}`,
+                );
             }
         });
     }
@@ -319,7 +343,7 @@ export class GameRenderer {
         if (this.settingsListener) {
             window.removeEventListener(
                 "qq-settings-changed",
-                this.settingsListener
+                this.settingsListener,
             );
             this.settingsListener = null;
         }

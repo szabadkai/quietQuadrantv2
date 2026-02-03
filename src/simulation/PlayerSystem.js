@@ -377,7 +377,7 @@ export const PlayerSystem = {
     updateWeaponHeat(state, player) {
         // Count player's bullets on screen
         const playerBullets = state.bullets.filter(
-            (b) => b.alive && b.owner === player.id
+            (b) => b.alive && b.owner === player.id && !b.isShrapnel
         ).length;
         
         // Calculate target heat based on bullet count
