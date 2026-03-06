@@ -25,7 +25,8 @@ const DEFAULT_SETTINGS = {
     crtScanlines: true,
     crtIntensity: 0.5,
     highContrast: false,
-    reducedMotion: false
+    reducedMotion: false,
+    colorblindMode: "none",
 };
 
 function loadSettings() {
@@ -50,6 +51,17 @@ function applyInitialSettings() {
     const intensity = settings.crtScanlines ? (settings.crtIntensity ?? 0.5) : 0;
     document.documentElement.style.setProperty("--crt-intensity", intensity);
     document.documentElement.style.setProperty("--glow-intensity", intensity);
+
+    // Apply colorblind mode on initial load
+    const cbMode = settings.colorblindMode || "none";
+    document.body.classList.remove(
+        "qq-colorblind-deuteranopia",
+        "qq-colorblind-protanopia",
+        "qq-colorblind-tritanopia"
+    );
+    if (cbMode !== "none") {
+        document.body.classList.add(`qq-colorblind-${cbMode}`);
+    }
 }
 
 export function App() {

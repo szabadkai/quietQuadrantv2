@@ -82,6 +82,9 @@ const PALETTES_HEX = {
 };
 
 let currentTheme = "vectrex";
+let currentColorblindMode = "none";
+
+import { COLORBLIND_PALETTE, COLORBLIND_PALETTE_HEX } from "../config/colorblindPalettes.js";
 
 export function setTheme(theme) {
     if (PALETTES[theme]) {
@@ -93,10 +96,25 @@ export function getTheme() {
     return currentTheme;
 }
 
+export function setColorblindMode(mode) {
+    currentColorblindMode = mode || "none";
+}
+
+export function getColorblindMode() {
+    return currentColorblindMode;
+}
+
 export const PALETTE = new Proxy(
     {},
     {
         get(target, prop) {
+            // Check colorblind override first
+            if (currentColorblindMode !== "none") {
+                const transforms = COLORBLIND_PALETTE[currentColorblindMode];
+                if (transforms && transforms[prop]) {
+                    return transforms[prop];
+                }
+            }
             return PALETTES[currentTheme][prop];
         },
     }
@@ -106,6 +124,13 @@ export const PALETTE_HEX = new Proxy(
     {},
     {
         get(target, prop) {
+            // Check colorblind override first
+            if (currentColorblindMode !== "none") {
+                const transforms = COLORBLIND_PALETTE_HEX[currentColorblindMode];
+                if (transforms && transforms[prop]) {
+                    return transforms[prop];
+                }
+            }
             return PALETTES_HEX[currentTheme][prop];
         },
     }

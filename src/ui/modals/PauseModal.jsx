@@ -5,6 +5,9 @@ import { Button } from "../components/Button.jsx";
 import { Slider } from "../components/Slider.jsx";
 import { soundManager } from "../../audio/SoundManager.js";
 import { musicManager } from "../../audio/MusicManager.js";
+import { isDesktop } from "../../utils/platform.js";
+import { steamBridge } from "../../utils/steamBridge.js";
+import { COLORBLIND_MODES, COLORBLIND_LABELS } from "../../config/colorblindPalettes.js";
 
 const SETTINGS_KEY = "quiet-quadrant-settings";
 const DEFAULT_SETTINGS = {
@@ -18,7 +21,8 @@ const DEFAULT_SETTINGS = {
     reducedMotion: false,
     crtScanlines: true,
     crtIntensity: 0.5,
-    colorTheme: "vectrex"
+    colorTheme: "vectrex",
+    colorblindMode: "none",
 };
 
 function loadSettings() {
@@ -53,6 +57,17 @@ function applyVisualSettings(settings) {
     // Apply color theme
     const theme = settings.colorTheme || "vectrex";
     document.body.setAttribute('data-theme', theme);
+
+    // Apply colorblind mode
+    const cbMode = settings.colorblindMode || "none";
+    document.body.classList.remove(
+        "qq-colorblind-deuteranopia",
+        "qq-colorblind-protanopia",
+        "qq-colorblind-tritanopia"
+    );
+    if (cbMode !== "none") {
+        document.body.classList.add(`qq-colorblind-${cbMode}`);
+    }
 }
 
 function notifySettingsChanged(settings) {
@@ -66,6 +81,16 @@ export function PauseModal({ onResume }) {
     const setScreen = useUIStore((s) => s.actions.setScreen);
     const stopGame = useGameStore((s) => s.actions.stopGame);
     const [settings, setSettings] = useState(loadSettings);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const showDesktop = isDesktop();
+
+    // Sync fullscreen state from Electron
+    useEffect(() => {
+        if (!showDesktop) return;
+        steamBridge.getFullscreen().then((fs) => {
+            if (fs !== null) setIsFullscreen(fs);
+        });
+    }, [showDesktop]);
 
     useEffect(() => {
         soundManager.setMasterVolume(settings.masterVolume);
@@ -120,6 +145,23 @@ export function PauseModal({ onResume }) {
                         value={settings.sfxVolume}
                         onChange={(v) => updateSetting("sfxVolume", v)}
                     />
+
+                    {showDesktop && (
+                        <div className="qq-toggle-row">
+                            <span>Fullscreen</span>
+                            <button
+                                type="button"
+                                className={`qq-toggle ${isFullscreen ? "active" : ""}`}
+                                onClick={async () => {
+                                    await steamBridge.toggleFullscreen();
+                                    const fs = await steamBridge.getFullscreen();
+                                    if (fs !== null) setIsFullscreen(fs);
+                                }}
+                            >
+                                {isFullscreen ? "ON" : "OFF"}
+                            </button>
+                        </div>
+                    )}
 
                     <div className="qq-toggle-row">
                         <span>Screen Shake</span>
@@ -177,6 +219,21 @@ export function PauseModal({ onResume }) {
                             }
                         >
                             {settings.reducedMotion ? "ON" : "OFF"}
+                        </button>
+                    </div>
+
+                    <div className="qq-toggle-row">
+                        <span>Colorblind Mode</span>
+                        <button
+                            type="button"
+                            className={`qq-toggle ${settings.colorblindMode !== "none" ? "active" : ""}`}
+                            onClick={() => {
+                                const idx = COLORBLIND_MODES.indexOf(settings.colorblindMode || "none");
+                                const next = COLORBLIND_MODES[(idx + 1) % COLORBLIND_MODES.length];
+                                updateSetting("colorblindMode", next);
+                            }}
+                        >
+                            {COLORBLIND_LABELS[settings.colorblindMode || "none"]}
                         </button>
                     </div>
 

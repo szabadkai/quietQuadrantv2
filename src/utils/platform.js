@@ -12,3 +12,11 @@ export function isNativeMobile() {
 export function shouldShowPreTitleVideos() {
     return isElectron() || isNativeMobile();
 }
+
+/**
+ * Check if running as a desktop build (Electron).
+ * Used to show desktop-only settings like fullscreen/resolution.
+ */
+export function isDesktop() {
+    return isElectron();
+}

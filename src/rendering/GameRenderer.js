@@ -13,7 +13,7 @@ import { TelegraphRenderer } from "./TelegraphRenderer.js";
 import { SPRITE_ASSETS } from "./sprites.js";
 import { soundManager } from "../audio/SoundManager.js";
 import { musicManager } from "../audio/MusicManager.js";
-import { setTheme } from "../utils/palette.js";
+import { setTheme, setColorblindMode } from "../utils/palette.js";
 import { GlowManager } from "./GlowManager.js";
 import { AssetPreloader } from "../utils/AssetPreloader.js";
 
@@ -125,6 +125,9 @@ export class GameRenderer {
         const theme = settings.colorTheme || "vectrex";
         setTheme(theme);
         GlowManager.setTheme(theme);
+
+        // Apply colorblind mode to Phaser palette
+        setColorblindMode(settings.colorblindMode || "none");
 
         // Apply CRT intensity to sprite glows
         // PERFORMANCE: lowFX mode disables all glow effects
