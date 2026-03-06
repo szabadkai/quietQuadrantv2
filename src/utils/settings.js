@@ -8,6 +8,7 @@ const DEFAULT_SETTINGS = {
     crtScanlines: true,
     crtIntensity: 0.5,
     colorTheme: "vectrex",
+    colorblindMode: "none",
     lowFX: false, // Performance mode: disables glow effects
 };
 
@@ -44,4 +45,15 @@ export function applyBodyClasses(settings) {
     // Apply color theme
     const theme = settings.colorTheme || "vectrex";
     document.body.setAttribute("data-theme", theme);
+
+    // Apply colorblind mode (CSS classes handle variable overrides via styles.css)
+    const cbMode = settings.colorblindMode || "none";
+    document.body.classList.remove(
+        "qq-colorblind-deuteranopia",
+        "qq-colorblind-protanopia",
+        "qq-colorblind-tritanopia"
+    );
+    if (cbMode !== "none") {
+        document.body.classList.add(`qq-colorblind-${cbMode}`);
+    }
 }

@@ -160,6 +160,62 @@ body.qq-no-scanlines::after {
   display: none !important;
 }
 
+/* COLORBLIND MODES */
+body.qq-colorblind-deuteranopia {
+  --qq-safe: #4488FF;
+  --qq-xp: #4488FF;
+  --qq-health: #FF8800;
+  --qq-danger: #FF8800;
+}
+
+body.qq-colorblind-protanopia {
+  --qq-safe: #4488FF;
+  --qq-xp: #4488FF;
+  --qq-health: #FFAA00;
+  --qq-danger: #FFAA00;
+}
+
+body.qq-colorblind-tritanopia {
+  --qq-elite: #FF8888;
+  --qq-rare: #FF8888;
+}
+
+/* KEYBINDINGS DISPLAY */
+.qq-keybindings {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qq-keybindings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.qq-keybindings-title {
+  font-size: 0.7em;
+  color: var(--qq-muted);
+  margin-bottom: 2px;
+}
+
+.qq-keybinding-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 0;
+  font-size: 0.75em;
+}
+
+.qq-keybinding-action {
+  color: var(--qq-text);
+}
+
+.qq-keybinding-keys {
+  color: var(--qq-muted);
+  text-align: right;
+}
+
 /* HEAVY VIDEO SCANLINES */
 .qq-video-scanlines {
   position: absolute;

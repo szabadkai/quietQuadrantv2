@@ -4,6 +4,10 @@ import { Slider } from "../components/Slider.jsx";
 import { soundManager } from "../../audio/SoundManager.js";
 import { musicManager } from "../../audio/MusicManager.js";
 import { useMetaStore } from "../../state/useMetaStore.js";
+import { isDesktop } from "../../utils/platform.js";
+import { steamBridge } from "../../utils/steamBridge.js";
+import { COLORBLIND_MODES, COLORBLIND_LABELS } from "../../config/colorblindPalettes.js";
+import { KEYBINDINGS } from "../../config/keybindings.js";
 
 const SETTINGS_KEY = "quiet-quadrant-settings";
 const DEFAULT_SETTINGS = {
@@ -17,8 +21,17 @@ const DEFAULT_SETTINGS = {
     damageNumbers: false,
     crtScanlines: true,
     crtIntensity: 0.5,
-    colorTheme: "vectrex"
+    colorTheme: "vectrex",
+    colorblindMode: "none",
 };
+
+const RESOLUTIONS = [
+    { label: "960x600", width: 960, height: 600 },
+    { label: "1200x800", width: 1200, height: 800 },
+    { label: "1440x900", width: 1440, height: 900 },
+    { label: "1600x1000", width: 1600, height: 1000 },
+    { label: "1920x1200", width: 1920, height: 1200 },
+];
 
 function loadSettings() {
     try {
@@ -52,6 +65,17 @@ function applyVisualSettings(settings) {
     // Apply color theme
     const theme = settings.colorTheme || "vectrex";
     document.body.setAttribute('data-theme', theme);
+
+    // Apply colorblind mode
+    const cbMode = settings.colorblindMode || "none";
+    document.body.classList.remove(
+        "qq-colorblind-deuteranopia",
+        "qq-colorblind-protanopia",
+        "qq-colorblind-tritanopia"
+    );
+    if (cbMode !== "none") {
+        document.body.classList.add(`qq-colorblind-${cbMode}`);
+    }
 }
 
 function notifySettingsChanged(settings) {
@@ -64,7 +88,26 @@ function notifySettingsChanged(settings) {
 export function SettingsModal({ onClose }) {
     const [settings, setSettings] = useState(loadSettings);
     const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [currentResLabel, setCurrentResLabel] = useState("1200x800");
     const { actions } = useMetaStore();
+    const showDesktop = isDesktop();
+
+    // Sync fullscreen state from Electron
+    useEffect(() => {
+        if (!showDesktop) return;
+        steamBridge.getFullscreen().then((fs) => {
+            if (fs !== null) setIsFullscreen(fs);
+        });
+        steamBridge.getBounds().then((bounds) => {
+            if (bounds) {
+                const match = RESOLUTIONS.find(
+                    (r) => r.width === bounds.width && r.height === bounds.height
+                );
+                setCurrentResLabel(match ? match.label : `${bounds.width}x${bounds.height}`);
+            }
+        });
+    }, [showDesktop]);
 
     useEffect(() => {
         soundManager.setMasterVolume(settings.masterVolume);
@@ -132,6 +175,43 @@ export function SettingsModal({ onClose }) {
 
                 <div className="qq-settings-section">
                     <h3>Display</h3>
+                    {showDesktop && (
+                        <>
+                            <div className="qq-toggle-row">
+                                <span>Fullscreen</span>
+                                <button
+                                    type="button"
+                                    className={`qq-toggle ${isFullscreen ? "active" : ""}`}
+                                    onClick={async () => {
+                                        await steamBridge.toggleFullscreen();
+                                        const fs = await steamBridge.getFullscreen();
+                                        if (fs !== null) setIsFullscreen(fs);
+                                    }}
+                                >
+                                    {isFullscreen ? "ON" : "OFF"}
+                                </button>
+                            </div>
+                            {!isFullscreen && (
+                                <div className="qq-toggle-row">
+                                    <span>Resolution</span>
+                                    <button
+                                        type="button"
+                                        className="qq-toggle"
+                                        onClick={async () => {
+                                            const idx = RESOLUTIONS.findIndex(
+                                                (r) => r.label === currentResLabel
+                                            );
+                                            const next = RESOLUTIONS[(idx + 1) % RESOLUTIONS.length];
+                                            await steamBridge.setBounds({ width: next.width, height: next.height });
+                                            setCurrentResLabel(next.label);
+                                        }}
+                                    >
+                                        {currentResLabel}
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    )}
                     <Toggle label="Screen Shake" settingKey="screenShake" />
                     <Toggle label="Screen Flash" settingKey="screenFlash" />
                     <Toggle label="Damage Numbers" settingKey="damageNumbers" />
@@ -159,6 +239,44 @@ export function SettingsModal({ onClose }) {
                     <h3>Accessibility</h3>
                     <Toggle label="High Contrast" settingKey="highContrast" />
                     <Toggle label="Reduced Motion" settingKey="reducedMotion" />
+                    <div className="qq-toggle-row">
+                        <span>Colorblind Mode</span>
+                        <button
+                            type="button"
+                            className={`qq-toggle ${settings.colorblindMode !== "none" ? "active" : ""}`}
+                            onClick={() => {
+                                const idx = COLORBLIND_MODES.indexOf(settings.colorblindMode || "none");
+                                const next = COLORBLIND_MODES[(idx + 1) % COLORBLIND_MODES.length];
+                                updateSetting("colorblindMode", next);
+                            }}
+                        >
+                            {COLORBLIND_LABELS[settings.colorblindMode || "none"]}
+                        </button>
+                    </div>
+                </div>
+
+                <div className="qq-settings-section">
+                    <h3>Controls</h3>
+                    <div className="qq-keybindings">
+                        <div className="qq-keybindings-group">
+                            <span className="qq-keybindings-title">Keyboard</span>
+                            {KEYBINDINGS.keyboard.map((b) => (
+                                <div key={b.action} className="qq-keybinding-row">
+                                    <span className="qq-keybinding-action">{b.action}</span>
+                                    <span className="qq-keybinding-keys">{b.keys}</span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="qq-keybindings-group">
+                            <span className="qq-keybindings-title">Gamepad</span>
+                            {KEYBINDINGS.gamepad.map((b) => (
+                                <div key={b.action} className="qq-keybinding-row">
+                                    <span className="qq-keybinding-action">{b.action}</span>
+                                    <span className="qq-keybinding-keys">{b.keys}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="qq-settings-section">
